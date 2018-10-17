@@ -1,0 +1,15 @@
+/// Screen에서 필요
+
+			/*
+			// 모든 노드를 그립니다.
+			context.clearRect(0, 0, width * devicePixelRatio, height * devicePixelRatio);
+			
+			context.save();
+			context.scale(devicePixelRatio, devicePixelRatio);
+			context.translate(width / 2 - getCameraFollowX(), height / 2 - getCameraFollowY());
+			
+			drawAll(self, context, self.getAlpha());
+			
+			context.restore();
+			*/
+			

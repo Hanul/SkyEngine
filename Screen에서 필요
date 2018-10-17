@@ -1,0 +1,74 @@
+/// Screen에서 필요
+		
+		// 노드의 모든 영역을 그립니다.
+		let drawAllArea = (node, context, color) => {
+			/*
+			context.save();
+			
+			context.translate(node.getDrawingX(), node.getDrawingY());
+			context.rotate(node.getRealRadian());
+			context.scale(node.getRealScaleX(), node.getRealScaleY());
+			
+			context.lineWidth = 1 / (node.getRealScaleX() > node.getRealScaleY() ? node.getRealScaleX() : node.getRealScaleY());
+			
+			context.beginPath();
+			
+			node.drawArea(context);
+			
+			context.strokeStyle = color;
+			context.stroke();
+			context.closePath();
+			
+			context.restore();
+			
+			let children = node.getChildren();
+			
+			for (let i = 0; i < children.length; i += 1) {
+				drawAllArea(children[i], context, color);
+			}
+			*/
+		};
+		
+		// 모든 노드를 그립니다.
+		let drawAll = (node, context, realAlpha) => {
+			/*
+			if (node.checkIsHiding() !== true) {
+				
+				realAlpha *= node.getAlpha();
+				
+				context.save();
+				
+				if (node.getFilter() !== undefined) {
+					context.filter = node.getFilter();
+				}
+				
+				if (node.getBlendMode() !== undefined) {
+					context.globalCompositeOperation = node.getBlendMode();
+				}
+				
+				context.save();
+				
+				context.translate(node.getDrawingX(), node.getDrawingY());
+				context.rotate(node.getRealRadian());
+				context.scale(node.getRealScaleX(), node.getRealScaleY());
+				
+				context.globalAlpha = realAlpha;
+				
+				node.draw(context);
+				
+				context.restore();
+				
+				if (node.checkIsRemoved() !== true) {
+					
+					// 모든 자식 노드를 그립니다.
+					let children = node.getChildren();
+					
+					for (let i = 0; i < children.length; i += 1) {
+						drawAll(children[i], context, realAlpha);
+					}
+				}
+				
+				context.restore();
+			}
+			*/
+		};
