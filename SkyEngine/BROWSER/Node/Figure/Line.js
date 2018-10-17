@@ -422,29 +422,23 @@ SkyEngine.Line = CLASS((cls) => {
 				};
 			});
 			
-			let draw;
-			OVERRIDE(self.draw, (origin) => {
-				
-				draw = self.draw = (context) => {
-					
-					context.beginPath();
-					
-					context.moveTo(startX, startY);
-					context.lineTo(endX, endY);
-					
-					origin(context);
-				};
+			let width = Math.abs(endX - startX);
+			let height = Math.abs(endX - startX);
+			
+			inner.draw(width, height, (context) => {
+				context.moveTo(width / 2 + startX, height / 2 + startY);
+				context.lineTo(width / 2 + endX, height / 2 + endY);
 			});
 			
 			let drawArea;
 			OVERRIDE(self.drawArea, (origin) => {
 				
-				drawArea = self.drawArea = (context) => {
+				drawArea = self.drawArea = (graphics) => {
 					
-					context.moveTo(startX, startY);
-					context.lineTo(endX, endY);
+					graphics.moveTo(self.getX() + startX, self.getY() + startY);
+					graphics.lineTo(self.getX() + endX, self.getY() + endY);
 					
-					origin(context);
+					origin(graphics);
 				};
 			});
 			

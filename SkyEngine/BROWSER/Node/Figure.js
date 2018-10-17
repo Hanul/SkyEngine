@@ -26,45 +26,89 @@ SkyEngine.Figure = CLASS({
 			borderColor = split[2];
 		}
 		
-		let draw;
-		OVERRIDE(self.draw, (origin) => {
+		let pixiSprite;
+		
+		let draw = inner.draw = (width, height, drawFigure) => {
 			
-			draw = self.draw = (context) => {
-				
-				// to implement.
-				
-				if (color !== undefined) {
+			let canvas = document.createElement('canvas');
+			canvas.width = width;
+			canvas.height = height;
+			
+			var context = canvas.getContext('2d');
+			
+			context.beginPath();
+			
+			drawFigure(context);
+			
+			if (color !== undefined) {
+				if (CHECK_IS_DATA(color) === true && color.checkIsInstanceOf(SkyEngine.Gradient) === true) {
+					context.fillStyle = color.generateContextGradient(context);
+				} else {
 					context.fillStyle = color;
-					context.fill();
+				}
+				context.fill();
+			}
+			
+			if (border !== undefined) {
+				context.lineWidth = borderPixel;
+				context.strokeStyle = borderColor;
+				
+				if (borderStyle === 'dashed') {
+					context.setLineDash([5]);
+				} else if (borderStyle === 'dotted') {
+					context.setLineDash([2]);
 				}
 				
-				if (border !== undefined) {
-					context.lineWidth = borderPixel;
-					context.strokeStyle = borderColor;
-					
-					if (borderStyle === 'dashed') {
-						context.setLineDash([5]);
-					} else if (borderStyle === 'dotted') {
-						context.setLineDash([2]);
-					}
-					
-					context.stroke();
-				}
+				context.stroke();
+			}
+			
+			context.closePath();
+			
+			pixiSprite = new PIXI.Sprite(PIXI.Texture.fromCanvas(canvas));
+			
+			pixiSprite.x = -width / 2;
+			pixiSprite.y = -height / 2;
+			pixiSprite.zIndex = -9999999;
+			
+			pixiSprite.blendMode = SkyEngine.Util.BlendMode.getPixiBlendMode(self.getBlendMode());
+			
+			self.addToPixiContainer(pixiSprite);
+			
+			context = undefined;
+			canvas = undefined;
+		};
+		
+		let setBlendMode;
+		OVERRIDE(self.setBlendMode, (origin) => {
+			
+			setBlendMode = self.setBlendMode = (blendMode) => {
+				//REQUIRED: blendMode
 				
-				context.closePath();
+				pixiSprite.blendMode = SkyEngine.Util.BlendMode.getPixiBlendMode(self.getBlendMode());
 				
-				origin(context);
+				origin(blendMode);
 			};
 		});
 		
-		let drawArea;
-		OVERRIDE(self.drawArea, (origin) => {
+		let removeBlendMode;
+		OVERRIDE(self.removeBlendMode, (origin) => {
 			
-			drawArea = self.drawArea = (context) => {
+			removeBlendMode = self.removeBlendMode = () => {
 				
-				// to implement.
+				origin();
 				
-				origin(context);
+				pixiSprite.blendMode = SkyEngine.Util.BlendMode.getPixiBlendMode(self.getBlendMode());
+			};
+		});
+		
+		let remove;
+		OVERRIDE(self.remove, (origin) => {
+			
+			remove = self.remove = () => {
+				
+				pixiSprite = undefined;
+				
+				origin();
 			};
 		});
 	}

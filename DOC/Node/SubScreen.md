@@ -8,7 +8,6 @@
 또한 [스크린 노드](Screen.md) 대비 몇 가지 제한사항이 있습니다.
 
 - [FixedNode](FixedNode.md) 및 [Background](Image.md#배경-노드) 사용 불가
-- [CreateGradient](../CreateGradient.md) 사용 불가
 - 모든 노드의 `checkCollision` 및 `checkOffScreen` 함수 사용 불가
 - DOM 추가 불가
 - 화면이 커질수록 성능을 많이 필요로하므로, **모바일 환경에서는 가급적 사용하지 마시기 바랍니다.**

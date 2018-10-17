@@ -51,6 +51,35 @@ SkyEngine.Image = CLASS((cls) => {
 			
 			let img;
 			
+			let pixiSprite;
+			
+			let createPixiSprite = () => {
+				
+				// 이미지가 로드 되어 있어야 합니다.
+				if (self.checkIsRemoved() !== true && width !== undefined) {
+					
+					// 기존 것을 지웁니다.
+					if (pixiSprite !== undefined) {
+						self.removeFromPixiContainer(pixiSprite);
+					}
+					
+					let w = width - cropLeft - cropRight;
+					let h = height - cropTop - cropBottom;
+					
+					let texture = new PIXI.Texture(new PIXI.BaseTexture(img), new PIXI.Rectangle(cropLeft, cropTop, w, h));
+					
+					pixiSprite = new PIXI.Sprite.from(texture);
+					
+					pixiSprite.x = -width / 2 + cropLeft;
+					pixiSprite.y = -height / 2 + cropTop;
+					pixiSprite.zIndex = -9999999;
+					
+					pixiSprite.blendMode = SkyEngine.Util.BlendMode.getPixiBlendMode(self.getBlendMode());
+					
+					self.addToPixiContainer(pixiSprite);
+				}
+			};
+			
 			let setSrc = self.setSrc = (_src) => {
 				src = _src;
 				
@@ -62,20 +91,52 @@ SkyEngine.Image = CLASS((cls) => {
 				
 				tempImg.onload = () => {
 					
-					width = tempImg.width;
-					height = tempImg.height;
-					
 					tempImg.onload = undefined;
 					
-					img = tempImg;
-					
-					self.fireEvent('load');
+					if (self.checkIsRemoved() !== true) {
+						
+						width = tempImg.width;
+						height = tempImg.height;
+						
+						img = tempImg;
+						
+						createPixiSprite();
+						
+						self.fireEvent('load');
+					}
 				};
 				
 				tempImg.src = src;
 			};
 			
 			setSrc(src);
+			
+			let setBlendMode;
+			OVERRIDE(self.setBlendMode, (origin) => {
+				
+				setBlendMode = self.setBlendMode = (blendMode) => {
+					//REQUIRED: blendMode
+					
+					if (pixiSprite !== undefined) {
+						pixiSprite.blendMode = SkyEngine.Util.BlendMode.getPixiBlendMode(self.getBlendMode());
+					}
+					
+					origin(blendMode);
+				};
+			});
+			
+			let removeBlendMode;
+			OVERRIDE(self.removeBlendMode, (origin) => {
+				
+				removeBlendMode = self.removeBlendMode = () => {
+					
+					origin();
+					
+					if (pixiSprite !== undefined) {
+						pixiSprite.blendMode = SkyEngine.Util.BlendMode.getPixiBlendMode(self.getBlendMode());
+					}
+				};
+			});
 			
 			let checkPoint;
 			OVERRIDE(self.checkPoint, (origin) => {
@@ -169,98 +230,6 @@ SkyEngine.Image = CLASS((cls) => {
 				};
 			});
 			
-			let draw;
-			OVERRIDE(self.draw, (origin) => {
-				
-				draw = self.draw = (context) => {
-					
-					let w = width - cropLeft - cropRight;
-					let h = height - cropTop - cropBottom;
-					
-					if (w > 0 && h > 0) {
-						context.drawImage(
-							img,
-							cropLeft,
-							cropTop,
-							w,
-							h,
-							-width / 2 + cropLeft,
-							-height / 2 + cropTop,
-							w,
-							h);
-					}
-					
-					origin(context);
-				};
-			});
-			
-			let drawArea;
-			OVERRIDE(self.drawArea, (origin) => {
-				
-				drawArea = self.drawArea = (context) => {
-					
-					if (polygonPoints === undefined) {
-						
-						if (imageData === undefined) {
-							
-							if (isImageDataLoading !== true) {
-								
-								let tempImg = new Image();
-								
-								tempImg.onload = () => {
-									
-									let width = tempImg.width;
-									let height = tempImg.height;
-									
-									let imageCanvas = CANVAS({
-										style : {
-											display : 'none'
-										},
-										width : width,
-										height : height
-									}).appendTo(BODY);
-									
-									let imageContext = imageCanvas.getContext('2d');
-									imageContext.drawImage(tempImg, 0, 0, width, height);
-									
-									imageData = imageContext.getImageData(0, 0, width, height).data;
-									
-									polygonPoints = SkyEngine.Util.ImageData.convertImageDataToPolygonPoints(imageData, width);
-									
-									// clear.
-									imageContext = undefined;
-									imageCanvas.remove();
-									
-									tempImg.onload = undefined;
-								};
-								
-								tempImg.src = src;
-								
-								isImageDataLoading = true;
-							}
-						}
-						
-						else {
-							polygonPoints = SkyEngine.Util.ImageData.convertImageDataToPolygonPoints(imageData, width);
-						}
-					}
-					
-					else if (polygonPoints.length > 0) {
-						
-						context.moveTo(polygonPoints[0].x - width / 2, polygonPoints[0].y - height / 2);
-						
-						for (let i = 1; i < polygonPoints.length; i += 1) {
-							let point = polygonPoints[i];
-							context.lineTo(point.x - width / 2, point.y - height / 2);
-						}
-						
-						context.lineTo(polygonPoints[0].x - width / 2, polygonPoints[0].y - height / 2);
-					}
-					
-					origin(context);
-				};
-			});
-			
 			let remove;
 			OVERRIDE(self.remove, (origin) => {
 				
@@ -268,6 +237,8 @@ SkyEngine.Image = CLASS((cls) => {
 					
 					img.onload = undefined;
 					img = undefined;
+					
+					pixiSprite = undefined;
 					
 					imageData = undefined;
 					
@@ -300,6 +271,8 @@ SkyEngine.Image = CLASS((cls) => {
 				if (params.left !== undefined) {
 					cropLeft = params.left;
 				}
+				
+				createPixiSprite();
 			};
 			
 			let getWidth = self.getWidth = () => {

@@ -277,27 +277,18 @@ SkyEngine.Rect = CLASS((cls) => {
 				};
 			});
 			
-			let draw;
-			OVERRIDE(self.draw, (origin) => {
-				
-				draw = self.draw = (context) => {
-					
-					context.beginPath();
-					
-					context.rect(-width / 2, -height / 2, width, height);
-					
-					origin(context);
-				};
+			inner.draw(width, height, (context) => {
+				context.rect(0, 0, width, height);
 			});
 			
 			let drawArea;
 			OVERRIDE(self.drawArea, (origin) => {
 				
-				drawArea = self.drawArea = (context) => {
+				drawArea = self.drawArea = (graphics) => {
 					
-					context.rect(-width / 2, -height / 2, width, height);
+					graphics.drawRect(self.getX() - width / 2, self.getY() - height / 2, width, height);
 					
-					origin(context);
+					origin(graphics);
 				};
 			});
 			

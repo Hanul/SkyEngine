@@ -230,27 +230,18 @@ SkyEngine.Circle = CLASS((cls) => {
 				};
 			});
 			
-			let draw;
-			OVERRIDE(self.draw, (origin) => {
-				
-				draw = self.draw = (context) => {
-					
-					context.beginPath();
-					
-					context.ellipse(0, 0, width / 2, height / 2, 0, 0, 2 * Math.PI);
-					
-					origin(context);
-				};
+			inner.draw(width, height, (context) => {
+				context.ellipse(width / 2, height / 2, width / 2, height / 2, 0, 0, 2 * Math.PI);
 			});
 			
 			let drawArea;
 			OVERRIDE(self.drawArea, (origin) => {
 				
-				drawArea = self.drawArea = (context) => {
+				drawArea = self.drawArea = (graphics) => {
 					
-					context.ellipse(0, 0, width / 2, height / 2, 0, 0, 2 * Math.PI);
+					graphics.drawEllipse(self.getX(), self.getY(), width / 2, height / 2);
 					
-					origin(context);
+					origin(graphics);
 				};
 			});
 			

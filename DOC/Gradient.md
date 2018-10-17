@@ -1,5 +1,5 @@
-# `SkyEngine.CreateGradient`
-그라디언트 색상을 만들어주는 메소드
+# `SkyEngine.Gradient`
+그라디언트 색상을 생성하는 클래스
 
 아래와 같은 파라미터들을 사용할 수 있습니다.
 
@@ -12,13 +12,13 @@
 - `endRadius` 색상이 끝나는 반지름
 - `colors` 그라디언트를 이루는 색상들
 
-![그라디언트](https://raw.githubusercontent.com/Hanul/SkyEngine/master/DOC/CreateGradient/gradient.png)
+![그라디언트](https://raw.githubusercontent.com/Hanul/SkyEngine/master/DOC/Gradient/gradient.png)
 
 ```javascript
 let rect = SkyEngine.Rect({
 	width : 300,
 	height : 200,
-	color : SkyEngine.CreateGradient({
+	color : SkyEngine.Gradient({
 		type : 'radial',
 		startX : 0,
 		startY : 0,

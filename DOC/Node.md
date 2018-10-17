@@ -416,7 +416,12 @@ SkyEngine.Screen.setFilter('grayscale(100%)');
 ```
 
 ## 블렌드 모드
-기존의 도형 뒤에 새로운 도형을 그리거나, 도형의 일정한 영역을 보이지 않도록 하는 등의 효과를 위해 [`CanvasRenderingContext2D.globalCompositeOperation`](https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/globalCompositeOperation)을 사용하는 블렌드 모드를 적용할 수 있습니다.
+기존의 도형 뒤에 새로운 도형을 그리거나, 도형의 일정한 영역을 보이지 않도록 하는 등의 효과를 위해 아래 목록에 해당하는 블렌드 모드를 적용할 수 있습니다.
+
+- `'multiply'`
+- `'screen'`
+- `'add'`
+- `'lighten'`
 
 ![블렌드 모드](https://raw.githubusercontent.com/Hanul/SkyEngine/master/DOC/Node/blendmode.png)
 

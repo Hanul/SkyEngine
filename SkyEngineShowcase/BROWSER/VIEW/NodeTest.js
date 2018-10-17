@@ -6,7 +6,6 @@ SkyEngineShowcase.NodeTest = CLASS({
 	
 	init : (inner) => {
 		
-		let leftArm;
 		let man = SkyEngine.Rect({
 			width : 40,
 			height : 80,
@@ -22,7 +21,7 @@ SkyEngineShowcase.NodeTest = CLASS({
 			}),
 			
 			// left arm
-			leftArm = SkyEngine.Rect({
+			SkyEngine.Rect({
 				centerY : -30,
 				angle : 40,
 				x : -20,
@@ -60,12 +59,12 @@ SkyEngineShowcase.NodeTest = CLASS({
 			})]
 		}).appendTo(SkyEngine.Screen);
 		
-		leftArm.setScalingSpeedX(1);
+		man.setScalingSpeedX(1);
 		
 		let delay = SkyEngine.Delay(1, () => {
-			leftArm.setScalingSpeedX(-1);
+			man.setScalingSpeedX(-1);
 			delay = SkyEngine.Delay(1, () => {
-				leftArm.setScalingSpeedX(0);
+				man.setScalingSpeedX(0);
 			});
 		});
 		

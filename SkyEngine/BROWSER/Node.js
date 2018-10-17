@@ -90,38 +90,6 @@ SkyEngine.Node = CLASS({
 		// before properties
 		let beforeX, beforeY;
 		
-		let pixiContainer = new PIXI.Container();
-		
-		let getPixiContainer = inner.getPixiContainer = () => {
-			return pixiContainer;
-		};
-		
-		let addToPixiContainer = self.addToPixiContainer = (pixiChild) => {
-			
-			let pixiChildren = pixiContainer.children;
-			
-			let low = 0;
-			let high = pixiChildren.length;
-			
-			while (low < high) {
-			
-				// >>> 1은 2로 나누고 나머지를 버리는 것과 동일
-				let mid = (low + high) >>> 1;
-				
-				if (pixiChildren[mid].zIndex <= pixiChild.zIndex) {
-					low = mid + 1;
-				} else {
-					high = mid;
-				}
-			}
-			
-			pixiContainer.addChildAt(pixiChild, low);
-		};
-		
-		let removeFromPixiContainer = self.removeFromPixiContainer = (pixiChild) => {
-			pixiContainer.removeChild(pixiChild);
-		};
-		
 		let moveEndHandler;
 		let moveXEndHandler;
 		let moveYEndHandler;
@@ -161,12 +129,47 @@ SkyEngine.Node = CLASS({
 		let pauseCount = 0;
 		
 		let domWrapper;
+		let isFirstFixDomStyle;
 		
 		let onDisplayResize;
 		let displayResizeEvent;
 		
 		let maxCollisionWidth = BROWSER_CONFIG.SkyEngine.maxCollisionWidth;
 		let maxCollisionHeight = BROWSER_CONFIG.SkyEngine.maxCollisionHeight;
+		
+		// PixiJS 컨테이너
+		let pixiContainer = new PIXI.Container();
+		let areaGraphics;
+		
+		let getPixiContainer = inner.getPixiContainer = () => {
+			return pixiContainer;
+		};
+		
+		let addToPixiContainer = self.addToPixiContainer = (pixiChild) => {
+			
+			let pixiChildren = pixiContainer.children;
+			
+			let low = 0;
+			let high = pixiChildren.length;
+			
+			while (low < high) {
+			
+				// >>> 1은 2로 나누고 나머지를 버리는 것과 동일
+				let mid = (low + high) >>> 1;
+				
+				if (pixiChildren[mid].zIndex <= pixiChild.zIndex) {
+					low = mid + 1;
+				} else {
+					high = mid;
+				}
+			}
+			
+			pixiContainer.addChildAt(pixiChild, low);
+		};
+		
+		let removeFromPixiContainer = self.removeFromPixiContainer = (pixiChild) => {
+			pixiContainer.removeChild(pixiChild);
+		};
 
 		let genRealPosition = () => {
 
@@ -217,20 +220,20 @@ SkyEngine.Node = CLASS({
 			return y;
 		};
 
-		let setZIndex = self.setZIndex = (zIndex) => {
+		let setZIndex = self.setZIndex = (_zIndex) => {
 			//REQUIRED: zIndex
 
 			if (parentNode === undefined) {
-				pixiContainer.zIndex = zIndex;
+				pixiContainer.zIndex = zIndex = _zIndex;
 			} else {
 				removeFromParent();
-				pixiContainer.zIndex = zIndex;
+				pixiContainer.zIndex = zIndex = _zIndex;
 				appendToParent();
 			}
 		};
 
 		let getZIndex = self.getZIndex = () => {
-			return pixiContainer.zIndex;
+			return zIndex;
 		};
 
 		// x, y, zIndex를 한번에 지정합니다.
@@ -788,7 +791,7 @@ SkyEngine.Node = CLASS({
 			y = params.y;
 			centerX = params.centerX;
 			centerY = params.centerY;
-			pixiContainer.zIndex = params.zIndex;
+			pixiContainer.zIndex = zIndex = params.zIndex;
 			if (params.scale !== undefined) {
 				setScale(params.scale);
 			}
@@ -896,8 +899,8 @@ SkyEngine.Node = CLASS({
 		if (centerY === undefined) {
 			centerY = 0;
 		}
-		if (pixiContainer.zIndex === undefined) {
-			pixiContainer.zIndex = 0;
+		if (zIndex === undefined) {
+			pixiContainer.zIndex = zIndex = 0;
 		}
 		if (speedX === undefined) {
 			speedX = 0;
@@ -1772,6 +1775,8 @@ SkyEngine.Node = CLASS({
 					break;
 				}
 			}
+			
+			parentNode.removeFromPixiContainer(pixiContainer);
 		};
 
 		let appendToParent = () => {
@@ -1792,6 +1797,8 @@ SkyEngine.Node = CLASS({
 					high = mid;
 				}
 			}
+			
+			parentNode.addToPixiContainer(pixiContainer);
 
 			parentChildren.splice(low, 0, self);
 		};
@@ -1898,6 +1905,21 @@ SkyEngine.Node = CLASS({
 			}
 			
 			domWrapper.append(dom);
+			
+			let ratio = SkyEngine.Screen.getRatio();
+			
+			domWrapper.addStyle({
+				left : SkyEngine.Screen.getLeft() + (SkyEngine.Screen.getWidth() / 2 + drawingX - SkyEngine.Screen.getCameraFollowX()) * ratio - domWrapper.getWidth() / 2,
+				top : SkyEngine.Screen.getTop() + (SkyEngine.Screen.getHeight() / 2 + drawingY - SkyEngine.Screen.getCameraFollowY()) * ratio - domWrapper.getHeight() / 2,
+				transform : 'rotate(' + realRadian + 'rad) scale(' + ratio * realScaleX + ', ' + ratio * realScaleY + ')',
+				opacity : 0
+			});
+			
+			DELAY(() => {
+				domWrapper.addStyle({
+					opacity : pixiContainer.worldAlpha
+				});
+			});
 		};
 		
 		inner.getDomWrapper = () => {
@@ -1916,6 +1938,21 @@ SkyEngine.Node = CLASS({
 					}
 				}).appendTo(BODY);
 			}
+			
+			let ratio = SkyEngine.Screen.getRatio();
+			
+			domWrapper.addStyle({
+				left : SkyEngine.Screen.getLeft() + (SkyEngine.Screen.getWidth() / 2 + drawingX - SkyEngine.Screen.getCameraFollowX()) * ratio - domWrapper.getWidth() / 2,
+				top : SkyEngine.Screen.getTop() + (SkyEngine.Screen.getHeight() / 2 + drawingY - SkyEngine.Screen.getCameraFollowY()) * ratio - domWrapper.getHeight() / 2,
+				transform : 'rotate(' + realRadian + 'rad) scale(' + ratio * realScaleX + ', ' + ratio * realScaleY + ')',
+				opacity : 0
+			});
+			
+			DELAY(() => {
+				domWrapper.addStyle({
+					opacity : pixiContainer.worldAlpha
+				});
+			});
 			
 			return domWrapper;
 		};
@@ -2088,6 +2125,11 @@ SkyEngine.Node = CLASS({
 
 		let addTouchArea = self.addTouchArea = (touchArea) => {
 			//REQUIRED: touchArea
+			
+			if (areaGraphics !== undefined) {
+				areaGraphics.lineStyle(1, 0xFF00FF, 1);
+				touchArea.drawArea(areaGraphics);
+			}
 
 			touchAreas.push(touchArea);
 			touchArea.setTarget(self);
@@ -2111,6 +2153,11 @@ SkyEngine.Node = CLASS({
 		
 		let addCollider = self.addCollider = (collider) => {
 			//REQUIRED: collider
+			
+			if (areaGraphics !== undefined) {
+				areaGraphics.lineStyle(1, 0x00FF00, 1);
+				collider.drawArea(areaGraphics);
+			}
 
 			colliders.push(collider);
 			collider.setTarget(self);
@@ -2742,28 +2789,41 @@ SkyEngine.Node = CLASS({
 				if (isRemoved !== true && eventMap.move !== undefined && (x !== beforeX || y !== beforeY)) {
 					fireEvent('move');
 				}
+				
+				// PixiJS 컨테이너 재조정
+				pixiContainer.x = x;
+				pixiContainer.y = y;
+				pixiContainer.pivot.set(centerX, centerY);
+				pixiContainer.scale.set(scaleX, scaleY);
+				pixiContainer.rotation = angle * Math.PI / 180;
+				pixiContainer.alpha = alpha;
+				pixiContainer.visible = isHiding !== true;
+				
+				if (domWrapper !== undefined) {
+					
+					let ratio = SkyEngine.Screen.getRatio();
+					
+					domWrapper.addStyle({
+						left : SkyEngine.Screen.getLeft() + (SkyEngine.Screen.getWidth() / 2 + drawingX - SkyEngine.Screen.getCameraFollowX()) * ratio - domWrapper.getWidth() / 2,
+						top : SkyEngine.Screen.getTop() + (SkyEngine.Screen.getHeight() / 2 + drawingY - SkyEngine.Screen.getCameraFollowY()) * ratio - domWrapper.getHeight() / 2,
+						transform : 'rotate(' + realRadian + 'rad) scale(' + ratio * realScaleX + ', ' + ratio * realScaleY + ')',
+						opacity : isFirstFixDomStyle === true ? 0 : pixiContainer.worldAlpha,
+						filter : filter
+					});
+					
+					isFirstFixDomStyle = false;
+				}
 			}
 		};
 
-		let draw = self.draw = (context) => {
-			// to implement.
+		let drawArea = self.drawArea = (graphics) => {
+			//REQUIRED: graphics
 			
-			if (domWrapper !== undefined) {
-				
-				let ratio = SkyEngine.Screen.getRatio();
-				
-				domWrapper.addStyle({
-					left : SkyEngine.Screen.getLeft() + (SkyEngine.Screen.getWidth() / 2 + drawingX - SkyEngine.Screen.getCameraFollowX()) * ratio - domWrapper.getWidth() / 2,
-					top : SkyEngine.Screen.getTop() + (SkyEngine.Screen.getHeight() / 2 + drawingY - SkyEngine.Screen.getCameraFollowY()) * ratio - domWrapper.getHeight() / 2,
-					transform : 'rotate(' + realRadian + 'rad) scale(' + ratio * realScaleX + ', ' + ratio * realScaleY + ')',
-					opacity : context.globalAlpha,
-					filter : context.filter
-				});
+			let children = self.getChildren();
+			
+			for (let i = 0; i < children.length; i += 1) {
+				children[i].drawArea(graphics);
 			}
-		};
-
-		let drawArea = self.drawArea = (context) => {
-			// to implement.
 		};
 		
 		let pause = self.pause = () => {
@@ -2812,6 +2872,43 @@ SkyEngine.Node = CLASS({
 		};
 
 		genRealProperties();
+		
+		// 개발 모드에서는 중점 및 영역 표시
+		if (BROWSER_CONFIG.SkyEngine.isDebugMode === true) {
+			
+			areaGraphics = new PIXI.Graphics();
+			
+			// 중점을 그립니다.
+			areaGraphics.lineStyle(1, 0x00FFFF, 1);
+			areaGraphics.drawRect(-1, -1, 2, 2);
+			
+			areaGraphics.moveTo(-15, 0);
+			areaGraphics.lineTo(15, 0);
+			areaGraphics.moveTo(0, -15);
+			areaGraphics.lineTo(0, 15);
+			
+			// 터치 영역을 그립니다.
+			let touchAreas = self.getTouchAreas();
+			
+			areaGraphics.lineStyle(1, 0xFF00FF, 1);
+			
+			for (let i = 0; i < touchAreas.length; i += 1) {
+				touchAreas[i].drawArea(areaGraphics);
+			}
+			
+			// 충돌 영역을 그립니다.
+			let colliders = self.getColliders();
+			
+			areaGraphics.lineStyle(1, 0x00FF00, 1);
+			
+			for (let i = 0; i < colliders.length; i += 1) {
+				colliders[i].drawArea(areaGraphics);
+			}
+			
+			areaGraphics.zIndex = 9999999;
+			
+			addToPixiContainer(areaGraphics);
+		}
 	},
 
 	afterInit: (inner, self, params) => {

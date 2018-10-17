@@ -49,7 +49,7 @@ SkyEngine.Screen = OBJECT({
 		let cameraMaxFollowX;
 		let cameraMaxFollowY;
 		
-		// 드로잉 노드 등록
+		// 노드 등록
 		let registerNode = self.registerNode = (node) => {
 			
 			let cls = node.type;
@@ -66,7 +66,7 @@ SkyEngine.Screen = OBJECT({
 			}
 		};
 		
-		// 드로잉 노드 해제
+		// 노드 해제
 		let unregisterNode = self.unregisterNode = (node) => {
 			
 			let cls = node.type;
@@ -93,6 +93,7 @@ SkyEngine.Screen = OBJECT({
 			}
 		};
 		
+		// 노드 검색
 		let findNodesByClass = self.findNodesByClass = (cls) => {
 			return registeredNodeMap[cls.id] === undefined ? [] : registeredNodeMap[cls.id];
 		};
@@ -158,112 +159,6 @@ SkyEngine.Screen = OBJECT({
 			});
 		});
 		
-		// 노드의 모든 영역을 그립니다.
-		let drawAllArea = (node, context, color) => {
-			/*
-			context.save();
-			
-			context.translate(node.getDrawingX(), node.getDrawingY());
-			context.rotate(node.getRealRadian());
-			context.scale(node.getRealScaleX(), node.getRealScaleY());
-			
-			context.lineWidth = 1 / (node.getRealScaleX() > node.getRealScaleY() ? node.getRealScaleX() : node.getRealScaleY());
-			
-			context.beginPath();
-			
-			node.drawArea(context);
-			
-			context.strokeStyle = color;
-			context.stroke();
-			context.closePath();
-			
-			context.restore();
-			
-			let children = node.getChildren();
-			
-			for (let i = 0; i < children.length; i += 1) {
-				drawAllArea(children[i], context, color);
-			}
-			*/
-		};
-		
-		// 모든 노드를 그립니다.
-		let drawAll = (node, context, realAlpha) => {
-			/*
-			if (node.checkIsHiding() !== true) {
-				
-				realAlpha *= node.getAlpha();
-				
-				context.save();
-				
-				if (node.getFilter() !== undefined) {
-					context.filter = node.getFilter();
-				}
-				
-				if (node.getBlendMode() !== undefined) {
-					context.globalCompositeOperation = node.getBlendMode();
-				}
-				
-				context.save();
-				
-				context.translate(node.getDrawingX(), node.getDrawingY());
-				context.rotate(node.getRealRadian());
-				context.scale(node.getRealScaleX(), node.getRealScaleY());
-				
-				context.globalAlpha = realAlpha;
-				
-				node.draw(context);
-				
-				context.restore();
-				
-				if (node.checkIsRemoved() !== true) {
-					
-					// 모든 자식 노드를 그립니다.
-					let children = node.getChildren();
-					
-					for (let i = 0; i < children.length; i += 1) {
-						drawAll(children[i], context, realAlpha);
-					}
-				}
-				
-				context.restore();
-				
-				// 개발 모드에서는 중점 및 영역 표시
-				if (node.checkIsRemoved() !== true && BROWSER_CONFIG.SkyEngine.isDebugMode === true) {
-					
-					// 중점을 그립니다.
-					context.beginPath();
-					context.strokeStyle = context.fillStyle = 'aqua';
-					
-					let realX = node.getRealX();
-					let realY = node.getRealY();
-					
-					context.rect(realX - 1, realY - 1, 2, 2);
-					
-					context.moveTo(realX - 15, realY);
-					context.lineTo(realX + 15, realY);
-					context.moveTo(realX, realY - 15);
-					context.lineTo(realX, realY + 15);
-					context.stroke();
-					
-					// 터치 영역을 그립니다.
-					let touchAreas = node.getTouchAreas();
-					
-					for (let i = 0; i < touchAreas.length; i += 1) {
-						drawAllArea(touchAreas[i], context, 'magenta');
-					}
-					
-					// 충돌 영역을 그립니다.
-					let colliders = node.getColliders();
-					
-					for (let i = 0; i < colliders.length; i += 1) {
-						drawAllArea(colliders[i], context, 'lime');
-					}
-				}
-			}
-			*/
-		};
-		
 		let loop = LOOP((_deltaTime) => {
 			
 			deltaTime = _deltaTime;
@@ -288,19 +183,6 @@ SkyEngine.Screen = OBJECT({
 			}
 			
 			nonePausableNode.step(deltaTime);
-			
-			/*
-			// 모든 노드를 그립니다.
-			context.clearRect(0, 0, width * devicePixelRatio, height * devicePixelRatio);
-			
-			context.save();
-			context.scale(devicePixelRatio, devicePixelRatio);
-			context.translate(width / 2 - getCameraFollowX(), height / 2 - getCameraFollowY());
-			
-			drawAll(self, context, self.getAlpha());
-			
-			context.restore();
-			*/
 			
 			// 스테이지가 가운데 오도록
 			stage.x = width / 2 - getCameraFollowX();
@@ -546,10 +428,6 @@ SkyEngine.Screen = OBJECT({
 		
 		let getPixiRenderer = self.getPixiRenderer = () => {
 			return renderer;
-		};
-		
-		let getCanvasContext = self.getCanvasContext = () => {
-			return renderer.context;
 		};
 		
 		let nonePausableNode = SkyEngine.Node();

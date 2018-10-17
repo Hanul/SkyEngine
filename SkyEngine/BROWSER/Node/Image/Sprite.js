@@ -28,9 +28,12 @@ SkyEngine.Sprite = CLASS({
 		let img;
 		let imgs;
 		
+		let pixiTilingSprite;
+		let pixiSprites;
+		let nowPixiSprite;
+		
 		let width;
 		let height;
-		
 		
 		let realFrame = 0;
 		let frame = 0;
@@ -46,50 +49,20 @@ SkyEngine.Sprite = CLASS({
 			img = new Image();
 			
 			img.onload = () => {
-				
-				width = img.width;
-				height = img.height;
-				
-				if (spriteWidth === undefined) {
-					if (frameCount !== undefined) {
-						spriteWidth = width / frameCount;
-					} else {
-						spriteWidth = width;
-					}
-				}
-				
-				if (spriteHeight === undefined) {
-					spriteHeight = height;
-				}
-				
-				if (frameCount === undefined) {
-					frameCount = width / spriteWidth * height / spriteHeight;
-				}
-				
+					
 				img.onload = undefined;
 				
-				self.fireEvent('load');
-			};
-			
-			img.src = src;
-		}
-		
-		if (srcs !== undefined) {
-			EACH(srcs, (src) => {
-				
-				let img = new Image();
-				
-				if (imgs === undefined) {
-					imgs = [];
-				}
-					
-				img.onload = () => {
+				if (self.checkIsRemoved() !== true) {
 					
 					width = img.width;
 					height = img.height;
 					
 					if (spriteWidth === undefined) {
-						spriteWidth = width;
+						if (frameCount !== undefined) {
+							spriteWidth = width / frameCount;
+						} else {
+							spriteWidth = width;
+						}
 					}
 					
 					if (spriteHeight === undefined) {
@@ -97,14 +70,71 @@ SkyEngine.Sprite = CLASS({
 					}
 					
 					if (frameCount === undefined) {
-						frameCount = 1;
-					} else {
-						frameCount += 1;
+						frameCount = width / spriteWidth * height / spriteHeight;
 					}
+					
+					pixiTilingSprite = new PIXI.extras.TilingSprite.fromImage(src, spriteWidth, spriteHeight);
+					
+					pixiTilingSprite.x = -spriteWidth / 2;
+					pixiTilingSprite.y = -spriteHeight / 2;
+					pixiTilingSprite.zIndex = -9999999;
+					
+					pixiTilingSprite.blendMode = SkyEngine.Util.BlendMode.getPixiBlendMode(self.getBlendMode());
+					
+					self.addToPixiContainer(pixiTilingSprite);
+					
+					self.fireEvent('load');
+				}
+			};
+			
+			img.src = src;
+		}
+		
+		if (srcs !== undefined) {
+			EACH(srcs, (src, i) => {
+				
+				let img = new Image();
+				
+				if (imgs === undefined) {
+					imgs = [];
+					pixiSprites = [];
+				}
+					
+				img.onload = () => {
 					
 					img.onload = undefined;
 					
-					self.fireEvent('load');
+					if (self.checkIsRemoved() !== true) {
+						
+						width = img.width;
+						height = img.height;
+						
+						if (spriteWidth === undefined) {
+							spriteWidth = width;
+						}
+						
+						if (spriteHeight === undefined) {
+							spriteHeight = height;
+						}
+						
+						if (frameCount === undefined) {
+							frameCount = 1;
+						} else {
+							frameCount += 1;
+						}
+						
+						let pixiSprite = new PIXI.Sprite.fromImage(src);
+						
+						pixiSprite.x = -width / 2;
+						pixiSprite.y = -height / 2;
+						pixiSprite.zIndex = -9999999;
+						
+						pixiSprite.blendMode = SkyEngine.Util.BlendMode.getPixiBlendMode(self.getBlendMode());
+						
+						pixiSprites[i] = pixiSprite;
+						
+						self.fireEvent('load');
+					}
 				};
 				
 				img.src = src;
@@ -156,6 +186,45 @@ SkyEngine.Sprite = CLASS({
 				resume();
 				
 				origin();
+			};
+		});
+		
+		let setBlendMode;
+		OVERRIDE(self.setBlendMode, (origin) => {
+			
+			setBlendMode = self.setBlendMode = (blendMode) => {
+				//REQUIRED: blendMode
+				
+				if (pixiTilingSprite !== undefined) {
+					pixiTilingSprite.blendMode = SkyEngine.Util.BlendMode.getPixiBlendMode(self.getBlendMode());
+				}
+				
+				if (pixiSprites !== undefined) {
+					EACH(pixiSprites, (pixiSprite) => {
+						pixiSprite.blendMode = SkyEngine.Util.BlendMode.getPixiBlendMode(self.getBlendMode());
+					});
+				}
+				
+				origin(blendMode);
+			};
+		});
+		
+		let removeBlendMode;
+		OVERRIDE(self.removeBlendMode, (origin) => {
+			
+			removeBlendMode = self.removeBlendMode = () => {
+				
+				origin();
+				
+				if (pixiTilingSprite !== undefined) {
+					pixiTilingSprite.blendMode = SkyEngine.Util.BlendMode.getPixiBlendMode(self.getBlendMode());
+				}
+				
+				if (pixiSprites !== undefined) {
+					EACH(pixiSprites, (pixiSprite) => {
+						pixiSprite.blendMode = SkyEngine.Util.BlendMode.getPixiBlendMode(self.getBlendMode());
+					});
+				}
 			};
 		});
 		
@@ -213,50 +282,30 @@ SkyEngine.Sprite = CLASS({
 					frame = Math.floor(realFrame);
 					
 					if (frame !== beforeFrame && self.checkIsRemoved() !== true) {
+						
+						if (pixiSprites !== undefined) {
+							
+							if (nowPixiSprite !== undefined) {
+								self.removeFromPixiContainer(nowPixiSprite);
+							}
+							
+							nowPixiSprite = pixiSprites[self.getFrame()];
+							
+							if (nowPixiSprite !== undefined) {
+								self.addToPixiContainer(nowPixiSprite);
+							}
+						}
+						
+						else if (pixiTilingSprite !== undefined) {
+							pixiTilingSprite.tilePosition.x = -spriteWidth * Math.floor(realFrame % (width / spriteWidth));
+							pixiTilingSprite.tilePosition.y = -spriteHeight * Math.floor(realFrame / (width / spriteWidth));
+						}
+						
 						self.fireEvent('framechange');
 					}
 				}
 				
 				origin(deltaTime);
-			};
-		});
-		
-		let draw;
-		OVERRIDE(self.draw, (origin) => {
-			
-			draw = self.draw = (context) => {
-				
-				if (imgs !== undefined) {
-					if (frameCount !== undefined) {
-						
-						let frameImg = imgs[frame];
-						
-						if (frameImg !== undefined) {
-							
-							context.drawImage(
-								frameImg,
-								-width / 2,
-								-height / 2,
-								width,
-								height);
-						}
-					}
-				}
-				
-				else if (
-				width !== undefined && height !== undefined &&
-				spriteWidth !== undefined && spriteHeight !== undefined) {
-					
-					context.drawImage(
-						img,
-						spriteWidth * Math.floor(realFrame % (width / spriteWidth)), spriteHeight * Math.floor(realFrame / (width / spriteWidth)),
-						spriteWidth, spriteHeight,
-						-spriteWidth / 2, -spriteHeight / 2,
-						spriteWidth,
-						spriteHeight);
-				}
-				
-				origin(context);
 			};
 		});
 		
@@ -276,6 +325,10 @@ SkyEngine.Sprite = CLASS({
 					img.onload = undefined;
 				});
 				imgs = undefined;
+				
+				pixiTilingSprite = undefined;
+				pixiSprites = undefined;
+				nowPixiSprite = undefined;
 				
 				origin();
 			};
