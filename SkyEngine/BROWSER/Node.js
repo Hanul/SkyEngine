@@ -90,6 +90,38 @@ SkyEngine.Node = CLASS({
 		// before properties
 		let beforeX, beforeY;
 		
+		let pixiContainer = new PIXI.Container();
+		
+		let getPixiContainer = inner.getPixiContainer = () => {
+			return pixiContainer;
+		};
+		
+		let addToPixiContainer = self.addToPixiContainer = (pixiChild) => {
+			
+			let pixiChildren = pixiContainer.children;
+			
+			let low = 0;
+			let high = pixiChildren.length;
+			
+			while (low < high) {
+			
+				// >>> 1은 2로 나누고 나머지를 버리는 것과 동일
+				let mid = (low + high) >>> 1;
+				
+				if (pixiChildren[mid].zIndex <= pixiChild.zIndex) {
+					low = mid + 1;
+				} else {
+					high = mid;
+				}
+			}
+			
+			pixiContainer.addChildAt(pixiChild, low);
+		};
+		
+		let removeFromPixiContainer = self.removeFromPixiContainer = (pixiChild) => {
+			pixiContainer.removeChild(pixiChild);
+		};
+		
 		let moveEndHandler;
 		let moveXEndHandler;
 		let moveYEndHandler;
@@ -185,20 +217,20 @@ SkyEngine.Node = CLASS({
 			return y;
 		};
 
-		let setZIndex = self.setZIndex = (_zIndex) => {
-			//REQUIRED: _zIndex
+		let setZIndex = self.setZIndex = (zIndex) => {
+			//REQUIRED: zIndex
 
 			if (parentNode === undefined) {
-				zIndex = _zIndex;
+				pixiContainer.zIndex = zIndex;
 			} else {
 				removeFromParent();
-				zIndex = _zIndex;
+				pixiContainer.zIndex = zIndex;
 				appendToParent();
 			}
 		};
 
 		let getZIndex = self.getZIndex = () => {
-			return zIndex;
+			return pixiContainer.zIndex;
 		};
 
 		// x, y, zIndex를 한번에 지정합니다.
@@ -756,7 +788,7 @@ SkyEngine.Node = CLASS({
 			y = params.y;
 			centerX = params.centerX;
 			centerY = params.centerY;
-			zIndex = params.zIndex;
+			pixiContainer.zIndex = params.zIndex;
 			if (params.scale !== undefined) {
 				setScale(params.scale);
 			}
@@ -864,8 +896,8 @@ SkyEngine.Node = CLASS({
 		if (centerY === undefined) {
 			centerY = 0;
 		}
-		if (zIndex === undefined) {
-			zIndex = 0;
+		if (pixiContainer.zIndex === undefined) {
+			pixiContainer.zIndex = 0;
 		}
 		if (speedX === undefined) {
 			speedX = 0;

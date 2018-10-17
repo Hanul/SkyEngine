@@ -19,7 +19,12 @@ SkyEngine.Screen = OBJECT({
 		}).appendTo(BODY);
 		
 		let canvas = CANVAS().appendTo(wrapper);
-		let context = canvas.getContext('2d');
+		let renderer = new PIXI.autoDetectRenderer({
+			view : canvas.getEl()
+		});
+		
+		let stage = new PIXI.Container();
+		stage.addChild(inner.getPixiContainer());
 		
 		let left;
 		let top;
@@ -155,7 +160,7 @@ SkyEngine.Screen = OBJECT({
 		
 		// 노드의 모든 영역을 그립니다.
 		let drawAllArea = (node, context, color) => {
-			
+			/*
 			context.save();
 			
 			context.translate(node.getDrawingX(), node.getDrawingY());
@@ -179,11 +184,12 @@ SkyEngine.Screen = OBJECT({
 			for (let i = 0; i < children.length; i += 1) {
 				drawAllArea(children[i], context, color);
 			}
+			*/
 		};
 		
 		// 모든 노드를 그립니다.
 		let drawAll = (node, context, realAlpha) => {
-			
+			/*
 			if (node.checkIsHiding() !== true) {
 				
 				realAlpha *= node.getAlpha();
@@ -255,6 +261,7 @@ SkyEngine.Screen = OBJECT({
 					}
 				}
 			}
+			*/
 		};
 		
 		let loop = LOOP((_deltaTime) => {
@@ -282,6 +289,7 @@ SkyEngine.Screen = OBJECT({
 			
 			nonePausableNode.step(deltaTime);
 			
+			/*
 			// 모든 노드를 그립니다.
 			context.clearRect(0, 0, width * devicePixelRatio, height * devicePixelRatio);
 			
@@ -292,6 +300,13 @@ SkyEngine.Screen = OBJECT({
 			drawAll(self, context, self.getAlpha());
 			
 			context.restore();
+			*/
+			
+			// 스테이지가 가운데 오도록
+			stage.x = width / 2 - getCameraFollowX();
+			stage.y = height / 2 - getCameraFollowY();
+			
+			renderer.render(stage);
 		});
 		
 		// 화면 크기가 변경되는 경우, 캔버스의 크기 또한 변경되어야 합니다.
@@ -378,6 +393,8 @@ SkyEngine.Screen = OBJECT({
 				width : width * devicePixelRatio,
 				height : height * devicePixelRatio
 			});
+			
+			renderer.resize(width, height);
 		}));
 		
 		self.on('remove', () => {
@@ -527,8 +544,12 @@ SkyEngine.Screen = OBJECT({
 			return canvas;
 		};
 		
+		let getPixiRenderer = self.getPixiRenderer = () => {
+			return renderer;
+		};
+		
 		let getCanvasContext = self.getCanvasContext = () => {
-			return context;
+			return renderer.context;
 		};
 		
 		let nonePausableNode = SkyEngine.Node();
