@@ -349,152 +349,105 @@ SkyEngine.ParticleSystem = CLASS(() => {
 				particleBorderColor = split[2];
 			}
 			
-			let texture;
+			let width;
+			let height;
+			
+			let img;
 			
 			if (particleSrc !== undefined) {
-				texture = PIXI.Texture.fromImage(particleSrc);
+				
+				img = new Image();
+				
+				img.onload = () => {
+					
+					width = img.width;
+					if (particleWidth === undefined) {
+						particleWidth = width;
+					}
+					
+					height = img.height;
+					if (particleHeight === undefined) {
+						particleHeight = height;
+					}
+					
+					img.onload = undefined;
+					
+					self.fireEvent('load');
+				};
+				
+				img.src = particleSrc;
 			}
 			
 			else {
-				
-				let graphics = new PIXI.Graphics();
-				
-				if (particleBorder !== undefined) {
-					graphics.lineStyle(particleBorderPixel, parseInt(particleBorderColor.substring(1), 16), 1);
-				}
-				
-				if (particleColor !== undefined) {
-					graphics.beginFill(parseInt(particleColor.substring(1), 16));
-				}
-				
-				else {
-					particleColor = RANDOM({
-						min : minParticleColorR,
-						max : maxParticleColorR
-					}) << 16 | RANDOM({
-						min : minParticleColorG,
-						max : maxParticleColorG
-					}) << 8 | RANDOM({
-						min : minParticleColorB,
-						max : maxParticleColorB
-					});
-					
-					graphics.beginFill(particleColor);
-				}
-				
-				if (particleFigure === 'line') {
-					graphics.moveTo(particleCenterX + particleStartX, particleCenterY + particleStartY);
-					graphics.lineTo(particleCenterX + particleEndX, particleCenterY + particleEndY);
-				}
-				
-				else if (particleFigure === 'rect') {
-					graphics.drawRect(particleCenterX - particleWidth / 2, particleCenterX - particleHeight / 2, particleWidth, particleHeight);
-				}
-				
-				else if (particleFigure === 'circle') {
-					graphics.drawEllipse(particleCenterX, particleCenterY, particleWidth / 2, particleHeight / 2);
-				}
-				
-				else if (particleFigure === 'polygon') {
-					
-					if (particlePoints.length > 0) {
-						
-						let pixiPoints = [];
-						
-						EACH(particlePoints, (particlePoint) => {
-							pixiPoints.push(new PIXI.Point(particleCenterX + particlePoint.x, particleCenterY + particlePoint.y));
-						});
-						
-						if (particlePoints.length > 0) {
-							pixiPoints.push(new PIXI.Point(particleCenterX + particlePoints[0].x, particleCenterY + particlePoints[0].y));
-						}
-						
-						graphics.drawPolygon(pixiPoints);
-					}
-				}
-				
-				if (particleColor !== undefined) {
-					graphics.endFill();
-				}
-				
-				texture = SkyEngine.Screen.getPixiRenderer().generateTexture(graphics);
-				
-				graphics.destroy();
-				graphics = undefined;
+				self.fireEvent('load');
 			}
-
-			let emitter = new PIXI.particles.Emitter(
-				
-				inner.getPixiContainer(),
-				
-				[texture],
-				
-				{
-					alpha : {
-						start : random(minParticleAlpha, maxParticleAlpha),
-						end : random(minParticleAlpha, maxParticleAlpha) + random(minParticleFadingSpeed, maxParticleFadingSpeed) * maxParticleLifetime
-					},
-					scale : {
-						start : random(minParticleScale, maxParticleScale),
-						end : random(minParticleScale, maxParticleScale) + random(minParticleScalingSpeed, maxParticleScalingSpeed) * maxParticleLifetime
-					},
-					color : {
-						start : 'ffffff',
-						end : 'ffffff'
-					},
-					speed : {
-						start : random(minParticleSpeed, maxParticleSpeed),
-						end : random(minParticleSpeed, maxParticleSpeed)
-					},
-					acceleration : {
-						x : particleAccelX,
-						y : particleAccelY
-					},
-					startRotation : {
-						min : minParticleAngle,
-						max : maxParticleAngle === 0 ? 360 : maxParticleAngle
-					},
-					rotationSpeed : {
-						min : minParticleRotationSpeed,
-						max : maxParticleRotationSpeed
-					},
-					lifetime : {
-						min : minParticleLifetime,
-						max : maxParticleLifetime
-					},
-					frequency : 0.008,
-					emitterLifetime : maxParticleLifetime,
-					maxParticles : random(minParticleCount, maxParticleCount),
-					pos : {
-						x : particleCenterX,
-						y : particleCenterY
-					},
-					addAtBack : false,
-					spawnType : 'circle',
-					spawnCircle : {
-						x : 0,
-						y : 0,
-						r : 10
-					}
-				}
-			);
 			
-			emitter.particleBlendMode = SkyEngine.Util.BlendMode.getPixiBlendMode(self.getBlendMode());
+			let particles = [];
 			
 			let endHandler;
-
+			
 			let burst = self.burst = (_endHandler) => {
-				//OPTIONAL: endHandler
 				
 				endHandler = _endHandler;
-
-				if (emitter !== undefined) {
-					emitter.playOnce(() => {
-						if (endHandler !== undefined) {
-							endHandler(self);
-						}
-					});
-				}
+				
+				REPEAT(random(minParticleCount, maxParticleCount), () => {
+					
+					let direction = random(minParticleDirection, maxParticleDirection) * Math.PI / 180;
+					
+					let sin = Math.sin(direction);
+					let cos = Math.cos(direction);
+					
+					let speed = random(minParticleSpeed, maxParticleSpeed);
+					let accel = random(minParticleAccel, maxParticleAccel);
+					
+					let particle = {
+						time : 0,
+						lifetime : random(minParticleLifetime, maxParticleLifetime),
+						x : random(minParticleX, maxParticleX),
+						y : random(minParticleY, maxParticleY),
+						scalingSpeed : random(minParticleScalingSpeed, maxParticleScalingSpeed),
+						direction : direction,
+						speedX : speed * cos,
+						speedY : speed * sin,
+						accelX : accel * cos,
+						accelY : accel * sin,
+						scale : random(minParticleScale, maxParticleScale),
+						rotationSpeedRadian : random(minParticleRotationSpeedRadian, maxParticleRotationSpeedRadian),
+						radian : random(minParticleAngle, maxParticleAngle) * Math.PI / 180,
+						fadingSpeed : random(minParticleFadingSpeed, maxParticleFadingSpeed),
+						alpha : random(minParticleAlpha, maxParticleAlpha)
+					};
+					
+					if (particleFigure !== undefined && particleColor === undefined) {
+						particle.color = 'rgb(' + RANDOM({
+							min : minParticleColorR,
+							max : maxParticleColorR
+						}) + ', ' + RANDOM({
+							min : minParticleColorG,
+							max : maxParticleColorG
+						}) + ', ' + RANDOM({
+							min : minParticleColorB,
+							max : maxParticleColorB
+						}) + ')';
+					}
+					
+					if (particleSrc !== undefined) {
+						
+						let pixiSprite = new PIXI.Sprite.fromImage(particleSrc);
+						
+						pixiSprite.anchor.x = 0.5;
+						pixiSprite.anchor.y = 0.5;
+						pixiSprite.zIndex = -9999999;
+						
+						pixiSprite.blendMode = SkyEngine.Util.BlendMode.getPixiBlendMode(self.getBlendMode());
+						
+						self.addToPixiContainer(pixiSprite);
+						
+						particle.pixiSprite = pixiSprite;
+					}
+					
+					particles.push(particle);
+				});
 			};
 			
 			let step;
@@ -502,7 +455,69 @@ SkyEngine.ParticleSystem = CLASS(() => {
 				
 				step = self.step = (deltaTime) => {
 					
-					emitter.update(deltaTime);
+					for (let i = 0; i < particles.length; i += 1) {
+						
+						let particle = particles[i];
+						
+						let pixiSprite;
+						if (particle.pixiSprite !== undefined) {
+							pixiSprite = particle.pixiSprite;
+						}
+						
+						particle.time += deltaTime;
+						
+						if (particle.time > particle.lifetime) {
+							particles.splice(i, 1);
+							
+							if (pixiSprite !== undefined) {
+								self.removeFromPixiContainer(pixiSprite);
+							}
+							
+							if (endHandler !== undefined && particles.length === 0) {
+								endHandler(self);
+							}
+						}
+						
+						else {
+							
+							particle.speedX += particleAccelX * deltaTime;
+							particle.speedY += particleAccelY * deltaTime;
+							
+							particle.speedX += particle.accelX * deltaTime;
+							particle.speedY += particle.accelY * deltaTime;
+							
+							particle.x += particle.speedX * deltaTime;
+							particle.y += particle.speedY * deltaTime;
+							
+							particle.scale += particle.scalingSpeed * deltaTime;
+							
+							if (particle.scale < 0) {
+								particle.scale = 0;
+							}
+							
+							if (pixiSprite !== undefined) {
+								pixiSprite.x = particle.x;
+								pixiSprite.y = particle.y;
+								pixiSprite.scale.set(particle.scale, particle.scale);
+							}
+							
+							particle.radian += particle.rotationSpeedRadian * deltaTime;
+							
+							particle.alpha += particle.fadingSpeed * deltaTime;
+							
+							if (particleFadingAccel !== undefined) {
+								particle.fadingSpeed += particleFadingAccel * deltaTime;
+							}
+							
+							if (particle.alpha < 0) {
+								particle.alpha = 0;
+							}
+						}
+						
+						if (particles === undefined) {
+							break;
+						}
+					}
 					
 					origin(deltaTime);
 				};
@@ -513,10 +528,12 @@ SkyEngine.ParticleSystem = CLASS(() => {
 				
 				remove = self.remove = () => {
 					
-					emitter.destroy();
-					emitter = undefined;
+					if (img !== undefined) {
+						img.onload = undefined;
+						img = undefined;
+					}
 					
-					endHandler = undefined;
+					particles = undefined;
 					
 					origin();
 				};
