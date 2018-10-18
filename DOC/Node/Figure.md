@@ -32,8 +32,6 @@ let rect = SkyEngine.Rect({
 ### `border`
 도형의 테두리를 설정할 수 있습니다. `두께 모양 색상` 순서대로 문자열로 지정합니다.
 
-모양으로는 `'solid'`, `'dotted'`, `'dashed'`를 지정할 수 있습니다.
-
 ![도형의 테두리](https://raw.githubusercontent.com/Hanul/SkyEngine/master/DOC/Node/Figure/border.png)
 
 ```javascript
@@ -50,7 +48,7 @@ let rect = SkyEngine.Rect({
 	x : 100,
 	width : 100,
 	height : 100,
-	border : '5px dotted #0000ff'
+	border : '5px solid #0000ff'
 }).appendTo(SkyEngine.Screen);
 ```
 
@@ -74,6 +72,7 @@ let line = SkyEngine.Line({
 - `startY` 직선의 시작 y 좌표
 - `endX` 직선의 끝 x 좌표
 - `endY` 직선의 끝 Y 좌표
+- `isEndless` `true`로 지정하면 양 끝이 무한인 직선을 생성합니다.
 
 ## 사각형 노드
 사각형을 생성합니다.

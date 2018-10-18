@@ -294,18 +294,6 @@ SkyEngineShowcase.MainMenu = CLASS({
 						marginTop : 15
 					},
 					c : A({
-						c : '그라디언트 색상 테스트',
-						on : {
-							tap : () => {
-								SkyEngineShowcase.GO('test/gradient');
-							}
-						}
-					})
-				}), LI({
-					style : {
-						marginTop : 15
-					},
-					c : A({
 						c : '서브스크린 테스트',
 						on : {
 							tap : () => {

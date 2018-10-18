@@ -338,17 +338,6 @@ SkyEngine.ParticleSystem = CLASS(() => {
 				maxParticleFadingSpeed = particleFadingSpeed;
 			}
 			
-			let particleBorderPixel;
-			let particleBorderStyle;
-			let particleBorderColor;
-			
-			if (particleBorder !== undefined) {
-				let split = particleBorder.split(' ');
-				particleBorderPixel = INTEGER(split[0]);
-				particleBorderStyle = split[1];
-				particleBorderColor = split[2];
-			}
-			
 			let width;
 			let height;
 			
@@ -400,53 +389,101 @@ SkyEngine.ParticleSystem = CLASS(() => {
 					let speed = random(minParticleSpeed, maxParticleSpeed);
 					let accel = random(minParticleAccel, maxParticleAccel);
 					
-					let particle = {
+					let pixiGraphics;
+					
+					if (particleFigure !== undefined) {
+						
+						let color = particleColor;
+						
+						if (color === undefined) {
+							color = (1 << 24) + (RANDOM({
+								min : minParticleColorR,
+								max : maxParticleColorR
+							}) << 16) + (RANDOM({
+								min : minParticleColorG,
+								max : maxParticleColorG
+							}) << 8) + RANDOM({
+								min : minParticleColorB,
+								max : maxParticleColorB
+							});
+						}
+						
+						if (particleFigure === 'line') {
+							pixiGraphics = SkyEngine.Line.generateGraphics({
+								startX : particleStartX,
+								startY : particleStartY,
+								endX : particleEndX,
+								endY : particleEndY,
+								border : particleBorder,
+								blendMode : self.getBlendMode()
+							});
+						}
+						
+						else if (particleFigure === 'rect') {
+							pixiGraphics = SkyEngine.Rect.generateGraphics({
+								width : particleWidth,
+								height : particleHeight,
+								color : color,
+								border : particleBorder,
+								blendMode : self.getBlendMode()
+							});
+						}
+						
+						else if (particleFigure === 'circle') {
+							pixiGraphics = SkyEngine.Circle.generateGraphics({
+								width : particleWidth,
+								height : particleHeight,
+								color : color,
+								border : particleBorder,
+								blendMode : self.getBlendMode()
+							});
+						}
+						
+						else if (particleFigure === 'polygon') {
+							pixiGraphics = SkyEngine.Circle.generateGraphics({
+								points : particlePoints,
+								color : color,
+								border : particleBorder,
+								blendMode : self.getBlendMode()
+							});
+						}
+					}
+					
+					if (particleSrc !== undefined) {
+						
+						pixiGraphics = new PIXI.Sprite.fromImage(particleSrc);
+						
+						pixiGraphics.anchor.x = 0.5;
+						pixiGraphics.anchor.y = 0.5;
+						pixiGraphics.zIndex = -9999999;
+						
+						pixiGraphics.blendMode = SkyEngine.Util.BlendMode.getPixiBlendMode(self.getBlendMode());
+					}
+					
+					pixiGraphics.x += random(minParticleX, maxParticleX);
+					pixiGraphics.y += random(minParticleY, maxParticleY);
+					pixiGraphics.pivot.set(particleCenterX, particleCenterY);
+					
+					let scale = random(minParticleScale, maxParticleScale);
+					pixiGraphics.scale.set(scale, scale);
+					pixiGraphics.rotation = random(minParticleAngle, maxParticleAngle) * Math.PI / 180;
+					pixiGraphics.alpha = random(minParticleAlpha, maxParticleAlpha);
+					
+					self.addToPixiContainer(pixiGraphics);
+					
+					particles.push({
 						time : 0,
 						lifetime : random(minParticleLifetime, maxParticleLifetime),
-						x : random(minParticleX, maxParticleX),
-						y : random(minParticleY, maxParticleY),
 						scalingSpeed : random(minParticleScalingSpeed, maxParticleScalingSpeed),
 						direction : direction,
 						speedX : speed * cos,
 						speedY : speed * sin,
 						accelX : accel * cos,
 						accelY : accel * sin,
-						scale : random(minParticleScale, maxParticleScale),
 						rotationSpeedRadian : random(minParticleRotationSpeedRadian, maxParticleRotationSpeedRadian),
-						radian : random(minParticleAngle, maxParticleAngle) * Math.PI / 180,
 						fadingSpeed : random(minParticleFadingSpeed, maxParticleFadingSpeed),
-						alpha : random(minParticleAlpha, maxParticleAlpha)
-					};
-					
-					if (particleFigure !== undefined && particleColor === undefined) {
-						particle.color = 'rgb(' + RANDOM({
-							min : minParticleColorR,
-							max : maxParticleColorR
-						}) + ', ' + RANDOM({
-							min : minParticleColorG,
-							max : maxParticleColorG
-						}) + ', ' + RANDOM({
-							min : minParticleColorB,
-							max : maxParticleColorB
-						}) + ')';
-					}
-					
-					if (particleSrc !== undefined) {
-						
-						let pixiSprite = new PIXI.Sprite.fromImage(particleSrc);
-						
-						pixiSprite.anchor.x = 0.5;
-						pixiSprite.anchor.y = 0.5;
-						pixiSprite.zIndex = -9999999;
-						
-						pixiSprite.blendMode = SkyEngine.Util.BlendMode.getPixiBlendMode(self.getBlendMode());
-						
-						self.addToPixiContainer(pixiSprite);
-						
-						particle.pixiSprite = pixiSprite;
-					}
-					
-					particles.push(particle);
+						pixiGraphics : pixiGraphics
+					});
 				});
 			};
 			
@@ -458,19 +495,16 @@ SkyEngine.ParticleSystem = CLASS(() => {
 					for (let i = 0; i < particles.length; i += 1) {
 						
 						let particle = particles[i];
-						
-						let pixiSprite;
-						if (particle.pixiSprite !== undefined) {
-							pixiSprite = particle.pixiSprite;
-						}
+						let pixiGraphics = particle.pixiGraphics;
 						
 						particle.time += deltaTime;
 						
+						// 삭제
 						if (particle.time > particle.lifetime) {
 							particles.splice(i, 1);
 							
-							if (pixiSprite !== undefined) {
-								self.removeFromPixiContainer(pixiSprite);
+							if (pixiGraphics !== undefined) {
+								self.removeFromPixiContainer(pixiGraphics);
 							}
 							
 							if (endHandler !== undefined && particles.length === 0) {
@@ -486,31 +520,26 @@ SkyEngine.ParticleSystem = CLASS(() => {
 							particle.speedX += particle.accelX * deltaTime;
 							particle.speedY += particle.accelY * deltaTime;
 							
-							particle.x += particle.speedX * deltaTime;
-							particle.y += particle.speedY * deltaTime;
+							pixiGraphics.x += particle.speedX * deltaTime;
+							pixiGraphics.y += particle.speedY * deltaTime;
 							
-							particle.scale += particle.scalingSpeed * deltaTime;
-							
-							if (particle.scale < 0) {
-								particle.scale = 0;
+							let scale = pixiGraphics.scale.x + particle.scalingSpeed * deltaTime;
+							if (scale < 0) {
+								scale = 0;
 							}
 							
-							if (pixiSprite !== undefined) {
-								pixiSprite.x = particle.x;
-								pixiSprite.y = particle.y;
-								pixiSprite.scale.set(particle.scale, particle.scale);
+							pixiGraphics.scale.set(scale, scale);
+							
+							pixiGraphics.rotation += particle.rotationSpeedRadian * deltaTime;
+							
+							pixiGraphics.alpha += particle.fadingSpeed * deltaTime;
+							
+							if (pixiGraphics.alpha < 0) {
+								pixiGraphics.alpha = 0;
 							}
-							
-							particle.radian += particle.rotationSpeedRadian * deltaTime;
-							
-							particle.alpha += particle.fadingSpeed * deltaTime;
 							
 							if (particleFadingAccel !== undefined) {
 								particle.fadingSpeed += particleFadingAccel * deltaTime;
-							}
-							
-							if (particle.alpha < 0) {
-								particle.alpha = 0;
 							}
 						}
 						

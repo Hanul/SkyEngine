@@ -283,13 +283,12 @@ SkyEngine.Line = CLASS((cls) => {
 		return points;
 	};
 	
-	let generatePixiSprite = cls.generatePixiSprite = (params) => {
+	let generateGraphics = cls.generateGraphics = (params) => {
 		//REQUIRED: params
 		//REQUIRED: params.startX
 		//REQUIRED: params.startY
 		//REQUIRED: params.endX
 		//REQUIRED: params.endY
-		//OPTIONAL: params.color
 		//OPTIONAL: params.border
 		//OPTIONAL: params.blendMode
 		
@@ -297,17 +296,14 @@ SkyEngine.Line = CLASS((cls) => {
 		let startY = params.startY;
 		let endX = params.endX;
 		let endY = params.endY;
+		let border = params.border;
 		
-		let width = Math.abs(endX - startX);
-		let height = Math.abs(endX - startX);
+		let graphics = SkyEngine.Figure.generateGraphics(params);
 		
-		params.width = width;		
-		params.height = height;
+		graphics.moveTo(startX, startY);
+		graphics.lineTo(endX, endY);
 		
-		return SkyEngine.Figure.generatePixiSprite(params, (context) => {
-			context.moveTo(width / 2 + startX, height / 2 + startY);
-			context.lineTo(width / 2 + endX, height / 2 + endY);
-		});
+		return graphics;
 	};
 	
 	return {
@@ -323,15 +319,27 @@ SkyEngine.Line = CLASS((cls) => {
 			//REQUIRED: params.endX			직선의 끝 x 좌표
 			//REQUIRED: params.endY			직선의 끝 Y 좌표
 			//REQUIRED: params.border
+			//OPTIONAL: params.isEndless	true로 지정하면 양 끝이 무한인 직선을 생성합니다.
 			
 			let startX = params.startX;
 			let startY = params.startY;
 			let endX = params.endX;
 			let endY = params.endY;
 			let border = params.border;
+			let isEndless = params.isEndless;
 			
 			let checkLineLine = SkyEngine.Util.Collision.checkLineLine;
 			let checkLineRect = SkyEngine.Util.Collision.checkLineRect;
+			
+			if (isEndless === true) {
+				if (Math.abs(endX - startX) < Math.abs(endY - startY)) {
+					endX = ((endY - startY < 0 ? -999999 : 999999) - startY) / (endY - startY) * (endX - startX) + startX;
+					endY = endY - startY < 0 ? -999999 : 999999;
+				} else {
+					endY = (endY - startY) / (endX - startX) * ((endX - startX < 0 ? -999999 : 999999) - startX) + startY;
+					endX = endX - startX < 0 ? -999999 : 999999;
+				}
+			}
 			
 			let setStartX = self.setStartX = (_startX) => {
 				startX = _startX;
@@ -439,7 +447,7 @@ SkyEngine.Line = CLASS((cls) => {
 				};
 			});
 			
-			inner.setPixiSprite(generatePixiSprite({
+			inner.setGraphics(generateGraphics({
 				startX : startX,
 				startY : startY,
 				endX : endX,

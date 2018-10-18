@@ -120,9 +120,6 @@ SkyEngine의 모든 구성요소는 노드를 확장합니다.
 ### [`SkyEngine.Interval`](DOC/Interval.md)
 주어진 초 마다 함수를 반복해서 실행하는 클래스
 
-### [`SkyEngine.CreateGradient`](DOC/CreateGradient.md)
-그라디언트 색상을 만들어주는 메소드
-
 ### [`SkyEngine.TextBorderShadow`](DOC/TextBorderShadow.md)
 `textShadow` 스타일을 이용해 글자의 테두리를 만들어주는 메소드
 

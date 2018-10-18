@@ -116,7 +116,7 @@ SkyEngine.Rect = CLASS((cls) => {
 		}];
 	};
 	
-	let generatePixiSprite = cls.generatePixiSprite = (params) => {
+	let generateGraphics = cls.generateGraphics = (params) => {
 		//REQUIRED: params
 		//REQUIRED: params.width
 		//REQUIRED: params.height
@@ -127,9 +127,11 @@ SkyEngine.Rect = CLASS((cls) => {
 		let width = params.width;
 		let height = params.height;
 		
-		return SkyEngine.Figure.generatePixiSprite(params, (context) => {
-			context.rect(0, 0, width, height);
-		});
+		let graphics = SkyEngine.Figure.generateGraphics(params);
+		
+		graphics.drawRect(-width / 2, -height / 2, width, height);
+		
+		return graphics;
 	};
 	
 	return {
@@ -297,7 +299,7 @@ SkyEngine.Rect = CLASS((cls) => {
 				};
 			});
 			
-			inner.setPixiSprite(generatePixiSprite({
+			inner.setGraphics(generateGraphics({
 				width : width,
 				height : height,
 				color : color,

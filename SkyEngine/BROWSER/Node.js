@@ -2209,7 +2209,7 @@ SkyEngine.Node = CLASS({
 			//REQUIRED: touchArea
 			
 			if (areaGraphics !== undefined) {
-				areaGraphics.lineStyle(1, 0xFF00FF, 1);
+				areaGraphics.lineStyle(1, 0xFF00FF);
 				touchArea.drawArea(areaGraphics);
 			}
 
@@ -2237,7 +2237,7 @@ SkyEngine.Node = CLASS({
 			//REQUIRED: collider
 			
 			if (areaGraphics !== undefined) {
-				areaGraphics.lineStyle(1, 0x00FF00, 1);
+				areaGraphics.lineStyle(1, 0x00FF00);
 				collider.drawArea(areaGraphics);
 			}
 
@@ -2977,7 +2977,7 @@ SkyEngine.Node = CLASS({
 			areaGraphics = new PIXI.Graphics();
 			
 			// 중점을 그립니다.
-			areaGraphics.lineStyle(1, 0x00FFFF, 1);
+			areaGraphics.lineStyle(1, 0x00FFFF);
 			areaGraphics.drawRect(-1, -1, 2, 2);
 			
 			areaGraphics.moveTo(-15, 0);
@@ -2988,7 +2988,7 @@ SkyEngine.Node = CLASS({
 			// 터치 영역을 그립니다.
 			let touchAreas = self.getTouchAreas();
 			
-			areaGraphics.lineStyle(1, 0xFF00FF, 1);
+			areaGraphics.lineStyle(1, 0xFF00FF);
 			
 			for (let i = 0; i < touchAreas.length; i += 1) {
 				touchAreas[i].drawArea(areaGraphics);
@@ -2997,7 +2997,7 @@ SkyEngine.Node = CLASS({
 			// 충돌 영역을 그립니다.
 			let colliders = self.getColliders();
 			
-			areaGraphics.lineStyle(1, 0x00FF00, 1);
+			areaGraphics.lineStyle(1, 0x00FF00);
 			
 			for (let i = 0; i < colliders.length; i += 1) {
 				colliders[i].drawArea(areaGraphics);

@@ -46,7 +46,7 @@ SkyEngine.Circle = CLASS((cls) => {
 			circleSin, circleCos);
 	};
 	
-	let generatePixiSprite = cls.generatePixiSprite = (params) => {
+	let generateGraphics = cls.generateGraphics = (params) => {
 		//REQUIRED: params
 		//REQUIRED: params.width
 		//REQUIRED: params.height
@@ -57,9 +57,11 @@ SkyEngine.Circle = CLASS((cls) => {
 		let width = params.width;
 		let height = params.height;
 		
-		return SkyEngine.Figure.generatePixiSprite(params, (context) => {
-			context.ellipse(width / 2, height / 2, width / 2, height / 2, 0, 0, 2 * Math.PI);
-		});
+		let graphics = SkyEngine.Figure.generateGraphics(params);
+		
+		graphics.drawEllipse(0, 0, width / 2, height / 2, 0, 0, 2 * Math.PI);
+		
+		return graphics;
 	};
 	
 	return {
@@ -250,7 +252,7 @@ SkyEngine.Circle = CLASS((cls) => {
 				};
 			});
 			
-			inner.setPixiSprite(generatePixiSprite({
+			inner.setGraphics(generateGraphics({
 				width : width,
 				height : height,
 				color : color,

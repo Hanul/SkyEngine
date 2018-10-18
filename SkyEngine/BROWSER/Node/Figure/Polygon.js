@@ -60,7 +60,7 @@ SkyEngine.Polygon = CLASS((cls) => {
 		}];
 	};
 	
-	let generatePixiSprite = cls.generatePixiSprite = (params) => {
+	let generateGraphics = cls.generateGraphics = (params) => {
 		//REQUIRED: params
 		//REQUIRED: params.points
 		//OPTIONAL: params.color
@@ -69,56 +69,21 @@ SkyEngine.Polygon = CLASS((cls) => {
 		
 		let points = params.points;
 		
-		let minX = 9999999;
-		let minY = 9999999;
-		let maxX = -9999999;
-		let maxY = -9999999;
-		
-		let width = 0;
-		let height = 0;
+		let graphics = SkyEngine.Figure.generateGraphics(params);
 		
 		if (points.length > 0) {
 			
-			for (let i = 0; i < points.length; i += 1) {
+			graphics.moveTo(points[0].x, points[0].y);
+			
+			for (let i = 1; i < points.length; i += 1) {
 				let point = points[i];
-				if (point.x < minX) {
-					minX = point.x;
-				}
-				if (point.y < minY) {
-					minY = point.y;
-				}
-				if (point.x > maxX) {
-					maxX = point.x;
-				}
-				if (point.y > maxY) {
-					maxY = point.y;
-				}
+				graphics.lineTo(point.x, point.y);
 			}
 			
-			width = maxX - minX;
-			height = maxY - minY;
+			graphics.lineTo(points[0].x, points[0].y);
 		}
 		
-		params.width = width;		
-		params.height = height;
-		
-		return SkyEngine.Figure.generatePixiSprite(params, (context, pixiSprite) => {
-			
-			if (points.length > 0) {
-				
-				pixiSprite.x = minX;
-				pixiSprite.y = minY;
-				
-				context.moveTo(points[0].x - minX, points[0].y - minY);
-				
-				for (let i = 1; i < points.length; i += 1) {
-					let point = points[i];
-					context.lineTo(point.x - minX, point.y - minY);
-				}
-				
-				context.lineTo(points[0].x - minX, points[0].y - minY);
-			}
-		});
+		return graphics;
 	};
 	
 	return {
@@ -325,7 +290,7 @@ SkyEngine.Polygon = CLASS((cls) => {
 				};
 			});
 			
-			inner.setPixiSprite(generatePixiSprite({
+			inner.setGraphics(generateGraphics({
 				points : points,
 				color : color,
 				border : border,
