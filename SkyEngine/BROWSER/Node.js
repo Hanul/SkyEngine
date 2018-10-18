@@ -129,7 +129,7 @@ SkyEngine.Node = CLASS({
 		let pauseCount = 0;
 		
 		let domWrapper;
-		let isFirstFixDomStyle;
+		let isFirstFixDomStyle = true;
 		
 		let onDisplayResize;
 		let displayResizeEvent;
@@ -2885,7 +2885,7 @@ SkyEngine.Node = CLASS({
 					areaGraphics.y = centerY;
 				}
 				
-				if (domWrapper !== undefined) {
+				if (isRemoved !== true && domWrapper !== undefined) {
 					
 					let ratio = SkyEngine.Screen.getRatio();
 					let domFilter = TO_DELETE;
