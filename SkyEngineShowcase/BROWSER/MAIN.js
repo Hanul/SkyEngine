@@ -119,7 +119,7 @@ SkyEngineShowcase.MAIN = METHOD({
 		
 		SkyEngineShowcase.MATCH_VIEW({
 			uri : 'test/gradient',
-			target : SkyEngineShowcase.CreateGradientTest
+			target : SkyEngineShowcase.GradientTest
 		});
 		
 		SkyEngineShowcase.MATCH_VIEW({

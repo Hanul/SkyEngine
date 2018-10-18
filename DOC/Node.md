@@ -97,8 +97,8 @@ SkyEngine의 모든 구성요소는 노드입니다. 즉 SkyEngine을 기반으�
 - `toAlpha` 페이드 알파 값 목적지
 
 ### 그래픽 관련 파라미터
-- `filter` 이 설정을 통해 노드에 [`CanvasRenderingContext2D.filter`](https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/filter)를 적용할 수 있습니다.
-- `blendMode` 이 설정을 통해 노드에 [`CanvasRenderingContext2D.globalCompositeOperation`](https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/globalCompositeOperation)를 적용할 수 있습니다.
+- `filter` 필터
+- `blendMode` 블렌드 모드
 
 ### 영역 관련 파라미터
 - `collider` 충돌 영역. 하나의 영역을 지정하거나, 영역들의 배열을 지정할 수 있습니다. 영역에 대한 자세한 내용은 [영역 설정 문서](Node/Area.md)를 참고해주시기 바랍니다.
@@ -284,13 +284,13 @@ circle.setPosition({
 
 ### 필터 관련 함수
 필터에 대한 자세한 내용은 [필터 항목](#필터)을 참고해주시기 바랍니다.
-- `setFilter(filter)` 노드에 [`CanvasRenderingContext2D.filter`](https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/filter)를 적용합니다.
+- `setFilter(filter)` 노드에 필터를 적용합니다.
 - `getFilter()` `setFilter`로 지정한 값을 가져옵니다.
 - `removeFilter()` 필터를 제거합니다.
 
 ### 블렌드 모드 관련 함수
 블렌드 모드에 대한 자세한 내용은 [블렌드 모드 항목](#블렌드-모드)을 참고해주시기 바랍니다.
-- `setBlendMode(blendMode)` 노드에 [`CanvasRenderingContext2D.globalCompositeOperation`](https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/globalCompositeOperation)를 적용합니다.
+- `setBlendMode(blendMode)` 노드에 블렌드 모드를 적용합니다.
 - `getBlendMode()` `setBlendMode`로 지정한 값을 가져옵니다.
 - `removeBlendMode()` 블렌드 모드를 제거합니다.
 
@@ -373,7 +373,15 @@ let rect = SkyEngine.Rect({
 ```
 
 ## 필터
-노드에 블러 효과나 흑백 효과와 같은 그래픽 필터를 적용시킬 수 있습니다. *(Safari는 [`CanvasRenderingContext2D.filter`](https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/filter)를 지원하지 않으므로 사용할 수 없습니다.)*
+노드에 블러 효과나 흑백 효과와 같은 그래픽 필터를 적용시킬 수 있습니다. 아래 목록에 해당하는 필터를 적용할 수 있습니다.
+
+- `'blur(<length>px)'`
+- `'brightness(<percentage>%)'`
+- `'contrast(<percentage>%)'`
+- `'drop-shadow(<offset-x>px <offset-y>px <blur-radius>px #<color>)'`
+- `'grayscale(<percentage>%)'`
+- `'hue-rotate(<degree>deg)'`
+- `'saturate(<percentage>%)'`
 
 ![필터](https://raw.githubusercontent.com/Hanul/SkyEngine/master/DOC/Node/filter.png)
 
@@ -420,8 +428,7 @@ SkyEngine.Screen.setFilter('grayscale(100%)');
 
 - `'multiply'`
 - `'screen'`
-- `'add'`
-- `'lighten'`
+- `'overlay'`
 
 ![블렌드 모드](https://raw.githubusercontent.com/Hanul/SkyEngine/master/DOC/Node/blendmode.png)
 

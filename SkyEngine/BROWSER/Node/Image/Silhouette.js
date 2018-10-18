@@ -41,7 +41,7 @@ SkyEngine.Silhouette = CLASS((cls) => {
 			let img;
 			let imageData;
 			
-			let polygonPoints;
+			let pixiSprite;
 			
 			let setSrc = self.setSrc = (_src) => {
 				src = _src;
@@ -50,63 +50,139 @@ SkyEngine.Silhouette = CLASS((cls) => {
 				
 				img.onload = () => {
 					
-					if (width === undefined) {
-						width = img.width;
-					}
-					if (height === undefined) {
-						height = img.height;
-					}
-					
-					let imageCanvas = CANVAS({
-						style : {
-							display : 'none'
-						},
-						width : width,
-						height : height
-					}).appendTo(BODY);
-					
-					let imageContext = imageCanvas.getContext('2d');
-					imageContext.drawImage(img, 0, 0, img.width, img.height);
-					
-					let imgData = imageContext.getImageData(0, 0, width, height);
-					imageData = imgData.data;
-					
-					let i, length = imageData.length;
-					for (i = 0; i < length; i += 4){
-						imageData[i] = 0;
-						imageData[i + 1] = 0;
-						imageData[i + 2] = 0;
-					}
-					
 					img.onload = undefined;
 					
-					imageContext.clearRect(0, 0, width, height);
-					
-					imageContext.putImageData(imgData, 0, 0);
-					imageContext.globalCompositeOperation = 'source-in';
-					
-					imageContext.rect(0, 0, width, height);
-					imageContext.fillStyle = color;
-					imageContext.fill();
-					
-					img.src = imageCanvas.getEl().toDataURL();
-					
-					// clear.
-					imgData = undefined;
-					imageContext = undefined;
-					imageCanvas.remove();
-					
-					if (border !== undefined) {
-						polygonPoints = SkyEngine.Util.ImageData.convertImageDataToPolygonPoints(imageData, width);
+					if (self.checkIsRemoved() !== true) {
+						
+						if (width === undefined) {
+							width = img.width;
+						}
+						if (height === undefined) {
+							height = img.height;
+						}
+						
+						let imageCanvas = CANVAS({
+							style : {
+								display : 'none'
+							},
+							width : width,
+							height : height
+						}).appendTo(BODY);
+						
+						let imageContext = imageCanvas.getContext('2d');
+						
+						imageContext.save();
+						
+						imageContext.drawImage(img, 0, 0, img.width, img.height);
+						
+						let imgData = imageContext.getImageData(0, 0, width, height);
+						imageData = imgData.data;
+						
+						let i, length = imageData.length;
+						for (i = 0; i < length; i += 4){
+							imageData[i] = 0;
+							imageData[i + 1] = 0;
+							imageData[i + 2] = 0;
+						}
+						
+						imageContext.clearRect(0, 0, width, height);
+						
+						if (color !== undefined) {
+							
+							imageContext.putImageData(imgData, 0, 0);
+							imageContext.globalCompositeOperation = 'source-in';
+							
+							imageContext.rect(0, 0, width, height);
+							imageContext.fillStyle = color;
+							imageContext.fill();
+						}
+						
+						imageContext.restore();
+						
+						if (border !== undefined) {
+							
+							let polygonPoints = SkyEngine.Util.ImageData.convertImageDataToPolygonPoints(imageData, width);
+							
+							if (polygonPoints.length > 0) {
+								
+								imageContext.beginPath();
+								imageContext.moveTo(polygonPoints[0].x, polygonPoints[0].y);
+								
+								for (let i = 1; i < polygonPoints.length; i += 1) {
+									let point = polygonPoints[i];
+									imageContext.lineTo(point.x, point.y);
+								}
+								
+								imageContext.lineTo(polygonPoints[0].x, polygonPoints[0].y);
+								
+								imageContext.lineWidth = borderPixel;
+								imageContext.strokeStyle = borderColor;
+								
+								if (borderStyle === 'dashed') {
+									imageContext.setLineDash([5]);
+								} else if (borderStyle === 'dotted') {
+									imageContext.setLineDash([2]);
+								}
+								
+								imageContext.stroke();
+								imageContext.closePath();
+							}
+							
+							polygonPoints = undefined;
+						}
+						
+						img.src = imageCanvas.getEl().toDataURL();
+						
+						// clear.
+						imgData = undefined;
+						imageContext = undefined;
+						imageCanvas.remove();
+						
+						pixiSprite = new PIXI.Sprite.fromImage(img.src);
+						
+						pixiSprite.x = -width / 2;
+						pixiSprite.y = -height / 2;
+						pixiSprite.zIndex = -9999999;
+						
+						pixiSprite.blendMode = SkyEngine.Util.BlendMode.getPixiBlendMode(self.getBlendMode());
+						
+						self.addToPixiContainer(pixiSprite);
+						
+						self.fireEvent('load');
 					}
-					
-					self.fireEvent('load');
 				};
 				
 				img.src = src;
 			};
 			
 			setSrc(src);
+			
+			let setBlendMode;
+			OVERRIDE(self.setBlendMode, (origin) => {
+				
+				setBlendMode = self.setBlendMode = (blendMode) => {
+					//REQUIRED: blendMode
+					
+					origin(blendMode);
+					
+					if (pixiSprite !== undefined) {
+						pixiSprite.blendMode = SkyEngine.Util.BlendMode.getPixiBlendMode(self.getBlendMode());
+					}
+				};
+			});
+			
+			let removeBlendMode;
+			OVERRIDE(self.removeBlendMode, (origin) => {
+				
+				removeBlendMode = self.removeBlendMode = () => {
+					
+					origin();
+					
+					if (pixiSprite !== undefined) {
+						pixiSprite.blendMode = SkyEngine.Util.BlendMode.getPixiBlendMode(self.getBlendMode());
+					}
+				};
+			});
 			
 			let checkPoint;
 			OVERRIDE(self.checkPoint, (origin) => {
@@ -165,80 +241,6 @@ SkyEngine.Silhouette = CLASS((cls) => {
 				};
 			});
 			
-			let draw;
-			OVERRIDE(self.draw, (origin) => {
-				
-				draw = self.draw = (context) => {
-					
-					if (imageData !== undefined) {
-						
-						if (color !== undefined) {
-							context.drawImage(
-								img,
-								-width / 2,
-								-height / 2,
-								width,
-								height);
-						}
-						
-						if (border !== undefined && polygonPoints.length > 0) {
-							
-							context.beginPath();
-							context.moveTo(polygonPoints[0].x - width / 2, polygonPoints[0].y - height / 2);
-							
-							for (let i = 1; i < polygonPoints.length; i += 1) {
-								let point = polygonPoints[i];
-								context.lineTo(point.x - width / 2, point.y - height / 2);
-							}
-							
-							context.lineTo(polygonPoints[0].x - width / 2, polygonPoints[0].y - height / 2);
-							
-							context.lineWidth = borderPixel;
-							context.strokeStyle = borderColor;
-							
-							if (borderStyle === 'dashed') {
-								context.setLineDash([5]);
-							} else if (borderStyle === 'dotted') {
-								context.setLineDash([2]);
-							}
-							
-							context.stroke();
-							context.closePath();
-						}
-					}
-					
-					origin(context);
-				};
-			});
-			
-			let drawArea;
-			OVERRIDE(self.drawArea, (origin) => {
-				
-				drawArea = self.drawArea = (context) => {
-					
-					if (polygonPoints === undefined) {
-						
-						if (imageData !== undefined) {
-							polygonPoints = SkyEngine.Util.ImageData.convertImageDataToPolygonPoints(imageData, width);
-						}
-					}
-					
-					else if (polygonPoints.length > 0) {
-						
-						context.moveTo(polygonPoints[0].x - width / 2, polygonPoints[0].y - height / 2);
-						
-						for (let i = 1; i < polygonPoints.length; i += 1) {
-							let point = polygonPoints[i];
-							context.lineTo(point.x - width / 2, point.y - height / 2);
-						}
-						
-						context.lineTo(polygonPoints[0].x - width / 2, polygonPoints[0].y - height / 2);
-					}
-					
-					origin(context);
-				};
-			});
-			
 			let remove;
 			OVERRIDE(self.remove, (origin) => {
 				
@@ -247,9 +249,9 @@ SkyEngine.Silhouette = CLASS((cls) => {
 					img.onload = undefined;
 					img = undefined;
 					
-					imageData = undefined;
+					pixiSprite = undefined;
 					
-					polygonPoints = undefined;
+					imageData = undefined;
 					
 					origin();
 				};
@@ -257,10 +259,6 @@ SkyEngine.Silhouette = CLASS((cls) => {
 			
 			let getImg = inner.getImg = () => {
 				return img;
-			};
-			
-			let getPolygonPoints = inner.getPolygonPoints = () => {
-				return polygonPoints;
 			};
 			
 			let getWidth = self.getWidth = () => {

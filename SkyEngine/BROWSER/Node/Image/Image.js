@@ -117,11 +117,11 @@ SkyEngine.Image = CLASS((cls) => {
 				setBlendMode = self.setBlendMode = (blendMode) => {
 					//REQUIRED: blendMode
 					
+					origin(blendMode);
+					
 					if (pixiSprite !== undefined) {
 						pixiSprite.blendMode = SkyEngine.Util.BlendMode.getPixiBlendMode(self.getBlendMode());
 					}
-					
-					origin(blendMode);
 				};
 			});
 			

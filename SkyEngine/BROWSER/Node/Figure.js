@@ -34,15 +34,23 @@ SkyEngine.Figure = CLASS({
 			canvas.width = width;
 			canvas.height = height;
 			
+			pixiSprite = new PIXI.Sprite(PIXI.Texture.fromCanvas(canvas));
+			
+			pixiSprite.x = -width / 2;
+			pixiSprite.y = -height / 2;
+			pixiSprite.zIndex = -9999999;
+			
+			pixiSprite.blendMode = SkyEngine.Util.BlendMode.getPixiBlendMode(self.getBlendMode());
+			
 			var context = canvas.getContext('2d');
 			
 			context.beginPath();
 			
-			drawFigure(context);
+			drawFigure(context, pixiSprite);
 			
 			if (color !== undefined) {
 				if (CHECK_IS_DATA(color) === true && color.checkIsInstanceOf(SkyEngine.Gradient) === true) {
-					context.fillStyle = color.generateContextGradient(context);
+					context.fillStyle = color.generateContextGradient(context, width / 2, height / 2);
 				} else {
 					context.fillStyle = color;
 				}
@@ -64,14 +72,6 @@ SkyEngine.Figure = CLASS({
 			
 			context.closePath();
 			
-			pixiSprite = new PIXI.Sprite(PIXI.Texture.fromCanvas(canvas));
-			
-			pixiSprite.x = -width / 2;
-			pixiSprite.y = -height / 2;
-			pixiSprite.zIndex = -9999999;
-			
-			pixiSprite.blendMode = SkyEngine.Util.BlendMode.getPixiBlendMode(self.getBlendMode());
-			
 			self.addToPixiContainer(pixiSprite);
 			
 			context = undefined;
@@ -84,9 +84,9 @@ SkyEngine.Figure = CLASS({
 			setBlendMode = self.setBlendMode = (blendMode) => {
 				//REQUIRED: blendMode
 				
-				pixiSprite.blendMode = SkyEngine.Util.BlendMode.getPixiBlendMode(self.getBlendMode());
-				
 				origin(blendMode);
+				
+				pixiSprite.blendMode = SkyEngine.Util.BlendMode.getPixiBlendMode(self.getBlendMode());
 			};
 		});
 		

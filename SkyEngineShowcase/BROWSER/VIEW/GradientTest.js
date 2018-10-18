@@ -1,4 +1,4 @@
-SkyEngineShowcase.CreateGradientTest = CLASS({
+SkyEngineShowcase.GradientTest = CLASS({
 	
 	preset : () => {
 		return VIEW;
@@ -9,7 +9,7 @@ SkyEngineShowcase.CreateGradientTest = CLASS({
 		let rect = SkyEngine.Rect({
 			width : 300,
 			height : 200,
-			color : SkyEngine.CreateGradient({
+			color : SkyEngine.Gradient({
 				type : 'radial',
 				startX : 0,
 				startY : 0,

@@ -9,10 +9,8 @@ SkyEngine('Util').BlendMode = OBJECT({
 				return PIXI.BLEND_MODES.MULTIPLY;
 			} else if (blendMode === 'screen') {
 				return PIXI.BLEND_MODES.SCREEN;
-			} else if (blendMode === 'add') {
-				return PIXI.BLEND_MODES.ADD;
-			} else if (blendMode === 'lighten') {
-				return PIXI.BLEND_MODES.LIGHTEN;
+			} else if (blendMode === 'overlay') {
+				return PIXI.BLEND_MODES.OVERLAY;
 			}
 			
 			return PIXI.BLEND_MODES.NORMAL;

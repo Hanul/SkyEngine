@@ -55,8 +55,8 @@ SkyEngine.Node = CLASS({
 		//OPTIONAL: params.maxFadingSpeed		최대 페이드 속도
 		//OPTIONAL: params.toAlpha				페이드 알파 값 목적지
 		
-		//OPTIONAL: params.filter				이 설정을 통해 노드에 CanvasRenderingContext2D.filter를 적용할 수 있습니다.
-		//OPTIONAL: params.blendMode			이 설정을 통해 노드에 CanvasRenderingContext2D.globalCompositeOperation를 적용할 수 있습니다.
+		//OPTIONAL: params.filter				필터
+		//OPTIONAL: params.blendMode			블렌드 모드 (multiply, screen, overlay)
 
 		//OPTIONAL: params.collider				충돌 영역. 하나의 영역을 지정하거나, 영역들의 배열을 지정할 수 있습니다.
 		//OPTIONAL: params.touchArea			터치 영역. 하나의 영역을 지정하거나, 영역들의 배열을 지정할 수 있습니다.
@@ -994,14 +994,100 @@ SkyEngine.Node = CLASS({
 			//REQUIRED: filter
 
 			filter = _filter;
+			
+			if (filter.indexOf('blur(') !== -1) {
+				
+				let pixiFilter = new PIXI.filters.BlurFilter(filter.substring(5, filter.indexOf('px')));
+				
+				pixiContainer.filters = [pixiFilter];
+			}
+			
+			else if (filter.indexOf('brightness(') !== -1) {
+				
+				let pixiFilter = new PIXI.filters.ColorMatrixFilter();
+				pixiFilter.brightness(filter.substring(11, filter.indexOf('%')) / 100);
+				
+				pixiContainer.filters = [pixiFilter];
+			}
+			
+			else if (filter.indexOf('contrast(') !== -1) {
+				
+				let pixiFilter = new PIXI.filters.ColorMatrixFilter();
+				pixiFilter.contrast(filter.substring(9, filter.indexOf('%')) / 100 - 1);
+				
+				pixiContainer.filters = [pixiFilter];
+			}
+			
+			else if (filter.indexOf('drop-shadow(') !== -1) {
+				
+				let filterSplit = filter.substring(12, filter.indexOf(')')).split(' ');
+				
+				let offsetX = filterSplit[0];
+				offsetX = REAL(offsetX.substring(0, offsetX.indexOf('px'))) * realScaleX;
+				
+				let offsetY = filterSplit[1];
+				offsetY = REAL(offsetY.substring(0, offsetY.indexOf('px'))) * realScaleY;
+				
+				let blurRadius = filterSplit[2];
+				blurRadius = REAL(blurRadius.substring(0, blurRadius.indexOf('px')));
+				
+				let color = parseInt(filterSplit[3].substring(1), 16);
+				
+				let pixiFilter = new PIXI.filters.DropShadowFilter({
+					rotation : Math.atan2(offsetY, offsetX) * 180 / Math.PI,
+					distance : Math.sqrt(offsetX * offsetX + offsetY * offsetY),
+					blur : blurRadius,
+					color : color
+				});
+				
+				console.log({
+					rotation : Math.atan2(offsetY, offsetX) * 180 / Math.PI,
+					distance : Math.sqrt(offsetX * offsetX + offsetY * offsetY),
+					blur : blurRadius,
+					color : color
+				});
+				
+				pixiContainer.filters = [pixiFilter];
+			}
+			
+			else if (filter.indexOf('grayscale(') !== -1) {
+				
+				let pixiFilter = new PIXI.filters.ColorMatrixFilter();
+				pixiFilter.saturate(-filter.substring(10, filter.indexOf('%')) / 100);
+				
+				pixiContainer.filters = [pixiFilter];
+			}
+			
+			else if (filter.indexOf('hue-rotate(') !== -1) {
+				
+				let pixiFilter = new PIXI.filters.ColorMatrixFilter();
+				pixiFilter.hue(filter.substring(11, filter.indexOf('deg')));
+				
+				pixiContainer.filters = [pixiFilter];
+			}
+			
+			else if (filter.indexOf('saturate(') !== -1) {
+				
+				let pixiFilter = new PIXI.filters.ColorMatrixFilter();
+				pixiFilter.saturate(filter.substring(9, filter.indexOf('%')) / 100 - 1);
+				
+				pixiContainer.filters = [pixiFilter];
+			}
 		};
+		
+		if (filter !== undefined) {
+			setFilter(filter);
+		}
 
 		let getFilter = self.getFilter = () => {
 			return filter;
 		};
 
 		let removeFilter = self.removeFilter = () => {
+			
 			filter = undefined;
+			
+			pixiContainer.filters = TO_DELETE;
 		};
 
 		let setBlendMode = self.setBlendMode = (_blendMode) => {
@@ -1672,6 +1758,8 @@ SkyEngine.Node = CLASS({
 		let hide = self.hide = () => {
 			isHiding = true;
 			
+			pixiContainer.visible = false;
+			
 			if (domWrapper !== undefined) {
 				domWrapper.hide();
 			}
@@ -1679,6 +1767,8 @@ SkyEngine.Node = CLASS({
 
 		let show = self.show = () => {
 			isHiding = false;
+			
+			pixiContainer.visible = true;
 			
 			if (domWrapper !== undefined) {
 				domWrapper.show();
@@ -1895,31 +1985,27 @@ SkyEngine.Node = CLASS({
 			
 			if (domWrapper === undefined) {
 				
+				let ratio = SkyEngine.Screen.getRatio();
+				
 				domWrapper = DIV({
 					style : {
 						position : 'fixed',
-						left : -999999,
-						top : -999999
+						left : SkyEngine.Screen.getLeft() + (SkyEngine.Screen.getWidth() / 2 + drawingX - SkyEngine.Screen.getCameraFollowX()) * ratio,
+						top : SkyEngine.Screen.getTop() + (SkyEngine.Screen.getHeight() / 2 + drawingY - SkyEngine.Screen.getCameraFollowY()) * ratio,
+						transform : 'rotate(' + realRadian + 'rad) scale(' + ratio * realScaleX + ', ' + ratio * realScaleY + ')',
+						opacity : 0,
+						filter : filter
 					}
 				}).appendTo(BODY);
+				
+				DELAY(() => {
+					domWrapper.addStyle({
+						opacity : pixiContainer.worldAlpha
+					});
+				});
 			}
 			
 			domWrapper.append(dom);
-			
-			let ratio = SkyEngine.Screen.getRatio();
-			
-			domWrapper.addStyle({
-				left : SkyEngine.Screen.getLeft() + (SkyEngine.Screen.getWidth() / 2 + drawingX - SkyEngine.Screen.getCameraFollowX()) * ratio - domWrapper.getWidth() / 2,
-				top : SkyEngine.Screen.getTop() + (SkyEngine.Screen.getHeight() / 2 + drawingY - SkyEngine.Screen.getCameraFollowY()) * ratio - domWrapper.getHeight() / 2,
-				transform : 'rotate(' + realRadian + 'rad) scale(' + ratio * realScaleX + ', ' + ratio * realScaleY + ')',
-				opacity : 0
-			});
-			
-			DELAY(() => {
-				domWrapper.addStyle({
-					opacity : pixiContainer.worldAlpha
-				});
-			});
 		};
 		
 		inner.getDomWrapper = () => {
@@ -1930,29 +2016,25 @@ SkyEngine.Node = CLASS({
 			
 			if (domWrapper === undefined) {
 				
+				let ratio = SkyEngine.Screen.getRatio();
+				
 				domWrapper = DIV({
 					style : {
 						position : 'fixed',
-						left : -999999,
-						top : -999999
+						left : SkyEngine.Screen.getLeft() + (SkyEngine.Screen.getWidth() / 2 + drawingX - SkyEngine.Screen.getCameraFollowX()) * ratio,
+						top : SkyEngine.Screen.getTop() + (SkyEngine.Screen.getHeight() / 2 + drawingY - SkyEngine.Screen.getCameraFollowY()) * ratio,
+						transform : 'rotate(' + realRadian + 'rad) scale(' + ratio * realScaleX + ', ' + ratio * realScaleY + ')',
+						opacity : 0,
+						filter : filter
 					}
 				}).appendTo(BODY);
-			}
-			
-			let ratio = SkyEngine.Screen.getRatio();
-			
-			domWrapper.addStyle({
-				left : SkyEngine.Screen.getLeft() + (SkyEngine.Screen.getWidth() / 2 + drawingX - SkyEngine.Screen.getCameraFollowX()) * ratio - domWrapper.getWidth() / 2,
-				top : SkyEngine.Screen.getTop() + (SkyEngine.Screen.getHeight() / 2 + drawingY - SkyEngine.Screen.getCameraFollowY()) * ratio - domWrapper.getHeight() / 2,
-				transform : 'rotate(' + realRadian + 'rad) scale(' + ratio * realScaleX + ', ' + ratio * realScaleY + ')',
-				opacity : 0
-			});
-			
-			DELAY(() => {
-				domWrapper.addStyle({
-					opacity : pixiContainer.worldAlpha
+				
+				DELAY(() => {
+					domWrapper.addStyle({
+						opacity : pixiContainer.worldAlpha
+					});
 				});
-			});
+			}
 			
 			return domWrapper;
 		};
@@ -2797,18 +2879,34 @@ SkyEngine.Node = CLASS({
 				pixiContainer.scale.set(scaleX, scaleY);
 				pixiContainer.rotation = angle * Math.PI / 180;
 				pixiContainer.alpha = alpha;
-				pixiContainer.visible = isHiding !== true;
+				
+				if (areaGraphics !== undefined) {
+					areaGraphics.x = centerX;
+					areaGraphics.y = centerY;
+				}
 				
 				if (domWrapper !== undefined) {
 					
 					let ratio = SkyEngine.Screen.getRatio();
+					let domFilter = TO_DELETE;
+					
+					let target = self;
+					while (target !== undefined) {
+						
+						if (target.getFilter() !== undefined) {
+							domFilter = target.getFilter();
+							break;
+						}
+						
+						target = target.getParent();
+					}
 					
 					domWrapper.addStyle({
 						left : SkyEngine.Screen.getLeft() + (SkyEngine.Screen.getWidth() / 2 + drawingX - SkyEngine.Screen.getCameraFollowX()) * ratio - domWrapper.getWidth() / 2,
 						top : SkyEngine.Screen.getTop() + (SkyEngine.Screen.getHeight() / 2 + drawingY - SkyEngine.Screen.getCameraFollowY()) * ratio - domWrapper.getHeight() / 2,
 						transform : 'rotate(' + realRadian + 'rad) scale(' + ratio * realScaleX + ', ' + ratio * realScaleY + ')',
 						opacity : isFirstFixDomStyle === true ? 0 : pixiContainer.worldAlpha,
-						filter : filter
+						filter : domFilter
 					});
 					
 					isFirstFixDomStyle = false;

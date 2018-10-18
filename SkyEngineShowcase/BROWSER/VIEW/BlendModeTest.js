@@ -12,13 +12,7 @@ SkyEngineShowcase.BlendModeTest = CLASS({
 			color : '#0000FF'
 		}).appendTo(SkyEngine.Screen);
 		
-		let circle = SkyEngine.Circle({
-			width : 320,
-			height : 220,
-			color : '#FFFF00'
-		}).appendTo(SkyEngine.Screen);
-		
-		/*let character = SkyEngine.Sprite({
+		let character = SkyEngine.Sprite({
 			srcs : [
 				SkyEngineShowcase.R('robot/run1.png'),
 				SkyEngineShowcase.R('robot/run2.png'),
@@ -31,15 +25,21 @@ SkyEngineShowcase.BlendModeTest = CLASS({
 			],
 			fps : 10,
 			scale : 0.2
-		}).appendTo(SkyEngine.Screen);*/
+		}).appendTo(SkyEngine.Screen);
+		
+		let circle = SkyEngine.Circle({
+			width : 320,
+			height : 220,
+			color : '#FFFF00'
+		}).appendTo(SkyEngine.Screen);
 		
 		circle.setBlendMode('multiply');
 		
 		inner.on('close', () => {
 			
 			rect.remove();
+			character.remove();
 			circle.remove();
-			//character.remove();
 		});
 	}
 });

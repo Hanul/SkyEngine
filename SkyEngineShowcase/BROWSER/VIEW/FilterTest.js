@@ -37,10 +37,9 @@ SkyEngineShowcase.FilterTest = CLASS({
 					fontSize : 300
 				},
 				c : 'Test'
-			})
+			}),
+			filter : 'drop-shadow(16px 16px 2px #000000)'
 		}).appendTo(SkyEngine.Screen);
-		
-		SkyEngine.Screen.setFilter('grayscale(100%)');
 		
 		inner.on('close', () => {
 			

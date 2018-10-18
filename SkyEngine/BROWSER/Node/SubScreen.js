@@ -26,7 +26,13 @@ SkyEngine.SubScreen = CLASS({
 		});
 		
 		let canvas = CANVAS().appendTo(wrapper);
-		let context = canvas.getContext('2d');
+		let renderer = new PIXI.autoDetectRenderer({
+			view : canvas.getEl(),
+			transparent : true
+		});
+		
+		let stage = new PIXI.Container();
+		stage.addChild(inner.getPixiContainer());
 		
 		let left;
 		let top;
@@ -107,110 +113,6 @@ SkyEngine.SubScreen = CLASS({
 			});
 		});
 		
-		// 노드의 모든 영역을 그립니다.
-		let drawAllArea = (node, context, color) => {
-			
-			context.save();
-			
-			context.translate(node.getDrawingX(), node.getDrawingY());
-			context.rotate(node.getRealRadian());
-			context.scale(node.getRealScaleX(), node.getRealScaleY());
-			
-			context.lineWidth = 1 / (node.getRealScaleX() > node.getRealScaleY() ? node.getRealScaleX() : node.getRealScaleY());
-			
-			context.beginPath();
-			
-			node.drawArea(context);
-			
-			context.strokeStyle = color;
-			context.stroke();
-			context.closePath();
-			
-			context.restore();
-			
-			let children = node.getChildren();
-			
-			for (let i = 0; i < children.length; i += 1) {
-				drawAllArea(children[i], context, color);
-			}
-		};
-		
-		// 모든 노드를 그립니다.
-		let drawAll = (node, context, realAlpha) => {
-			
-			if (node.checkIsHiding() !== true) {
-				
-				realAlpha *= node.getAlpha();
-				
-				context.save();
-				
-				if (node.getFilter() !== undefined) {
-					context.filter = node.getFilter();
-				}
-				
-				if (node.getBlendMode() !== undefined) {
-					context.globalCompositeOperation = node.getBlendMode();
-				}
-				
-				context.save();
-				
-				context.translate(node.getDrawingX(), node.getDrawingY());
-				context.rotate(node.getRealRadian());
-				context.scale(node.getRealScaleX(), node.getRealScaleY());
-				
-				context.globalAlpha = realAlpha;
-				
-				node.draw(context);
-				
-				context.restore();
-				
-				if (node.checkIsRemoved() !== true) {
-					
-					// 모든 자식 노드를 그립니다.
-					let children = node.getChildren();
-					
-					for (let i = 0; i < children.length; i += 1) {
-						drawAll(children[i], context, realAlpha);
-					}
-				}
-				
-				context.restore();
-				
-				// 개발 모드에서는 중점 및 영역 표시
-				if (node.checkIsRemoved() !== true && (isDebugMode === true || BROWSER_CONFIG.SkyEngine.isDebugMode === true)) {
-					
-					// 중점을 그립니다.
-					context.beginPath();
-					context.strokeStyle = context.fillStyle = 'aqua';
-					
-					let realX = node.getRealX();
-					let realY = node.getRealY();
-					
-					context.rect(realX - 1, realY - 1, 2, 2);
-					
-					context.moveTo(realX - 15, realY);
-					context.lineTo(realX + 15, realY);
-					context.moveTo(realX, realY - 15);
-					context.lineTo(realX, realY + 15);
-					context.stroke();
-					
-					// 터치 영역을 그립니다.
-					let touchAreas = node.getTouchAreas();
-					
-					for (let i = 0; i < touchAreas.length; i += 1) {
-						drawAllArea(touchAreas[i], context, 'magenta');
-					}
-					
-					// 충돌 영역을 그립니다.
-					let colliders = node.getColliders();
-					
-					for (let i = 0; i < colliders.length; i += 1) {
-						drawAllArea(colliders[i], context, 'lime');
-					}
-				}
-			}
-		};
-		
 		let loop = LOOP((_deltaTime) => {
 			
 			deltaTime = _deltaTime;
@@ -230,16 +132,11 @@ SkyEngine.SubScreen = CLASS({
 			
 			nonePausableNode.step(deltaTime);
 			
-			// 모든 노드를 그립니다.
-			context.clearRect(0, 0, width * devicePixelRatio, height * devicePixelRatio);
+			// 스테이지가 가운데 오도록
+			stage.x = width / 2 - getCameraFollowX();
+			stage.y = height / 2 - getCameraFollowY();
 			
-			context.save();
-			context.scale(devicePixelRatio, devicePixelRatio);
-			context.translate(width / 2 - getCameraFollowX(), height / 2 - getCameraFollowY());
-			
-			drawAll(self, context, self.getAlpha());
-			
-			context.restore();
+			renderer.render(stage);
 		});
 		
 		// 화면 크기가 변경되는 경우, 캔버스의 크기 또한 변경되어야 합니다.
@@ -265,6 +162,8 @@ SkyEngine.SubScreen = CLASS({
 				width : width * devicePixelRatio,
 				height : height * devicePixelRatio
 			});
+			
+			renderer.resize(width, height);
 		};
 		
 		setSize({
@@ -415,8 +314,8 @@ SkyEngine.SubScreen = CLASS({
 			return canvas;
 		};
 		
-		let getCanvasContext = self.getCanvasContext = () => {
-			return context;
+		let getPixiRenderer = self.getPixiRenderer = () => {
+			return renderer;
 		};
 		
 		let nonePausableNode = SkyEngine.Node();

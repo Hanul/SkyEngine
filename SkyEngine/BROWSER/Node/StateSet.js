@@ -56,7 +56,7 @@ SkyEngine.StateSet = CLASS({
 			state = _state;
 			animationEndHandler = _animationEndHandler;
 			
-			EACH(stateNodes, (stateNode) => {
+			EACH(stateNodes, (stateNode, state) => {
 				stateNode.hide();
 			});
 			

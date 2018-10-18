@@ -83,20 +83,17 @@ SkyEngineShowcase.HitscanShootingTest = CLASS({
 								let bullet = SkyEngine.Line({
 									startX : hero.getX() + 65,
 									startY : hero.getY() + 24,
-									endX : hero.getX() + 66,
+									endX : hero.getX() + 1280,
 									endY : hero.getY() + 24,
-									isEndless : true,
 									border : '1px solid #ffffff',
 									collider : SkyEngine.Line({
 										startX : hero.getX() + 65,
 										startY : hero.getY() + 24,
-										endX : hero.getX() + 66,
-										endY : hero.getY() + 24,
-										isEndless : true
+										endX : hero.getX() + 1280,
+										endY : hero.getY() + 24
 									}),
 									on : {
 										nextstep : (e, bullet) => {
-											bullet.remove();
 											
 											if (targetEnemy !== undefined) {
 												
@@ -110,6 +107,10 @@ SkyEngineShowcase.HitscanShootingTest = CLASS({
 										} 
 									}
 								}).appendTo(SkyEngine.Screen);
+								
+								bullet.delay(0.1, () => {
+									bullet.remove();
+								});
 								
 								bullet.onMeet(Enemy, (enemy) => {
 									
@@ -157,7 +158,7 @@ SkyEngineShowcase.HitscanShootingTest = CLASS({
 		let keyupEvent = EVENT('keyup', (e) => {
 			
 			if (e.getKey().toUpperCase() === 'A') {
-				hero.setToState('idle');
+				hero.setState('idle');
 			}
 			
 			else if (e.getKey() === 'ArrowUp') {

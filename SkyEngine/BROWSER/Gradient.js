@@ -6,11 +6,11 @@ SkyEngine.Gradient = CLASS({
 	init : (inner, self, params) => {
 		//REQUIRED: params
 		//OPTIONAL: params.type
-		//REQUIRED: params.startX
-		//REQUIRED: params.startY
+		//OPTIONAL: params.startX
+		//OPTIONAL: params.startY
 		//OPTIONAL: params.startRadius
-		//REQUIRED: params.endX
-		//REQUIRED: params.endY
+		//OPTIONAL: params.endX
+		//OPTIONAL: params.endY
 		//OPTIONAL: params.endRadius
 		//REQUIRED: params.colors
 		
@@ -23,15 +23,30 @@ SkyEngine.Gradient = CLASS({
 		let endRadius = params.endRadius;
 		let colors = params.colors;
 		
-		let generateContextGradient = self.generateContextGradient = (context) => {
+		if (startX === undefined) {
+			startX = 0;
+		}
+		if (startY === undefined) {
+			startY = 0;
+		}
+		if (endX === undefined) {
+			endX = 0;
+		}
+		if (endY === undefined) {
+			endY = 0;
+		}
+		
+		let generateContextGradient = self.generateContextGradient = (context, baseX, baseY) => {
 			//REQUIRED: context
+			//REQUIRED: baseX
+			//REQUIRED: baseY
 			
 			let contextGradient;
 			
 			if (type === 'radial') {
-				contextGradient = context.createRadialGradient(startX, startY, startRadius, endX, endY, endRadius);
+				contextGradient = context.createRadialGradient(baseX + startX, baseY + startY, startRadius, baseX + endX, baseY + endY, endRadius);
 			} else {
-				contextGradient = context.createLinearGradient(startX, startY, endX, endY);
+				contextGradient = context.createLinearGradient(baseX + startX, baseY + startY, baseX + endX, baseY + endY);
 			}
 			
 			EACH(colors, (color, i) => {

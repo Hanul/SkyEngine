@@ -49,7 +49,7 @@ SkyEngine.Sprite = CLASS({
 			img = new Image();
 			
 			img.onload = () => {
-					
+				
 				img.onload = undefined;
 				
 				if (self.checkIsRemoved() !== true) {
@@ -195,6 +195,8 @@ SkyEngine.Sprite = CLASS({
 			setBlendMode = self.setBlendMode = (blendMode) => {
 				//REQUIRED: blendMode
 				
+				origin(blendMode);
+				
 				if (pixiTilingSprite !== undefined) {
 					pixiTilingSprite.blendMode = SkyEngine.Util.BlendMode.getPixiBlendMode(self.getBlendMode());
 				}
@@ -204,8 +206,6 @@ SkyEngine.Sprite = CLASS({
 						pixiSprite.blendMode = SkyEngine.Util.BlendMode.getPixiBlendMode(self.getBlendMode());
 					});
 				}
-				
-				origin(blendMode);
 			};
 		});
 		
@@ -281,7 +281,7 @@ SkyEngine.Sprite = CLASS({
 					beforeFrame = frame;
 					frame = Math.floor(realFrame);
 					
-					if (frame !== beforeFrame && self.checkIsRemoved() !== true) {
+					if (self.checkIsRemoved() !== true) {
 						
 						if (pixiSprites !== undefined) {
 							

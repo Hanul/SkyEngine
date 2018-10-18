@@ -1,0 +1,261 @@
+
+			
+			let width;
+			let height;
+			
+			let img;
+			
+			if (particleSrc !== undefined) {
+				
+				img = new Image();
+				
+				img.onload = () => {
+					
+					width = img.width;
+					if (particleWidth === undefined) {
+						particleWidth = width;
+					}
+					
+					height = img.height;
+					if (particleHeight === undefined) {
+						particleHeight = height;
+					}
+					
+					img.onload = undefined;
+					
+					self.fireEvent('load');
+				};
+				
+				img.src = particleSrc;
+			}
+			
+			else {
+				self.fireEvent('load');
+			}
+			
+			let particleInfos = [];
+			
+			let endHandler;
+			
+			let burst = self.burst = (_endHandler) => {
+				
+				endHandler = _endHandler;
+				
+				REPEAT(random(minParticleCount, maxParticleCount), () => {
+					
+					let direction = random(minParticleDirection, maxParticleDirection) * Math.PI / 180;
+					
+					let sin = Math.sin(direction);
+					let cos = Math.cos(direction);
+					
+					let speed = random(minParticleSpeed, maxParticleSpeed);
+					let accel = random(minParticleAccel, maxParticleAccel);
+					
+					let particleInfo = {
+						time : 0,
+						lifetime : random(minParticleLifetime, maxParticleLifetime),
+						x : random(minParticleX, maxParticleX),
+						y : random(minParticleY, maxParticleY),
+						scalingSpeed : random(minParticleScalingSpeed, maxParticleScalingSpeed),
+						direction : direction,
+						speedX : speed * cos,
+						speedY : speed * sin,
+						accelX : accel * cos,
+						accelY : accel * sin,
+						scale : random(minParticleScale, maxParticleScale),
+						rotationSpeedRadian : random(minParticleRotationSpeedRadian, maxParticleRotationSpeedRadian),
+						radian : random(minParticleAngle, maxParticleAngle) * Math.PI / 180,
+						fadingSpeed : random(minParticleFadingSpeed, maxParticleFadingSpeed),
+						alpha : random(minParticleAlpha, maxParticleAlpha)
+					};
+					
+					if (particleFigure !== undefined && particleColor === undefined) {
+						particleInfo.color = 'rgb(' + RANDOM({
+							min : minParticleColorR,
+							max : maxParticleColorR
+						}) + ', ' + RANDOM({
+							min : minParticleColorG,
+							max : maxParticleColorG
+						}) + ', ' + RANDOM({
+							min : minParticleColorB,
+							max : maxParticleColorB
+						}) + ')';
+					}
+					
+					particleInfos.push(particleInfo);
+				});
+			};
+			
+			let step;
+			OVERRIDE(self.step, (origin) => {
+				
+				step = self.step = (deltaTime) => {
+					
+					for (let i = 0; i < particleInfos.length; i += 1) {
+						
+						let particleInfo = particleInfos[i];
+						
+						particleInfo.time += deltaTime;
+						
+						if (particleInfo.time > particleInfo.lifetime) {
+							particleInfos.splice(i, 1);
+							
+							if (endHandler !== undefined && particleInfos.length === 0) {
+								endHandler(self);
+							}
+						}
+						
+						else {
+							
+							particleInfo.speedX += particleAccelX * deltaTime;
+							particleInfo.speedY += particleAccelY * deltaTime;
+							
+							particleInfo.speedX += particleInfo.accelX * deltaTime;
+							particleInfo.speedY += particleInfo.accelY * deltaTime;
+							
+							particleInfo.x += particleInfo.speedX * deltaTime;
+							particleInfo.y += particleInfo.speedY * deltaTime;
+							
+							particleInfo.scale += particleInfo.scalingSpeed * deltaTime;
+							
+							if (particleInfo.scale < 0) {
+								particleInfo.scale = 0;
+							}
+							
+							particleInfo.radian += particleInfo.rotationSpeedRadian * deltaTime;
+							
+							particleInfo.alpha += particleInfo.fadingSpeed * deltaTime;
+							
+							if (particleFadingAccel !== undefined) {
+								particleInfo.fadingSpeed += particleFadingAccel * deltaTime;
+							}
+							
+							if (particleInfo.alpha < 0) {
+								particleInfo.alpha = 0;
+							}
+						}
+						
+						if (particleInfos === undefined) {
+							break;
+						}
+					}
+					
+					origin(deltaTime);
+				};
+			});
+			
+			let draw;
+			OVERRIDE(self.draw, (origin) => {
+				
+				draw = self.draw = (context) => {
+					
+					for (let i = 0; i < particleInfos.length; i += 1) {
+						
+						let particleInfo = particleInfos[i];
+						
+						let scale = particleInfo.scale;
+						
+						context.save();
+						
+						context.translate(particleInfo.x, particleInfo.y);
+						
+						if (isParticleAngleToDirection === true) {
+							context.rotate(particleInfo.direction);
+						} else {
+							context.rotate(particleInfo.radian);
+						}
+						
+						context.scale(scale, scale);
+						
+						context.globalAlpha *= particleInfo.alpha;
+						
+						if (particleFigure === undefined) {
+							
+							context.drawImage(
+								img,
+								particleCenterX - width / 2,
+								particleCenterY - height / 2,
+								width,
+								height);
+						}
+						
+						else {
+							
+							context.beginPath();
+							
+							if (particleFigure === 'line') {
+								context.moveTo(particleCenterX + particleStartX, particleCenterY + particleStartY);
+								context.lineTo(particleCenterX + particleEndX, particleCenterY + particleEndY);
+							}
+							
+							else if (particleFigure === 'rect') {
+								context.rect(particleCenterX - particleWidth / 2, particleCenterX - particleHeight / 2, particleWidth, particleHeight);
+							}
+							
+							else if (particleFigure === 'circle') {
+								context.ellipse(particleCenterX, particleCenterY, particleWidth / 2, particleHeight / 2, 0, 0, 2 * Math.PI);
+							}
+							
+							else if (particleFigure === 'polygon') {
+								
+								if (particlePoints.length > 0) {
+									
+									context.moveTo(particleCenterX + particlePoints[0].x, particleCenterY + particlePoints[0].y);
+									
+									for (let i = 1; i < particlePoints.length; i += 1) {
+										let point = particlePoints[i];
+										context.lineTo(particleCenterX + point.x, particleCenterY + point.y);
+									}
+									
+									context.lineTo(particleCenterX + particlePoints[0].x, particleCenterY + particlePoints[0].y);
+								}
+							}
+							
+							if (particleColor !== undefined) {
+								context.fillStyle = particleColor;
+								context.fill();
+							}
+							
+							else if (particleInfo.color !== undefined) {
+								context.fillStyle = particleInfo.color;
+								context.fill();
+							}
+							
+							if (particleBorder !== undefined) {
+								context.lineWidth = particleBorderPixel;
+								context.strokeStyle = particleBorderColor;
+								
+								if (particleBorderStyle === 'dashed') {
+									context.setLineDash([5]);
+								} else if (particleBorderStyle === 'dotted') {
+									context.setLineDash([2]);
+								}
+								
+								context.stroke();
+							}
+							
+							context.closePath();
+						}
+						
+						context.restore();
+					}
+					
+					origin(context);
+				};
+			});
+			
+			let remove;
+			OVERRIDE(self.remove, (origin) => {
+				
+				remove = self.remove = () => {
+					
+					if (img !== undefined) {
+						img.onload = undefined;
+						img = undefined;
+					}
+					
+					particleInfos = undefined;
+					
+					origin();
+				};
+			});

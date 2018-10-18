@@ -349,90 +349,152 @@ SkyEngine.ParticleSystem = CLASS(() => {
 				particleBorderColor = split[2];
 			}
 			
-			let width;
-			let height;
-			
-			let img;
+			let texture;
 			
 			if (particleSrc !== undefined) {
-				
-				img = new Image();
-				
-				img.onload = () => {
-					
-					width = img.width;
-					if (particleWidth === undefined) {
-						particleWidth = width;
-					}
-					
-					height = img.height;
-					if (particleHeight === undefined) {
-						particleHeight = height;
-					}
-					
-					img.onload = undefined;
-					
-					self.fireEvent('load');
-				};
-				
-				img.src = particleSrc;
+				texture = PIXI.Texture.fromImage(particleSrc);
 			}
 			
 			else {
-				self.fireEvent('load');
+				
+				let graphics = new PIXI.Graphics();
+				
+				if (particleBorder !== undefined) {
+					graphics.lineStyle(particleBorderPixel, parseInt(particleBorderColor.substring(1), 16), 1);
+				}
+				
+				if (particleColor !== undefined) {
+					graphics.beginFill(parseInt(particleColor.substring(1), 16));
+				}
+				
+				else {
+					particleColor = RANDOM({
+						min : minParticleColorR,
+						max : maxParticleColorR
+					}) << 16 | RANDOM({
+						min : minParticleColorG,
+						max : maxParticleColorG
+					}) << 8 | RANDOM({
+						min : minParticleColorB,
+						max : maxParticleColorB
+					});
+					
+					graphics.beginFill(particleColor);
+				}
+				
+				if (particleFigure === 'line') {
+					graphics.moveTo(particleCenterX + particleStartX, particleCenterY + particleStartY);
+					graphics.lineTo(particleCenterX + particleEndX, particleCenterY + particleEndY);
+				}
+				
+				else if (particleFigure === 'rect') {
+					graphics.drawRect(particleCenterX - particleWidth / 2, particleCenterX - particleHeight / 2, particleWidth, particleHeight);
+				}
+				
+				else if (particleFigure === 'circle') {
+					graphics.drawEllipse(particleCenterX, particleCenterY, particleWidth / 2, particleHeight / 2);
+				}
+				
+				else if (particleFigure === 'polygon') {
+					
+					if (particlePoints.length > 0) {
+						
+						let pixiPoints = [];
+						
+						EACH(particlePoints, (particlePoint) => {
+							pixiPoints.push(new PIXI.Point(particleCenterX + particlePoint.x, particleCenterY + particlePoint.y));
+						});
+						
+						if (particlePoints.length > 0) {
+							pixiPoints.push(new PIXI.Point(particleCenterX + particlePoints[0].x, particleCenterY + particlePoints[0].y));
+						}
+						
+						graphics.drawPolygon(pixiPoints);
+					}
+				}
+				
+				if (particleColor !== undefined) {
+					graphics.endFill();
+				}
+				
+				texture = SkyEngine.Screen.getPixiRenderer().generateTexture(graphics);
+				
+				graphics.destroy();
+				graphics = undefined;
 			}
+
+			let emitter = new PIXI.particles.Emitter(
+				
+				inner.getPixiContainer(),
+				
+				[texture],
+				
+				{
+					alpha : {
+						start : random(minParticleAlpha, maxParticleAlpha),
+						end : random(minParticleAlpha, maxParticleAlpha) + random(minParticleFadingSpeed, maxParticleFadingSpeed) * maxParticleLifetime
+					},
+					scale : {
+						start : random(minParticleScale, maxParticleScale),
+						end : random(minParticleScale, maxParticleScale) + random(minParticleScalingSpeed, maxParticleScalingSpeed) * maxParticleLifetime
+					},
+					color : {
+						start : 'ffffff',
+						end : 'ffffff'
+					},
+					speed : {
+						start : random(minParticleSpeed, maxParticleSpeed),
+						end : random(minParticleSpeed, maxParticleSpeed)
+					},
+					acceleration : {
+						x : particleAccelX,
+						y : particleAccelY
+					},
+					startRotation : {
+						min : minParticleAngle,
+						max : maxParticleAngle === 0 ? 360 : maxParticleAngle
+					},
+					rotationSpeed : {
+						min : minParticleRotationSpeed,
+						max : maxParticleRotationSpeed
+					},
+					lifetime : {
+						min : minParticleLifetime,
+						max : maxParticleLifetime
+					},
+					frequency : 0.008,
+					emitterLifetime : maxParticleLifetime,
+					maxParticles : random(minParticleCount, maxParticleCount),
+					pos : {
+						x : particleCenterX,
+						y : particleCenterY
+					},
+					addAtBack : false,
+					spawnType : 'circle',
+					spawnCircle : {
+						x : 0,
+						y : 0,
+						r : 10
+					}
+				}
+			);
 			
-			let particleInfos = [];
+			emitter.particleBlendMode = SkyEngine.Util.BlendMode.getPixiBlendMode(self.getBlendMode());
 			
 			let endHandler;
-			
+
 			let burst = self.burst = (_endHandler) => {
+				//OPTIONAL: endHandler
 				
 				endHandler = _endHandler;
-				
-				REPEAT(random(minParticleCount, maxParticleCount), () => {
-					
-					let direction = random(minParticleDirection, maxParticleDirection) * Math.PI / 180;
-					
-					let sin = Math.sin(direction);
-					let cos = Math.cos(direction);
-					
-					let speed = random(minParticleSpeed, maxParticleSpeed);
-					let accel = random(minParticleAccel, maxParticleAccel);
-					
-					let particleInfo = {
-						time : 0,
-						lifetime : random(minParticleLifetime, maxParticleLifetime),
-						x : random(minParticleX, maxParticleX),
-						y : random(minParticleY, maxParticleY),
-						scalingSpeed : random(minParticleScalingSpeed, maxParticleScalingSpeed),
-						direction : direction,
-						speedX : speed * cos,
-						speedY : speed * sin,
-						accelX : accel * cos,
-						accelY : accel * sin,
-						scale : random(minParticleScale, maxParticleScale),
-						rotationSpeedRadian : random(minParticleRotationSpeedRadian, maxParticleRotationSpeedRadian),
-						radian : random(minParticleAngle, maxParticleAngle) * Math.PI / 180,
-						fadingSpeed : random(minParticleFadingSpeed, maxParticleFadingSpeed),
-						alpha : random(minParticleAlpha, maxParticleAlpha)
-					};
-					
-					if (particleFigure !== undefined && particleColor === undefined) {
-						particleInfo.color = 'rgb(' + RANDOM({
-							min : minParticleColorR,
-							max : maxParticleColorR
-						}) + ', ' + RANDOM({
-							min : minParticleColorG,
-							max : maxParticleColorG
-						}) + ', ' + RANDOM({
-							min : minParticleColorB,
-							max : maxParticleColorB
-						}) + ')';
-					}
-					
-					particleInfos.push(particleInfo);
-				});
+
+				if (emitter !== undefined) {
+					emitter.playOnce(() => {
+						if (endHandler !== undefined) {
+							endHandler(self);
+						}
+					});
+				}
 			};
 			
 			let step;
@@ -440,156 +502,9 @@ SkyEngine.ParticleSystem = CLASS(() => {
 				
 				step = self.step = (deltaTime) => {
 					
-					for (let i = 0; i < particleInfos.length; i += 1) {
-						
-						let particleInfo = particleInfos[i];
-						
-						particleInfo.time += deltaTime;
-						
-						if (particleInfo.time > particleInfo.lifetime) {
-							particleInfos.splice(i, 1);
-							
-							if (endHandler !== undefined && particleInfos.length === 0) {
-								endHandler(self);
-							}
-						}
-						
-						else {
-							
-							particleInfo.speedX += particleAccelX * deltaTime;
-							particleInfo.speedY += particleAccelY * deltaTime;
-							
-							particleInfo.speedX += particleInfo.accelX * deltaTime;
-							particleInfo.speedY += particleInfo.accelY * deltaTime;
-							
-							particleInfo.x += particleInfo.speedX * deltaTime;
-							particleInfo.y += particleInfo.speedY * deltaTime;
-							
-							particleInfo.scale += particleInfo.scalingSpeed * deltaTime;
-							
-							if (particleInfo.scale < 0) {
-								particleInfo.scale = 0;
-							}
-							
-							particleInfo.radian += particleInfo.rotationSpeedRadian * deltaTime;
-							
-							particleInfo.alpha += particleInfo.fadingSpeed * deltaTime;
-							
-							if (particleFadingAccel !== undefined) {
-								particleInfo.fadingSpeed += particleFadingAccel * deltaTime;
-							}
-							
-							if (particleInfo.alpha < 0) {
-								particleInfo.alpha = 0;
-							}
-						}
-						
-						if (particleInfos === undefined) {
-							break;
-						}
-					}
+					emitter.update(deltaTime);
 					
 					origin(deltaTime);
-				};
-			});
-			
-			let draw;
-			OVERRIDE(self.draw, (origin) => {
-				
-				draw = self.draw = (context) => {
-					
-					for (let i = 0; i < particleInfos.length; i += 1) {
-						
-						let particleInfo = particleInfos[i];
-						
-						let scale = particleInfo.scale;
-						
-						context.save();
-						
-						context.translate(particleInfo.x, particleInfo.y);
-						
-						if (isParticleAngleToDirection === true) {
-							context.rotate(particleInfo.direction);
-						} else {
-							context.rotate(particleInfo.radian);
-						}
-						
-						context.scale(scale, scale);
-						
-						context.globalAlpha *= particleInfo.alpha;
-						
-						if (particleFigure === undefined) {
-							
-							context.drawImage(
-								img,
-								particleCenterX - width / 2,
-								particleCenterY - height / 2,
-								width,
-								height);
-						}
-						
-						else {
-							
-							context.beginPath();
-							
-							if (particleFigure === 'line') {
-								context.moveTo(particleCenterX + particleStartX, particleCenterY + particleStartY);
-								context.lineTo(particleCenterX + particleEndX, particleCenterY + particleEndY);
-							}
-							
-							else if (particleFigure === 'rect') {
-								context.rect(particleCenterX - particleWidth / 2, particleCenterX - particleHeight / 2, particleWidth, particleHeight);
-							}
-							
-							else if (particleFigure === 'circle') {
-								context.ellipse(particleCenterX, particleCenterY, particleWidth / 2, particleHeight / 2, 0, 0, 2 * Math.PI);
-							}
-							
-							else if (particleFigure === 'polygon') {
-								
-								if (particlePoints.length > 0) {
-									
-									context.moveTo(particleCenterX + particlePoints[0].x, particleCenterY + particlePoints[0].y);
-									
-									for (let i = 1; i < particlePoints.length; i += 1) {
-										let point = particlePoints[i];
-										context.lineTo(particleCenterX + point.x, particleCenterY + point.y);
-									}
-									
-									context.lineTo(particleCenterX + particlePoints[0].x, particleCenterY + particlePoints[0].y);
-								}
-							}
-							
-							if (particleColor !== undefined) {
-								context.fillStyle = particleColor;
-								context.fill();
-							}
-							
-							else if (particleInfo.color !== undefined) {
-								context.fillStyle = particleInfo.color;
-								context.fill();
-							}
-							
-							if (particleBorder !== undefined) {
-								context.lineWidth = particleBorderPixel;
-								context.strokeStyle = particleBorderColor;
-								
-								if (particleBorderStyle === 'dashed') {
-									context.setLineDash([5]);
-								} else if (particleBorderStyle === 'dotted') {
-									context.setLineDash([2]);
-								}
-								
-								context.stroke();
-							}
-							
-							context.closePath();
-						}
-						
-						context.restore();
-					}
-					
-					origin(context);
 				};
 			});
 			
@@ -598,12 +513,10 @@ SkyEngine.ParticleSystem = CLASS(() => {
 				
 				remove = self.remove = () => {
 					
-					if (img !== undefined) {
-						img.onload = undefined;
-						img = undefined;
-					}
+					emitter.destroy();
+					emitter = undefined;
 					
-					particleInfos = undefined;
+					endHandler = undefined;
 					
 					origin();
 				};

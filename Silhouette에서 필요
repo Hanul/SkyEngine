@@ -1,0 +1,30 @@
+
+			
+			
+			let drawArea;
+			OVERRIDE(self.drawArea, (origin) => {
+				
+				drawArea = self.drawArea = (context) => {
+					
+					if (polygonPoints === undefined) {
+						
+						if (imageData !== undefined) {
+							polygonPoints = SkyEngine.Util.ImageData.convertImageDataToPolygonPoints(imageData, width);
+						}
+					}
+					
+					else if (polygonPoints.length > 0) {
+						
+						context.moveTo(polygonPoints[0].x - width / 2, polygonPoints[0].y - height / 2);
+						
+						for (let i = 1; i < polygonPoints.length; i += 1) {
+							let point = polygonPoints[i];
+							context.lineTo(point.x - width / 2, point.y - height / 2);
+						}
+						
+						context.lineTo(polygonPoints[0].x - width / 2, polygonPoints[0].y - height / 2);
+					}
+					
+					origin(context);
+				};
+			});

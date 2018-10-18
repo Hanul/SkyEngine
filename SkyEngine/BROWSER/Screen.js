@@ -20,7 +20,8 @@ SkyEngine.Screen = OBJECT({
 		
 		let canvas = CANVAS().appendTo(wrapper);
 		let renderer = new PIXI.autoDetectRenderer({
-			view : canvas.getEl()
+			view : canvas.getEl(),
+			transparent : true
 		});
 		
 		let stage = new PIXI.Container();

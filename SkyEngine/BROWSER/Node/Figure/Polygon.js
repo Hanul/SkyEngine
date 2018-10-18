@@ -260,47 +260,72 @@ SkyEngine.Polygon = CLASS((cls) => {
 				};
 			});
 			
-			let draw;
-			OVERRIDE(self.draw, (origin) => {
+			let minX = 9999999;
+			let minY = 9999999;
+			let maxX = -9999999;
+			let maxY = -9999999;
+			
+			let width = 0;
+			let height = 0;
+			
+			if (points.length > 0) {
 				
-				draw = self.draw = (context) => {
-						
-					context.beginPath();
+				for (let i = 0; i < points.length; i += 1) {
+					let point = points[i];
+					if (point.x < minX) {
+						minX = point.x;
+					}
+					if (point.y < minY) {
+						minY = point.y;
+					}
+					if (point.x > maxX) {
+						maxX = point.x;
+					}
+					if (point.y > maxY) {
+						maxY = point.y;
+					}
+				}
+				
+				width = maxX - minX;
+				height = maxY - minY;
+			}
+			
+			inner.draw(width, height, (context, pixiSprite) => {
+				
+				if (points.length > 0) {
 					
-					if (points.length > 0) {
-						
-						context.moveTo(points[0].x, points[0].y);
-						
-						for (let i = 1; i < points.length; i += 1) {
-							let point = points[i];
-							context.lineTo(point.x, point.y);
-						}
-						
-						context.lineTo(points[0].x, points[0].y);
+					pixiSprite.x = minX;
+					pixiSprite.y = minY;
+					
+					context.moveTo(points[0].x - minX, points[0].y - minY);
+					
+					for (let i = 1; i < points.length; i += 1) {
+						let point = points[i];
+						context.lineTo(point.x - minX, point.y - minY);
 					}
 					
-					origin(context);
-				};
+					context.lineTo(points[0].x - minX, points[0].y - minY);
+				}
 			});
 			
 			let drawArea;
 			OVERRIDE(self.drawArea, (origin) => {
 				
-				drawArea = self.drawArea = (context) => {
+				drawArea = self.drawArea = (graphics) => {
 					
 					if (points.length > 0) {
 						
-						context.moveTo(points[0].x, points[0].y);
+						graphics.moveTo(points[0].x, points[0].y);
 						
 						for (let i = 1; i < points.length; i += 1) {
 							let point = points[i];
-							context.lineTo(point.x, point.y);
+							graphics.lineTo(point.x, point.y);
 						}
 						
-						context.lineTo(points[0].x, points[0].y);
+						graphics.lineTo(points[0].x, points[0].y);
 					}
 					
-					origin(context);
+					origin(graphics);
 				};
 			});
 			
