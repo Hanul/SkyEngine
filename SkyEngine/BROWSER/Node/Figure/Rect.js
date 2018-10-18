@@ -116,6 +116,22 @@ SkyEngine.Rect = CLASS((cls) => {
 		}];
 	};
 	
+	let generatePixiSprite = cls.generatePixiSprite = (params) => {
+		//REQUIRED: params
+		//REQUIRED: params.width
+		//REQUIRED: params.height
+		//OPTIONAL: params.color
+		//OPTIONAL: params.border
+		//OPTIONAL: params.blendMode
+		
+		let width = params.width;
+		let height = params.height;
+		
+		return SkyEngine.Figure.generatePixiSprite(params, (context) => {
+			context.rect(0, 0, width, height);
+		});
+	};
+	
 	return {
 		
 		preset : () => {
@@ -126,9 +142,13 @@ SkyEngine.Rect = CLASS((cls) => {
 			//REQUIRED: params
 			//REQUIRED: params.width	사각형의 너비
 			//REQUIRED: params.height	사각형의 높이
+			//REQUIRED: params.color
+			//REQUIRED: params.border
 			
 			let width = params.width;
 			let height = params.height;
+			let color = params.color;
+			let border = params.border;
 			
 			let checkPointInRect = SkyEngine.Util.Collision.checkPointInRect;
 			
@@ -277,9 +297,13 @@ SkyEngine.Rect = CLASS((cls) => {
 				};
 			});
 			
-			inner.draw(width, height, (context) => {
-				context.rect(0, 0, width, height);
-			});
+			inner.setPixiSprite(generatePixiSprite({
+				width : width,
+				height : height,
+				color : color,
+				border : border,
+				blendMode : self.getBlendMode()
+			}));
 			
 			let drawArea;
 			OVERRIDE(self.drawArea, (origin) => {

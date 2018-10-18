@@ -283,6 +283,33 @@ SkyEngine.Line = CLASS((cls) => {
 		return points;
 	};
 	
+	let generatePixiSprite = cls.generatePixiSprite = (params) => {
+		//REQUIRED: params
+		//REQUIRED: params.startX
+		//REQUIRED: params.startY
+		//REQUIRED: params.endX
+		//REQUIRED: params.endY
+		//OPTIONAL: params.color
+		//OPTIONAL: params.border
+		//OPTIONAL: params.blendMode
+		
+		let startX = params.startX;
+		let startY = params.startY;
+		let endX = params.endX;
+		let endY = params.endY;
+		
+		let width = Math.abs(endX - startX);
+		let height = Math.abs(endX - startX);
+		
+		params.width = width;		
+		params.height = height;
+		
+		return SkyEngine.Figure.generatePixiSprite(params, (context) => {
+			context.moveTo(width / 2 + startX, height / 2 + startY);
+			context.lineTo(width / 2 + endX, height / 2 + endY);
+		});
+	};
+	
 	return {
 		
 		preset : () => {
@@ -295,11 +322,13 @@ SkyEngine.Line = CLASS((cls) => {
 			//REQUIRED: params.startY		직선의 시작 y 좌표
 			//REQUIRED: params.endX			직선의 끝 x 좌표
 			//REQUIRED: params.endY			직선의 끝 Y 좌표
+			//REQUIRED: params.border
 			
 			let startX = params.startX;
 			let startY = params.startY;
 			let endX = params.endX;
 			let endY = params.endY;
+			let border = params.border;
 			
 			let checkLineLine = SkyEngine.Util.Collision.checkLineLine;
 			let checkLineRect = SkyEngine.Util.Collision.checkLineRect;
@@ -410,13 +439,14 @@ SkyEngine.Line = CLASS((cls) => {
 				};
 			});
 			
-			let width = Math.abs(endX - startX);
-			let height = Math.abs(endX - startX);
-			
-			inner.draw(width, height, (context) => {
-				context.moveTo(width / 2 + startX, height / 2 + startY);
-				context.lineTo(width / 2 + endX, height / 2 + endY);
-			});
+			inner.setPixiSprite(generatePixiSprite({
+				startX : startX,
+				startY : startY,
+				endX : endX,
+				endY : endY,
+				border : border,
+				blendMode : self.getBlendMode()
+			}));
 			
 			let drawArea;
 			OVERRIDE(self.drawArea, (origin) => {

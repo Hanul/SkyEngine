@@ -60,6 +60,67 @@ SkyEngine.Polygon = CLASS((cls) => {
 		}];
 	};
 	
+	let generatePixiSprite = cls.generatePixiSprite = (params) => {
+		//REQUIRED: params
+		//REQUIRED: params.points
+		//OPTIONAL: params.color
+		//OPTIONAL: params.border
+		//OPTIONAL: params.blendMode
+		
+		let points = params.points;
+		
+		let minX = 9999999;
+		let minY = 9999999;
+		let maxX = -9999999;
+		let maxY = -9999999;
+		
+		let width = 0;
+		let height = 0;
+		
+		if (points.length > 0) {
+			
+			for (let i = 0; i < points.length; i += 1) {
+				let point = points[i];
+				if (point.x < minX) {
+					minX = point.x;
+				}
+				if (point.y < minY) {
+					minY = point.y;
+				}
+				if (point.x > maxX) {
+					maxX = point.x;
+				}
+				if (point.y > maxY) {
+					maxY = point.y;
+				}
+			}
+			
+			width = maxX - minX;
+			height = maxY - minY;
+		}
+		
+		params.width = width;		
+		params.height = height;
+		
+		return SkyEngine.Figure.generatePixiSprite(params, (context, pixiSprite) => {
+			
+			if (points.length > 0) {
+				
+				pixiSprite.x = minX;
+				pixiSprite.y = minY;
+				
+				context.moveTo(points[0].x - minX, points[0].y - minY);
+				
+				for (let i = 1; i < points.length; i += 1) {
+					let point = points[i];
+					context.lineTo(point.x - minX, point.y - minY);
+				}
+				
+				context.lineTo(points[0].x - minX, points[0].y - minY);
+			}
+		});
+	};
+	
 	return {
 		
 		preset : () => {
@@ -69,8 +130,12 @@ SkyEngine.Polygon = CLASS((cls) => {
 		init : (inner, self, params) => {
 			//REQUIRED: params
 			//REQUIRED: params.points	다각형을 이루는 점들의 좌표들
+			//REQUIRED: params.color
+			//REQUIRED: params.border
 			
 			let points = params.points
+			let color = params.color;
+			let border = params.border;
 			
 			let checkPointInPolygon = SkyEngine.Util.Collision.checkPointInPolygon;
 			
@@ -260,53 +325,12 @@ SkyEngine.Polygon = CLASS((cls) => {
 				};
 			});
 			
-			let minX = 9999999;
-			let minY = 9999999;
-			let maxX = -9999999;
-			let maxY = -9999999;
-			
-			let width = 0;
-			let height = 0;
-			
-			if (points.length > 0) {
-				
-				for (let i = 0; i < points.length; i += 1) {
-					let point = points[i];
-					if (point.x < minX) {
-						minX = point.x;
-					}
-					if (point.y < minY) {
-						minY = point.y;
-					}
-					if (point.x > maxX) {
-						maxX = point.x;
-					}
-					if (point.y > maxY) {
-						maxY = point.y;
-					}
-				}
-				
-				width = maxX - minX;
-				height = maxY - minY;
-			}
-			
-			inner.draw(width, height, (context, pixiSprite) => {
-				
-				if (points.length > 0) {
-					
-					pixiSprite.x = minX;
-					pixiSprite.y = minY;
-					
-					context.moveTo(points[0].x - minX, points[0].y - minY);
-					
-					for (let i = 1; i < points.length; i += 1) {
-						let point = points[i];
-						context.lineTo(point.x - minX, point.y - minY);
-					}
-					
-					context.lineTo(points[0].x - minX, points[0].y - minY);
-				}
-			});
+			inner.setPixiSprite(generatePixiSprite({
+				points : points,
+				color : color,
+				border : border,
+				blendMode : self.getBlendMode()
+			}));
 			
 			let drawArea;
 			OVERRIDE(self.drawArea, (origin) => {

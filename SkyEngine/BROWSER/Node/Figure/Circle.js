@@ -46,6 +46,22 @@ SkyEngine.Circle = CLASS((cls) => {
 			circleSin, circleCos);
 	};
 	
+	let generatePixiSprite = cls.generatePixiSprite = (params) => {
+		//REQUIRED: params
+		//REQUIRED: params.width
+		//REQUIRED: params.height
+		//OPTIONAL: params.color
+		//OPTIONAL: params.border
+		//OPTIONAL: params.blendMode
+		
+		let width = params.width;
+		let height = params.height;
+		
+		return SkyEngine.Figure.generatePixiSprite(params, (context) => {
+			context.ellipse(width / 2, height / 2, width / 2, height / 2, 0, 0, 2 * Math.PI);
+		});
+	};
+	
 	return {
 		
 		preset : () => {
@@ -56,9 +72,13 @@ SkyEngine.Circle = CLASS((cls) => {
 			//REQUIRED: params
 			//REQUIRED: params.width	원의 너비
 			//REQUIRED: params.height	원의 높이
+			//REQUIRED: params.color
+			//REQUIRED: params.border
 			
 			let width = params.width;
 			let height = params.height;
+			let color = params.color;
+			let border = params.border;
 			
 			let checkPointInCircle = SkyEngine.Util.Collision.checkPointInCircle;
 			
@@ -230,9 +250,13 @@ SkyEngine.Circle = CLASS((cls) => {
 				};
 			});
 			
-			inner.draw(width, height, (context) => {
-				context.ellipse(width / 2, height / 2, width / 2, height / 2, 0, 0, 2 * Math.PI);
-			});
+			inner.setPixiSprite(generatePixiSprite({
+				width : width,
+				height : height,
+				color : color,
+				border : border,
+				blendMode : self.getBlendMode()
+			}));
 			
 			let drawArea;
 			OVERRIDE(self.drawArea, (origin) => {
