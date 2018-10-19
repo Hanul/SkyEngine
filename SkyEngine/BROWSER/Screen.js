@@ -19,10 +19,11 @@ SkyEngine.Screen = OBJECT({
 		}).appendTo(BODY);
 		
 		let canvas = CANVAS().appendTo(wrapper);
-		let renderer = new PIXI.autoDetectRenderer({
+		let renderer = new PIXI.WebGLRenderer({
 			view : canvas.getEl(),
 			transparent : true
 		});
+		renderer.plugins.interaction.autoPreventDefault = false;
 		
 		let stage = new PIXI.Container();
 		stage.addChild(inner.getPixiContainer());

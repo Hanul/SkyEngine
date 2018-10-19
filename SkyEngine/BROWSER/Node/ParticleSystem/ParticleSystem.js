@@ -451,7 +451,7 @@ SkyEngine.ParticleSystem = CLASS(() => {
 					
 					if (particleSrc !== undefined) {
 						
-						pixiGraphics = new PIXI.Sprite.fromImage(particleSrc);
+						pixiGraphics = new PIXI.Sprite.from(img);
 						
 						pixiGraphics.anchor.x = 0.5;
 						pixiGraphics.anchor.y = 0.5;
