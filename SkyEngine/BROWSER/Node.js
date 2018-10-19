@@ -104,6 +104,7 @@ SkyEngine.Node = CLASS({
 
 		let isHiding = false;
 		let isRemoved = false;
+		let isToRemove = false;
 
 		let eventMap = {};
 
@@ -1980,6 +1981,11 @@ SkyEngine.Node = CLASS({
 			return isRemoved;
 		};
 		
+		let setToRemove = self.setToRemove = () => {
+			pixiContainer.visible = false;
+			isToRemove = true;
+		};
+		
 		let addDom = self.addDom = (dom) => {
 			//REQUIRED: dom
 			
@@ -2488,7 +2494,11 @@ SkyEngine.Node = CLASS({
 
 		let step = self.step = (deltaTime) => {
 			
-			if (pauseCount === 0) {
+			if (isToRemove === true) {
+				remove();
+			}
+			
+			else if (pauseCount === 0) {
 				
 				beforeX = x;
 				beforeY = y;

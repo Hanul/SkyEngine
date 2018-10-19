@@ -63,6 +63,19 @@ SkyEngine.Image = CLASS((cls) => {
 						self.removeFromPixiContainer(pixiSprite);
 					}
 					
+					if (cropLeft > width) {
+						cropLeft = width;
+					}
+					if (cropRight > width) {
+						cropRight = width;
+					}
+					if (cropTop > height) {
+						cropTop = height;
+					}
+					if (cropBottom > height) {
+						cropBottom = height;
+					}
+					
 					let w = width - cropLeft - cropRight;
 					let h = height - cropTop - cropBottom;
 					
