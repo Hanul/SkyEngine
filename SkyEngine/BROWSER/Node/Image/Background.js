@@ -52,7 +52,7 @@ SkyEngine.Background = CLASS({
 				
 				if (pixiSprites.length === 0) {
 					
-					let pixiSprite = new PIXI.Sprite.fromImage(src);
+					let pixiSprite = new PIXI.Sprite.from(img);
 					
 					pixiSprite.x = -width / 2;
 					pixiSprite.y = -height / 2;
@@ -108,7 +108,7 @@ SkyEngine.Background = CLASS({
 					// 스프라이트 생성
 					if (existed !== true) {
 						
-						let pixiSprite = new PIXI.Sprite.fromImage(src);
+						let pixiSprite = new PIXI.Sprite.from(img);
 						
 						pixiSprite.x = -width / 2;
 						pixiSprite.y = _y;
@@ -167,7 +167,7 @@ SkyEngine.Background = CLASS({
 					// 스프라이트 생성
 					if (existed !== true) {
 						
-						let pixiSprite = new PIXI.Sprite.fromImage(src);
+						let pixiSprite = new PIXI.Sprite.from(img);
 						
 						pixiSprite.x = _x;
 						pixiSprite.y = -height / 2;
@@ -239,7 +239,7 @@ SkyEngine.Background = CLASS({
 						// 스프라이트 생성
 						if (existed !== true) {
 							
-							let pixiSprite = new PIXI.Sprite.fromImage(src);
+							let pixiSprite = new PIXI.Sprite.from(img);
 							
 							pixiSprite.x = _x2;
 							pixiSprite.y = _y;
@@ -274,7 +274,7 @@ SkyEngine.Background = CLASS({
 					let screenWidth = SkyEngine.Screen.getWidth() / SkyEngine.Screen.getRealScaleX() / self.getRealScaleX();
 					let screenHeight = SkyEngine.Screen.getHeight() / SkyEngine.Screen.getRealScaleY() / self.getRealScaleY();
 					
-					pixiTilingSprite = new PIXI.extras.TilingSprite.fromImage(src, screenWidth, screenHeight);
+					pixiTilingSprite = new PIXI.extras.TilingSprite.from(img, screenWidth, screenHeight);
 					
 					pixiTilingSprite.anchor.x = 0.5;
 					pixiTilingSprite.anchor.y = 0.5;

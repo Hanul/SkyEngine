@@ -73,7 +73,7 @@ SkyEngine.Sprite = CLASS({
 						frameCount = width / spriteWidth * height / spriteHeight;
 					}
 					
-					pixiTilingSprite = new PIXI.extras.TilingSprite.fromImage(src, spriteWidth, spriteHeight);
+					pixiTilingSprite = new PIXI.extras.TilingSprite.from(img, spriteWidth, spriteHeight);
 					
 					pixiTilingSprite.x = -spriteWidth / 2;
 					pixiTilingSprite.y = -spriteHeight / 2;
@@ -123,7 +123,7 @@ SkyEngine.Sprite = CLASS({
 							frameCount += 1;
 						}
 						
-						let pixiSprite = new PIXI.Sprite.fromImage(src);
+						let pixiSprite = new PIXI.Sprite.from(img);
 						
 						pixiSprite.x = -width / 2;
 						pixiSprite.y = -height / 2;

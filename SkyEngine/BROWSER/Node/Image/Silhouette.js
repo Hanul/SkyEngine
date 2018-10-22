@@ -138,7 +138,7 @@ SkyEngine.Silhouette = CLASS((cls) => {
 						imageContext = undefined;
 						imageCanvas.remove();
 						
-						pixiSprite = new PIXI.Sprite.fromImage(img.src);
+						pixiSprite = new PIXI.Sprite.from(img);
 						
 						pixiSprite.x = -width / 2;
 						pixiSprite.y = -height / 2;

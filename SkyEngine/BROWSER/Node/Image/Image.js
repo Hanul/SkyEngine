@@ -14,30 +14,8 @@ SkyEngine.Image = CLASS((cls) => {
 		init : (inner, self, params) => {
 			//REQUIRED: params
 			//REQUIRED: params.src
-			//OPTIONAL: params.cropTop
-			//OPTIONAL: params.cropRight
-			//OPTIONAL: params.cropBottom
-			//OPTIONAL: params.cropLeft
 			
 			let src = params.src;
-			
-			let cropTop = params.cropTop;
-			let cropRight = params.cropRight;
-			let cropBottom = params.cropBottom;
-			let cropLeft = params.cropLeft;
-			
-			if (cropTop === undefined) {
-				cropTop = 0;
-			}
-			if (cropRight === undefined) {
-				cropRight = 0;
-			}
-			if (cropBottom === undefined) {
-				cropBottom = 0;
-			}
-			if (cropLeft === undefined) {
-				cropLeft = 0;
-			}
 			
 			let checkRectRect = SkyEngine.Util.Collision.checkRectRect;
 			
@@ -52,46 +30,6 @@ SkyEngine.Image = CLASS((cls) => {
 			let img;
 			
 			let pixiSprite;
-			
-			let createPixiSprite = () => {
-				
-				// 이미지가 로드 되어 있어야 합니다.
-				if (self.checkIsRemoved() !== true && width !== undefined) {
-					
-					// 기존 것을 지웁니다.
-					if (pixiSprite !== undefined) {
-						self.removeFromPixiContainer(pixiSprite);
-					}
-					
-					if (cropLeft > width) {
-						cropLeft = width;
-					}
-					if (cropRight > width) {
-						cropRight = width;
-					}
-					if (cropTop > height) {
-						cropTop = height;
-					}
-					if (cropBottom > height) {
-						cropBottom = height;
-					}
-					
-					let w = width - cropLeft - cropRight;
-					let h = height - cropTop - cropBottom;
-					
-					let texture = new PIXI.Texture(new PIXI.BaseTexture(img), new PIXI.Rectangle(cropLeft, cropTop, w, h));
-					
-					pixiSprite = new PIXI.Sprite.from(texture);
-					
-					pixiSprite.x = -width / 2 + cropLeft;
-					pixiSprite.y = -height / 2 + cropTop;
-					pixiSprite.zIndex = -9999999;
-					
-					pixiSprite.blendMode = SkyEngine.Util.BlendMode.getPixiBlendMode(self.getBlendMode());
-					
-					self.addToPixiContainer(pixiSprite);
-				}
-			};
 			
 			let setSrc = self.setSrc = (_src) => {
 				src = _src;
@@ -113,7 +51,15 @@ SkyEngine.Image = CLASS((cls) => {
 						
 						img = tempImg;
 						
-						createPixiSprite();
+						pixiSprite = new PIXI.Sprite.from(img);
+						
+						pixiSprite.x = -width / 2;
+						pixiSprite.y = -height / 2;
+						pixiSprite.zIndex = -9999999;
+						
+						pixiSprite.blendMode = SkyEngine.Util.BlendMode.getPixiBlendMode(self.getBlendMode());
+						
+						self.addToPixiContainer(pixiSprite);
 						
 						self.fireEvent('load');
 					}
@@ -263,29 +209,6 @@ SkyEngine.Image = CLASS((cls) => {
 			
 			let getImg = inner.getImg = () => {
 				return img;
-			};
-			
-			let crop = self.crop = (params) => {
-				//REQUIRED: params
-				//REQUIRED: params.top
-				//REQUIRED: params.right
-				//REQUIRED: params.bottom
-				//REQUIRED: params.left
-				
-				if (params.top !== undefined) {
-					cropTop = params.top;
-				}
-				if (params.right !== undefined) {
-					cropRight = params.right;
-				}
-				if (params.bottom !== undefined) {
-					cropBottom = params.bottom;
-				}
-				if (params.left !== undefined) {
-					cropLeft = params.left;
-				}
-				
-				createPixiSprite();
 			};
 			
 			let getWidth = self.getWidth = () => {
