@@ -1925,6 +1925,8 @@ SkyEngine.Node = CLASS({
 			}
 			
 			childNodes = [];
+			
+			pixiContainer.removeChildren();
 		};
 
 		let remove = self.remove = () => {

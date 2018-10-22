@@ -466,7 +466,13 @@ SkyEngine.ParticleSystem = CLASS(() => {
 					
 					let scale = random(minParticleScale, maxParticleScale);
 					pixiGraphics.scale.set(scale, scale);
-					pixiGraphics.rotation = random(minParticleAngle, maxParticleAngle) * Math.PI / 180;
+					
+					if (isParticleAngleToDirection === true) {
+						pixiGraphics.rotation = direction;
+					} else {
+						pixiGraphics.rotation = random(minParticleAngle, maxParticleAngle) * Math.PI / 180;
+					}
+					
 					pixiGraphics.alpha = random(minParticleAlpha, maxParticleAlpha);
 					
 					self.addToPixiContainer(pixiGraphics);
@@ -530,7 +536,9 @@ SkyEngine.ParticleSystem = CLASS(() => {
 							
 							pixiGraphics.scale.set(scale, scale);
 							
-							pixiGraphics.rotation += particle.rotationSpeedRadian * deltaTime;
+							if (isParticleAngleToDirection !== true) {
+								pixiGraphics.rotation += particle.rotationSpeedRadian * deltaTime;
+							}
 							
 							pixiGraphics.alpha += particle.fadingSpeed * deltaTime;
 							

@@ -3,6 +3,18 @@
  */
 SkyEngine.Figure = CLASS((cls) => {
 	
+	let colorStrToColor = (colorStr) => {
+		
+		if (colorStr[0] === '#') {
+			return parseInt(colorStr.substring(1), 16);
+		}
+		
+		if (colorStr.substring(0, 4) === 'rgb(') {
+			let split = colorStr.substring(4, colorStr.indexOf(')')).split(',');
+			return (1 << 24) + (parseInt(split[0]) << 16) + (parseInt(split[1]) << 8) + parseInt(split[2]);
+		}
+	};
+	
 	let generateGraphics = cls.generateGraphics = (params) => {
 		//REQUIRED: params
 		//OPTIONAL: params.color
@@ -19,7 +31,7 @@ SkyEngine.Figure = CLASS((cls) => {
 			if (isNaN(color) !== true) {
 				graphics.beginFill(color);
 			} else {
-				graphics.beginFill(parseInt(color.substring(1), 16));
+				graphics.beginFill(colorStrToColor(color));
 			}
 		}
 		
@@ -30,7 +42,7 @@ SkyEngine.Figure = CLASS((cls) => {
 			let borderStyle = split[1];
 			let borderColor = split[2];
 			
-			graphics.lineStyle(borderSize, parseInt(borderColor.substring(1), 16), 1);
+			graphics.lineStyle(borderSize, colorStrToColor(borderColor), 1);
 		}
 		
 		graphics.zIndex = -9999999;
