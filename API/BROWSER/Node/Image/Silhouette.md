@@ -9,7 +9,13 @@
 * `REQUIRED` *params.src*
 * `OPTIONAL` *params.color*
 * `OPTIONAL` *params.border*
+* `OPTIONAL` *params.width*
+* `OPTIONAL` *params.height*
 
 ## Public Members
 
 ### `setSrc(src)`
+
+### `getWidth()`
+
+### `getHeight()`

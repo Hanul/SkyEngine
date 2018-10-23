@@ -1,19 +1,24 @@
-# `OBJECT` SkyEngine.Screen
-게임 화면 전체를 다루는 오브젝트
+# `CLASS` SkyEngine.SubScreen
+서브스크린 노드
 
 ## Mom CLASS
 `SkyEngine.Node`
 
+## Parameters
+* `REQUIRED` *params*
+* `OPTIONAL` *params.style*
+* `REQUIRED` *params.width*
+* `REQUIRED` *params.height*
+* `OPTIONAL` *params.isDebugMode*
+
 ## Public Members
 
-### `registerNode(node)`
-노드 등록
-
-### `unregisterNode(node)`
-노드 해제
-
-### `findNodesByClass(cls)`
-노드 검색
+### `setSize(params)`
+화면 크기가 변경되는 경우, 캔버스의 크기 또한 변경되어야 합니다.
+#### Parameters
+* `REQUIRED` *params*
+* `REQUIRED` *params.width*
+* `REQUIRED` *params.height*
 
 ### `cameraFollowX(params)`
 #### Parameters
@@ -59,8 +64,6 @@
 ### `getWidth()`
 
 ### `getHeight()`
-
-### `getRatio()`
 
 ### `getCanvas()`
 

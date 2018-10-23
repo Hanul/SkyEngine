@@ -4,7 +4,11 @@
 ## Mom CLASS
 `SkyEngine.Node`
 
-## Parameters
+## Static Members
+
+### `generateGraphics(params)`
+#### Parameters
 * `REQUIRED` *params*
 * `OPTIONAL` *params.color*
 * `OPTIONAL` *params.border*
+* `OPTIONAL` *params.blendMode*

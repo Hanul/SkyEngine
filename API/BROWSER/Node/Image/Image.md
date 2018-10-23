@@ -12,10 +12,6 @@
 
 ### `setSrc(src)`
 
-### `crop(params)`
-#### Parameters
-* `REQUIRED` *params*
-* `REQUIRED` *params.top*
-* `REQUIRED` *params.right*
-* `REQUIRED` *params.bottom*
-* `REQUIRED` *params.left*
+### `getWidth()`
+
+### `getHeight()`

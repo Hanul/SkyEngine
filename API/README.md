@@ -1,7 +1,7 @@
 # API
 
 ## [BROWSER](BROWSER/README.md)
-* [BROWSER/CreateGradient.md](BROWSER/CreateGradient.md)
+* [BROWSER/BGM.md](BROWSER/BGM.md) 배경음악
 * [BROWSER/Delay.md](BROWSER/Delay.md) 주어진 초가 흐른 뒤에 함수를 실행하는 클래스
 * [BROWSER/E.md](BROWSER/E.md) 이벤트 정보를 제공하는 객체를 생성하는 E 클래스
 * [BROWSER/Interval.md](BROWSER/Interval.md) 주어진 초 마다 함수를 반복해서 실행하는 클래스
@@ -13,6 +13,7 @@
 * [BROWSER/Node/Figure.md](BROWSER/Node/Figure.md) 도형 노드
 * [BROWSER/Node/FixedNode.md](BROWSER/Node/FixedNode.md) 위치 고정 노드
 * [BROWSER/Node/StateSet.md](BROWSER/Node/StateSet.md) 상태 세트 노드
+* [BROWSER/Node/SubScreen.md](BROWSER/Node/SubScreen.md) 서브스크린 노드
 
 #### [BROWSER/Node/Figure](BROWSER/Node/Figure/README.md)
 * [BROWSER/Node/Figure/Circle.md](BROWSER/Node/Figure/Circle.md) 원형 노드
@@ -38,5 +39,6 @@
 * [BROWSER/Node/TileSystem/TileMap.md](BROWSER/Node/TileSystem/TileMap.md) 타일맵 노드
 
 ### [BROWSER/Util](BROWSER/Util/README.md)
+* [BROWSER/Util/BlendMode.md](BROWSER/Util/BlendMode.md)
 * [BROWSER/Util/Collision.md](BROWSER/Util/Collision.md)
 * [BROWSER/Util/ImageData.md](BROWSER/Util/ImageData.md)

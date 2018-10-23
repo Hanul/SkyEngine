@@ -1,5 +1,5 @@
 # BROWSER API
-* [CreateGradient.md](CreateGradient.md)
+* [BGM.md](BGM.md) 배경음악
 * [Delay.md](Delay.md) 주어진 초가 흐른 뒤에 함수를 실행하는 클래스
 * [E.md](E.md) 이벤트 정보를 제공하는 객체를 생성하는 E 클래스
 * [Interval.md](Interval.md) 주어진 초 마다 함수를 반복해서 실행하는 클래스
@@ -11,6 +11,7 @@
 * [Node/Figure.md](Node/Figure.md) 도형 노드
 * [Node/FixedNode.md](Node/FixedNode.md) 위치 고정 노드
 * [Node/StateSet.md](Node/StateSet.md) 상태 세트 노드
+* [Node/SubScreen.md](Node/SubScreen.md) 서브스크린 노드
 
 ### [Node/Figure](Node/Figure/README.md)
 * [Node/Figure/Circle.md](Node/Figure/Circle.md) 원형 노드
@@ -36,5 +37,6 @@
 * [Node/TileSystem/TileMap.md](Node/TileSystem/TileMap.md) 타일맵 노드
 
 ## [Util](Util/README.md)
+* [Util/BlendMode.md](Util/BlendMode.md)
 * [Util/Collision.md](Util/Collision.md)
 * [Util/ImageData.md](Util/ImageData.md)

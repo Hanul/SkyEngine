@@ -48,6 +48,9 @@
 * `OPTIONAL` *params.maxParticleSpeed* 파티클의 최대 속도
 * `OPTIONAL` *params.particleAccelX* 파티클의 x 가속도
 * `OPTIONAL` *params.particleAccelY* 파티클의 y 가속도
+* `OPTIONAL` *params.particleAccel* 파티클의 가속도
+* `OPTIONAL` *params.minParticleAccel* 파티클의 최소 가속도
+* `OPTIONAL` *params.maxParticleAccel* 파티클의 최대 가속도
 * `OPTIONAL` *params.particleScale* 파티클의 스케일
 * `OPTIONAL` *params.minParticleScale* 파티클의 최소 스케일
 * `OPTIONAL` *params.maxParticleScale* 파티클의 최대 스케일
@@ -60,13 +63,14 @@
 * `OPTIONAL` *params.maxParticleAngle* 파티클의 최대 각도
 * `OPTIONAL` *params.particleRotationSpeed* 파티클의 회전 속도
 * `OPTIONAL` *params.minParticleRotationSpeed* 파티클의 최소 회전 속도
-* `OPTIONAL` *params.minParticleRotationSpeed* 파티클의 최대 회전 속도
+* `OPTIONAL` *params.maxParticleRotationSpeed* 파티클의 최대 회전 속도
 * `OPTIONAL` *params.particleAlpha* 파티클의 투명도
 * `OPTIONAL` *params.minParticleAlpha* 파티클의 최소 투명도
 * `OPTIONAL` *params.maxParticleAlpha* 파티클의 최대 투명도
 * `OPTIONAL` *params.particleFadingSpeed* 파티클의 페이딩 속도
 * `OPTIONAL` *params.minParticleFadingSpeed* 파티클의 최소 페이딩 속도
-* `OPTIONAL` *params.minParticleFadingSpeed* 파티클의 최대 페이딩 속도
+* `OPTIONAL` *params.maxParticleFadingSpeed* 파티클의 최대 페이딩 속도
+* `OPTIONAL` *params.particleFadingAccel* 파티클의 페이딩 가속도
 
 ## Public Members
 

@@ -13,3 +13,9 @@
 * `OPTIONAL` *params.rightMargin*
 * `OPTIONAL` *params.topMargin*
 * `OPTIONAL` *params.bottomMargin*
+
+## Public Members
+
+### `getWidth()`
+
+### `getHeight()`

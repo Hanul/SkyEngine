@@ -48,8 +48,8 @@
 * `OPTIONAL` *params.minFadingSpeed* 최소 페이드 속도
 * `OPTIONAL` *params.maxFadingSpeed* 최대 페이드 속도
 * `OPTIONAL` *params.toAlpha* 페이드 알파 값 목적지
-* `OPTIONAL` *params.filter* 이 설정을 통해 노드에 CanvasRenderingContext2D.filter를 적용할 수 있습니다.
-* `OPTIONAL` *params.blendMode* 이 설정을 통해 노드에 CanvasRenderingContext2D.globalCompositeOperation를 적용할 수 있습니다.
+* `OPTIONAL` *params.filter* 필터
+* `OPTIONAL` *params.blendMode* 블렌드 모드 (multiply, screen, overlay)
 * `OPTIONAL` *params.collider* 충돌 영역. 하나의 영역을 지정하거나, 영역들의 배열을 지정할 수 있습니다.
 * `OPTIONAL` *params.touchArea* 터치 영역. 하나의 영역을 지정하거나, 영역들의 배열을 지정할 수 있습니다.
 * `OPTIONAL` *params.on* 이벤트
@@ -58,8 +58,13 @@
 * `OPTIONAL` *params.dom* 노드를 따라다니는 DOM 객체를 지정할 수 있습니다. 노드의 크기가 변경되거나, 움직이거나, 회전하여도 똑같이 반영됩니다.
 * `OPTIONAL` *params.c* 자식 노드. 하나의 노드를 지정하거나, 노드들의 배열을 지정할 수 있습니다.
 * `OPTIONAL` *params.isToCheckCollision* true로 지정하면 최대 충돌 계산 크기 설정에 관계없이 해당 노드는 충돌 계산을 하게끔 강제합니다.
+* `OPTIONAL` *params.isY2ZIndex* true로 지정하면 y값이 변경되는 것을 감지하여 z 인덱스에 반영합니다.
 
 ## Public Members
+
+### `addToPixiContainer(pixiChild)`
+
+### `removeFromPixiContainer(pixiChild)`
 
 ### `setX(x)`
 #### Parameters
@@ -75,7 +80,7 @@
 
 ### `setZIndex(zIndex)`
 #### Parameters
-* `REQUIRED` *_zIndex*
+* `REQUIRED` *zIndex*
 
 ### `getZIndex()`
 
@@ -545,6 +550,10 @@ x 스케일과 y 스케일의 목적지를 동시에 설정합니다.
 
 ### `checkIsRemoved()`
 
+### `setToRemove(setToRemoveCallback)`
+#### Parameters
+* `OPTIONAL` *setToRemoveCallback*
+
 ### `addDom(dom)`
 #### Parameters
 * `REQUIRED` *dom*
@@ -556,10 +565,18 @@ x 스케일과 y 스케일의 목적지를 동시에 설정합니다.
 ### `removeAllDoms()`
 
 ### `on(eventName, eventHandler)`
+#### Parameters
+* `REQUIRED` *eventName*
+* `REQUIRED` *eventHandler*
 
 ### `checkIsEventExists(eventName)`
+#### Parameters
+* `REQUIRED` *eventName*
 
 ### `off(eventName, eventHandler)`
+#### Parameters
+* `REQUIRED` *eventName*
+* `OPTIONAL` *eventHandler*
 
 ### `fireEvent(eventNameOrParams)`
 #### Parameters
@@ -613,9 +630,9 @@ x 스케일과 y 스케일의 목적지를 동시에 설정합니다.
 
 ### `step(deltaTime)`
 
-### `draw(context)`
-
-### `drawArea(context)`
+### `drawArea(graphics)`
+#### Parameters
+* `REQUIRED` *graphics*
 
 ### `pause()`
 
@@ -624,3 +641,7 @@ x 스케일과 y 스케일의 목적지를 동시에 설정합니다.
 ### `resume()`
 
 ### `checkIsToCheckCollision()`
+
+### `delay(seconds, func)`
+
+### `interval(seconds, func)`

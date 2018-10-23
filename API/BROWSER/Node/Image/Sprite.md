@@ -11,6 +11,7 @@
 * `OPTIONAL` *params.spriteWidth*
 * `OPTIONAL` *params.spriteHeight*
 * `OPTIONAL` *params.fps*
+* `OPTIONAL` *params.frameCount*
 
 ## Public Members
 
@@ -21,3 +22,11 @@
 ### `stop()`
 
 ### `resume()`
+
+### `getSpriteWidth()`
+
+### `getSpriteHeight()`
+
+### `getWidth()`
+
+### `getHeight()`
