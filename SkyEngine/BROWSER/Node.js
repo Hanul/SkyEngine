@@ -105,6 +105,7 @@ SkyEngine.Node = CLASS({
 		let isHiding = false;
 		let isRemoved = false;
 		let isToRemove = false;
+		let setToRemoveCallback;
 
 		let eventMap = {};
 
@@ -1983,7 +1984,11 @@ SkyEngine.Node = CLASS({
 			return isRemoved;
 		};
 		
-		let setToRemove = self.setToRemove = () => {
+		let setToRemove = self.setToRemove = (_setToRemoveCallback) => {
+			//OPTIONAL: setToRemoveCallback
+			
+			setToRemoveCallback = _setToRemoveCallback;
+			
 			pixiContainer.visible = false;
 			isToRemove = true;
 		};
@@ -2497,6 +2502,11 @@ SkyEngine.Node = CLASS({
 		let step = self.step = (deltaTime) => {
 			
 			if (isToRemove === true) {
+				
+				if (setToRemoveCallback !== undefined) {
+					setToRemoveCallback();
+				}
+				
 				remove();
 			}
 			
