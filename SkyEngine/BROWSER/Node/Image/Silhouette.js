@@ -140,8 +140,9 @@ SkyEngine.Silhouette = CLASS((cls) => {
 						
 						pixiSprite = new PIXI.Sprite.from(img);
 						
-						pixiSprite.x = -width / 2;
-						pixiSprite.y = -height / 2;
+						pixiSprite.anchor.x = 0.5;
+						pixiSprite.anchor.y = 0.5;
+						
 						pixiSprite.zIndex = -9999999;
 						
 						pixiSprite.blendMode = SkyEngine.Util.BlendMode.getPixiBlendMode(self.getBlendMode());

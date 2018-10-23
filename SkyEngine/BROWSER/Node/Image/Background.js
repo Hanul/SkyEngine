@@ -48,14 +48,30 @@ SkyEngine.Background = CLASS({
 		
 		let draw = () => {
 			
+			let xs = leftMargin + width + rightMargin;
+			let ys = topMargin + height + bottomMargin;
+			
+			let realScaleX = SkyEngine.Screen.getRealScaleX() * self.getRealScaleX();
+			let realScaleY = SkyEngine.Screen.getRealScaleY() * self.getRealScaleY();
+			
+			let screenX = (SkyEngine.Screen.getCameraFollowX() - SkyEngine.Screen.getX()) / realScaleX;
+			let screenY = (SkyEngine.Screen.getCameraFollowY() - SkyEngine.Screen.getY()) / realScaleY;
+			
+			let halfScreenWidth = SkyEngine.Screen.getWidth() / 2 / realScaleX;
+			let halfScreenHeight = SkyEngine.Screen.getHeight() / 2 / realScaleY;
+			
+			let realX = self.getX() / realScaleX;
+			let realY = self.getY() / realScaleY;
+			
 			if (isNotToRepeatX === true && isNotToRepeatY === true) {
 				
 				if (pixiSprites.length === 0) {
 					
 					let pixiSprite = new PIXI.Sprite.from(img);
 					
-					pixiSprite.x = -width / 2;
-					pixiSprite.y = -height / 2;
+					pixiSprite.anchor.x = 0.5;
+					pixiSprite.anchor.y = 0.5;
+					
 					pixiSprite.zIndex = -9999999;
 					
 					pixiSprite.blendMode = SkyEngine.Util.BlendMode.getPixiBlendMode(self.getBlendMode());
@@ -68,11 +84,7 @@ SkyEngine.Background = CLASS({
 			
 			else if (isNotToRepeatX === true) {
 				
-				let _y = -height / 2;
-				
-				let screenY = (SkyEngine.Screen.getCameraFollowY() - SkyEngine.Screen.getY()) / SkyEngine.Screen.getRealScaleY() / self.getRealScaleY();
-				
-				let halfScreenHeight = SkyEngine.Screen.getHeight() / 2 / SkyEngine.Screen.getRealScaleY() / self.getRealScaleY();
+				let _y = 0;
 				
 				// 화면 밖으로 벗어난 스프라이트 제거
 				for (let i = 0; i < pixiSprites.length; i += 1) {
@@ -80,19 +92,19 @@ SkyEngine.Background = CLASS({
 					let pixiSprite = pixiSprites[i];
 					
 					if (
-					pixiSprite.y + self.getY() < screenY - halfScreenHeight - (topMargin + height + bottomMargin) ||
-					pixiSprite.y + self.getY() > screenY + halfScreenHeight) {
+					pixiSprite.y + realY < screenY - halfScreenHeight - ys ||
+					pixiSprite.y + realY > screenY + halfScreenHeight) {
 						self.removeFromPixiContainer(pixiSprite);
 						pixiSprites.splice(i, 1);
 						i -= 1;
 					}
 				}
 				
-				while (screenY - halfScreenHeight < _y + self.getY()) {
-					_y -= topMargin + height + bottomMargin;
+				while (screenY - halfScreenHeight < _y + realY) {
+					_y -= ys;
 				}
 				
-				while (_y + self.getY() < screenY + halfScreenHeight) {
+				while (_y + realY < screenY + halfScreenHeight + ys) {
 					
 					let existed;
 					
@@ -110,7 +122,9 @@ SkyEngine.Background = CLASS({
 						
 						let pixiSprite = new PIXI.Sprite.from(img);
 						
-						pixiSprite.x = -width / 2;
+						pixiSprite.anchor.x = 0.5;
+						pixiSprite.anchor.y = 0.5;
+						
 						pixiSprite.y = _y;
 						pixiSprite.zIndex = -9999999;
 						
@@ -121,17 +135,13 @@ SkyEngine.Background = CLASS({
 						self.addToPixiContainer(pixiSprite);
 					}
 					
-					_y += topMargin + height + bottomMargin;
+					_y += ys;
 				}
 			}
 			
 			else if (isNotToRepeatY === true) {
 				
-				let _x = -width / 2;
-				
-				let screenX = (SkyEngine.Screen.getCameraFollowX() - SkyEngine.Screen.getX()) / SkyEngine.Screen.getRealScaleX() / self.getRealScaleX();
-				
-				let halfScreenWidth = SkyEngine.Screen.getWidth() / 2 / SkyEngine.Screen.getRealScaleX() / self.getRealScaleX();
+				let _x = 0;
 				
 				// 화면 밖으로 벗어난 스프라이트 제거
 				for (let i = 0; i < pixiSprites.length; i += 1) {
@@ -139,19 +149,19 @@ SkyEngine.Background = CLASS({
 					let pixiSprite = pixiSprites[i];
 					
 					if (
-					pixiSprite.x + self.getX() < screenX - halfScreenWidth - (leftMargin + width + rightMargin) ||
-					pixiSprite.x + self.getX() > screenX + halfScreenWidth) {
+					pixiSprite.x + realX < screenX - halfScreenWidth - xs ||
+					pixiSprite.x + realX > screenX + halfScreenWidth) {
 						self.removeFromPixiContainer(pixiSprite);
 						pixiSprites.splice(i, 1);
 						i -= 1;
 					}
 				}
 				
-				while (screenX - halfScreenWidth < _x + self.getX()) {
-					_x -= leftMargin + width + rightMargin;
+				while (screenX - halfScreenWidth < _x + realX) {
+					_x -= xs;
 				}
 				
-				while (_x + self.getX() < screenX + halfScreenWidth) {
+				while (_x + realX < screenX + halfScreenWidth + xs) {
 					
 					let existed;
 					
@@ -169,8 +179,10 @@ SkyEngine.Background = CLASS({
 						
 						let pixiSprite = new PIXI.Sprite.from(img);
 						
+						pixiSprite.anchor.x = 0.5;
+						pixiSprite.anchor.y = 0.5;
+						
 						pixiSprite.x = _x;
-						pixiSprite.y = -height / 2;
 						pixiSprite.zIndex = -9999999;
 						
 						pixiSprite.blendMode = SkyEngine.Util.BlendMode.getPixiBlendMode(self.getBlendMode());
@@ -180,20 +192,14 @@ SkyEngine.Background = CLASS({
 						self.addToPixiContainer(pixiSprite);
 					}
 					
-					_x += leftMargin + width + rightMargin;
+					_x += xs;
 				}
 			}
 			
 			else {
 				
-				let _x = -width / 2;
-				let _y = -height / 2;
-				
-				let screenX = (SkyEngine.Screen.getCameraFollowX() - SkyEngine.Screen.getX()) / SkyEngine.Screen.getRealScaleX() / self.getRealScaleX();
-				let screenY = (SkyEngine.Screen.getCameraFollowY() - SkyEngine.Screen.getY()) / SkyEngine.Screen.getRealScaleY() / self.getRealScaleY();
-				
-				let halfScreenWidth = SkyEngine.Screen.getWidth() / 2 / SkyEngine.Screen.getRealScaleX() / self.getRealScaleX();
-				let halfScreenHeight = SkyEngine.Screen.getHeight() / 2 / SkyEngine.Screen.getRealScaleY() / self.getRealScaleY();
+				let _x = 0;
+				let _y = 0;
 				
 				// 화면 밖으로 벗어난 스프라이트 제거
 				for (let i = 0; i < pixiSprites.length; i += 1) {
@@ -201,29 +207,29 @@ SkyEngine.Background = CLASS({
 					let pixiSprite = pixiSprites[i];
 					
 					if (
-					pixiSprite.x + self.getX() < screenX - halfScreenWidth - (leftMargin + width + rightMargin) ||
-					pixiSprite.y + self.getY() < screenY - halfScreenHeight - (topMargin + height + bottomMargin) ||
-					pixiSprite.x + self.getX() > screenX + halfScreenWidth ||
-					pixiSprite.y + self.getY() > screenY + halfScreenHeight) {
+					pixiSprite.x + realX < screenX - halfScreenWidth ||
+					pixiSprite.y + realY < screenY - halfScreenHeight ||
+					pixiSprite.x + realX > screenX + halfScreenWidth ||
+					pixiSprite.y + realY > screenY + halfScreenHeight) {
 						self.removeFromPixiContainer(pixiSprite);
 						pixiSprites.splice(i, 1);
 						i -= 1;
 					}
 				}
 				
-				while (screenX - halfScreenWidth < _x + self.getX()) {
-					_x -= leftMargin + width + rightMargin;
+				while (screenX - halfScreenWidth < _x + realX) {
+					_x -= xs;
 				}
 				
-				while (screenY - halfScreenHeight < _y + self.getY()) {
-					_y -= topMargin + height + bottomMargin;
+				while (screenY - halfScreenHeight < _y + realY) {
+					_y -= ys;
 				}
 				
-				while (_y + self.getY() < screenY + halfScreenHeight) {
+				while (_y + realY < screenY + halfScreenHeight + ys) {
 					
 					let _x2 = _x;
 					
-					while (_x2 + self.getX() < screenX + halfScreenWidth) {
+					while (_x2 + realX < screenX + halfScreenWidth + xs) {
 						
 						let existed;
 						
@@ -241,6 +247,9 @@ SkyEngine.Background = CLASS({
 							
 							let pixiSprite = new PIXI.Sprite.from(img);
 							
+							pixiSprite.anchor.x = 0.5;
+							pixiSprite.anchor.y = 0.5;
+							
 							pixiSprite.x = _x2;
 							pixiSprite.y = _y;
 							pixiSprite.zIndex = -9999999;
@@ -252,10 +261,10 @@ SkyEngine.Background = CLASS({
 							self.addToPixiContainer(pixiSprite);
 						}
 						
-						_x2 += leftMargin + width + rightMargin;
+						_x2 += xs;
 					}
 					
-					_y += topMargin + height + bottomMargin;
+					_y += ys;
 				}
 			}
 		};
@@ -271,8 +280,8 @@ SkyEngine.Background = CLASS({
 				
 				if (isNotToRepeatX !== true && isNotToRepeatY !== true && leftMargin === 0 && rightMargin === 0 && topMargin === 0 && bottomMargin === 0) {
 					
-					let screenWidth = SkyEngine.Screen.getWidth() / SkyEngine.Screen.getRealScaleX() / self.getRealScaleX();
-					let screenHeight = SkyEngine.Screen.getHeight() / SkyEngine.Screen.getRealScaleY() / self.getRealScaleY();
+					let screenWidth = SkyEngine.Screen.getWidth() / realScaleX;
+					let screenHeight = SkyEngine.Screen.getHeight() / realScaleY;
 					
 					pixiTilingSprite = new PIXI.extras.TilingSprite.from(img, screenWidth, screenHeight);
 					
@@ -309,11 +318,11 @@ SkyEngine.Background = CLASS({
 				
 				if (pixiTilingSprite !== undefined) {
 					
-					let screenWidth = SkyEngine.Screen.getWidth() / SkyEngine.Screen.getRealScaleX() / self.getRealScaleX();
-					let screenHeight = SkyEngine.Screen.getHeight() / SkyEngine.Screen.getRealScaleY() / self.getRealScaleY();
+					let screenWidth = SkyEngine.Screen.getWidth() / realScaleX;
+					let screenHeight = SkyEngine.Screen.getHeight() / realScaleY;
 					
-					pixiTilingSprite.x = -self.getX() + (SkyEngine.Screen.getCameraFollowX() - SkyEngine.Screen.getX()) / SkyEngine.Screen.getRealScaleX() / self.getRealScaleX();
-					pixiTilingSprite.y = -self.getY() + (SkyEngine.Screen.getCameraFollowY() - SkyEngine.Screen.getY()) / SkyEngine.Screen.getRealScaleY() / self.getRealScaleY();
+					pixiTilingSprite.x = -self.getX() + (SkyEngine.Screen.getCameraFollowX() - SkyEngine.Screen.getX()) / realScaleX;
+					pixiTilingSprite.y = -self.getY() + (SkyEngine.Screen.getCameraFollowY() - SkyEngine.Screen.getY()) / realScaleY;
 					
 					pixiTilingSprite.tilePosition.x = (screenWidth - width) / 2 - pixiTilingSprite.x;
 					pixiTilingSprite.tilePosition.y = (screenHeight - height) / 2 - pixiTilingSprite.y;

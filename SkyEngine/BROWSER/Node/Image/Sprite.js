@@ -75,8 +75,9 @@ SkyEngine.Sprite = CLASS({
 					
 					pixiTilingSprite = new PIXI.extras.TilingSprite.from(img, spriteWidth, spriteHeight);
 					
-					pixiTilingSprite.x = -spriteWidth / 2;
-					pixiTilingSprite.y = -spriteHeight / 2;
+					pixiTilingSprite.anchor.x = 0.5;
+					pixiTilingSprite.anchor.y = 0.5;
+					
 					pixiTilingSprite.zIndex = -9999999;
 					
 					pixiTilingSprite.blendMode = SkyEngine.Util.BlendMode.getPixiBlendMode(self.getBlendMode());
@@ -125,8 +126,9 @@ SkyEngine.Sprite = CLASS({
 						
 						let pixiSprite = new PIXI.Sprite.from(img);
 						
-						pixiSprite.x = -width / 2;
-						pixiSprite.y = -height / 2;
+						pixiSprite.anchor.x = 0.5;
+						pixiSprite.anchor.y = 0.5;
+						
 						pixiSprite.zIndex = -9999999;
 						
 						pixiSprite.blendMode = SkyEngine.Util.BlendMode.getPixiBlendMode(self.getBlendMode());
