@@ -280,6 +280,9 @@ SkyEngine.Background = CLASS({
 				
 				if (isNotToRepeatX !== true && isNotToRepeatY !== true && leftMargin === 0 && rightMargin === 0 && topMargin === 0 && bottomMargin === 0) {
 					
+					let realScaleX = SkyEngine.Screen.getRealScaleX() * self.getRealScaleX();
+					let realScaleY = SkyEngine.Screen.getRealScaleY() * self.getRealScaleY();
+					
 					let screenWidth = SkyEngine.Screen.getWidth() / realScaleX;
 					let screenHeight = SkyEngine.Screen.getHeight() / realScaleY;
 					
@@ -318,11 +321,20 @@ SkyEngine.Background = CLASS({
 				
 				if (pixiTilingSprite !== undefined) {
 					
+					let realScaleX = SkyEngine.Screen.getRealScaleX() * self.getRealScaleX();
+					let realScaleY = SkyEngine.Screen.getRealScaleY() * self.getRealScaleY();
+					
+					let screenX = (SkyEngine.Screen.getCameraFollowX() - SkyEngine.Screen.getX()) / realScaleX;
+					let screenY = (SkyEngine.Screen.getCameraFollowY() - SkyEngine.Screen.getY()) / realScaleY;
+					
 					let screenWidth = SkyEngine.Screen.getWidth() / realScaleX;
 					let screenHeight = SkyEngine.Screen.getHeight() / realScaleY;
 					
-					pixiTilingSprite.x = -self.getX() + (SkyEngine.Screen.getCameraFollowX() - SkyEngine.Screen.getX()) / realScaleX;
-					pixiTilingSprite.y = -self.getY() + (SkyEngine.Screen.getCameraFollowY() - SkyEngine.Screen.getY()) / realScaleY;
+					let realX = self.getX() / realScaleX;
+					let realY = self.getY() / realScaleY;
+					
+					pixiTilingSprite.x = -realX + screenX;
+					pixiTilingSprite.y = -realY + screenY;
 					
 					pixiTilingSprite.tilePosition.x = (screenWidth - width) / 2 - pixiTilingSprite.x;
 					pixiTilingSprite.tilePosition.y = (screenHeight - height) / 2 - pixiTilingSprite.y;

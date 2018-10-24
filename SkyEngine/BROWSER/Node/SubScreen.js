@@ -173,6 +173,7 @@ SkyEngine.SubScreen = CLASS({
 		
 		self.on('remove', () => {
 			loop.remove();
+			wrapper.remove();
 		});
 		
 		let cameraFollowX = self.cameraFollowX = (params) => {
@@ -330,15 +331,6 @@ SkyEngine.SubScreen = CLASS({
 			appendTo = self.appendTo = (domNode) => {
 				wrapper.appendTo(domNode);
 				return self;
-			};
-		});
-		
-		let remove;
-		OVERRIDE(self.remove, (origin) => {
-			
-			remove = self.remove = () => {
-				origin();
-				wrapper.remove();
 			};
 		});
 	}
