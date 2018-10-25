@@ -1978,6 +1978,13 @@ SkyEngine.Node = CLASS({
 				displayResizeEvent.remove();
 				displayResizeEvent = undefined;
 			}
+			
+			pixiContainer.destroy({
+				children : true,
+				texture : true,
+				baseTexture : true
+			});
+			pixiContainer = undefined;
 		};
 
 		let checkIsRemoved = self.checkIsRemoved = () => {
