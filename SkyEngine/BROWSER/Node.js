@@ -2901,44 +2901,50 @@ SkyEngine.Node = CLASS({
 					fireEvent('move');
 				}
 				
-				// PixiJS 컨테이너 재조정
-				pixiContainer.x = x;
-				pixiContainer.y = y;
-				pixiContainer.pivot.set(centerX, centerY);
-				pixiContainer.scale.set(scaleX, scaleY);
-				pixiContainer.rotation = angle * Math.PI / 180;
-				pixiContainer.alpha = alpha;
-				
-				if (areaGraphics !== undefined) {
-					areaGraphics.x = centerX;
-					areaGraphics.y = centerY;
-				}
-				
-				if (isRemoved !== true && domWrapper !== undefined) {
+				if (isRemoved !== true) {
 					
-					let ratio = SkyEngine.Screen.getRatio();
-					let domFilter = TO_DELETE;
-					
-					let target = self;
-					while (target !== undefined) {
-						
-						if (target.getFilter() !== undefined) {
-							domFilter = target.getFilter();
-							break;
-						}
-						
-						target = target.getParent();
+					// PixiJS 컨테이너 재조정
+					if (pixiContainer !== undefined) {
+						pixiContainer.x = x;
+						pixiContainer.y = y;
+						pixiContainer.pivot.set(centerX, centerY);
+						pixiContainer.scale.set(scaleX, scaleY);
+						pixiContainer.rotation = angle * Math.PI / 180;
+						pixiContainer.alpha = alpha;
 					}
 					
-					domWrapper.addStyle({
-						left : SkyEngine.Screen.getLeft() + (SkyEngine.Screen.getWidth() / 2 + drawingX - SkyEngine.Screen.getCameraFollowX()) * ratio - domWrapper.getWidth() / 2,
-						top : SkyEngine.Screen.getTop() + (SkyEngine.Screen.getHeight() / 2 + drawingY - SkyEngine.Screen.getCameraFollowY()) * ratio - domWrapper.getHeight() / 2,
-						transform : 'rotate(' + realRadian + 'rad) scale(' + ratio * realScaleX + ', ' + ratio * realScaleY + ')',
-						opacity : isFirstFixDomStyle === true ? 0 : pixiContainer.worldAlpha,
-						filter : domFilter
-					});
+					if (areaGraphics !== undefined) {
+						areaGraphics.x = centerX;
+						areaGraphics.y = centerY;
+					}
 					
-					isFirstFixDomStyle = false;
+					// DOM Wrapper 재조정
+					if (domWrapper !== undefined) {
+						
+						let ratio = SkyEngine.Screen.getRatio();
+						let domFilter = TO_DELETE;
+						
+						let target = self;
+						while (target !== undefined) {
+							
+							if (target.getFilter() !== undefined) {
+								domFilter = target.getFilter();
+								break;
+							}
+							
+							target = target.getParent();
+						}
+						
+						domWrapper.addStyle({
+							left : SkyEngine.Screen.getLeft() + (SkyEngine.Screen.getWidth() / 2 + drawingX - SkyEngine.Screen.getCameraFollowX()) * ratio - domWrapper.getWidth() / 2,
+							top : SkyEngine.Screen.getTop() + (SkyEngine.Screen.getHeight() / 2 + drawingY - SkyEngine.Screen.getCameraFollowY()) * ratio - domWrapper.getHeight() / 2,
+							transform : 'rotate(' + realRadian + 'rad) scale(' + ratio * realScaleX + ', ' + ratio * realScaleY + ')',
+							opacity : isFirstFixDomStyle === true ? 0 : pixiContainer.worldAlpha,
+							filter : domFilter
+						});
+						
+						isFirstFixDomStyle = false;
+					}
 				}
 			}
 		};
