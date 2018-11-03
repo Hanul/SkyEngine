@@ -34,24 +34,49 @@ SkyEngine.Image = CLASS((cls) => {
 			let setSrc = self.setSrc = (_src) => {
 				src = _src;
 				
-				let tempImg = new Image();
-				
-				if (img === undefined) {
-					img = tempImg;
-				}
-				
-				tempImg.onload = () => {
+				NEXT([
+				(next) => {
 					
-					tempImg.onload = undefined;
+					if (PIXI.utils.TextureCache[src] === undefined) {
+						
+						let tempImg = new Image();
+						
+						if (img === undefined) {
+							img = tempImg;
+						}
+						
+						tempImg.onload = () => {
+							
+							tempImg.onload = undefined;
+							
+							if (self.checkIsRemoved() !== true) {
+								
+								width = tempImg.width;
+								height = tempImg.height;
+								
+								img = tempImg;
+								
+								PIXI.Texture.addToCache(new PIXI.Texture.from(img), src);
+								
+								next();
+							}
+						};
+						
+						tempImg.src = src;
+					}
 					
-					if (self.checkIsRemoved() !== true) {
+					else {
+						next();
+					}
+				},
+				
+				() => {
+					return () => {
 						
-						width = tempImg.width;
-						height = tempImg.height;
+						pixiSprite = new PIXI.Sprite.fromImage(src);
 						
-						img = tempImg;
-						
-						pixiSprite = new PIXI.Sprite.from(img);
+						width = pixiSprite.width;
+						height = pixiSprite.height;
 						
 						pixiSprite.anchor.x = 0.5;
 						pixiSprite.anchor.y = 0.5;
@@ -63,10 +88,8 @@ SkyEngine.Image = CLASS((cls) => {
 						self.addToPixiContainer(pixiSprite);
 						
 						self.fireEvent('load');
-					}
-				};
-				
-				tempImg.src = src;
+					};
+				}]);
 			};
 			
 			setSrc(src);
