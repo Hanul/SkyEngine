@@ -345,26 +345,60 @@ SkyEngine.ParticleSystem = CLASS(() => {
 			
 			if (particleSrc !== undefined) {
 				
-				img = new Image();
-				
-				img.onload = () => {
+				NEXT([
+				(next) => {
 					
-					width = img.width;
-					if (particleWidth === undefined) {
-						particleWidth = width;
+					let texture = PIXI.utils.TextureCache[particleSrc];
+					
+					if (texture === undefined) {
+						
+						img = new Image();
+						
+						img.onload = () => {
+							
+							img.onload = undefined;
+							
+							if (self.checkIsRemoved() !== true) {
+								
+								if (PIXI.utils.TextureCache[particleSrc] !== undefined) {
+									texture = PIXI.utils.TextureCache[particleSrc];
+								}
+								
+								else {
+									
+									texture = new PIXI.Texture.from(img);
+									
+									PIXI.Texture.addToCache(texture, particleSrc);
+								}
+								
+								next(texture);
+							}
+						};
+						
+						img.src = particleSrc;
 					}
 					
-					height = img.height;
-					if (particleHeight === undefined) {
-						particleHeight = height;
+					else {
+						next(texture);
 					}
-					
-					img.onload = undefined;
-					
-					self.fireEvent('load');
-				};
+				},
 				
-				img.src = particleSrc;
+				() => {
+					return (texture) => {
+						
+						width = texture.width;
+						height = texture.height;
+						
+						if (particleWidth === undefined) {
+							particleWidth = width;
+						}
+						if (particleHeight === undefined) {
+							particleHeight = height;
+						}
+						
+						self.fireEvent('load');
+					};
+				}]);
 			}
 			
 			else {
@@ -451,7 +485,7 @@ SkyEngine.ParticleSystem = CLASS(() => {
 					
 					if (particleSrc !== undefined) {
 						
-						pixiGraphics = new PIXI.Sprite.from(img);
+						pixiGraphics = new PIXI.Sprite.fromImage(particleSrc);
 						
 						pixiGraphics.anchor.x = 0.5;
 						pixiGraphics.anchor.y = 0.5;

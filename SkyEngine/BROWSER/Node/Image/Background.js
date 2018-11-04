@@ -41,7 +41,7 @@ SkyEngine.Background = CLASS({
 		let width;
 		let height;
 		
-		let img = new Image();
+		let img;
 		
 		let pixiTilingSprite;
 		let pixiSprites;
@@ -67,7 +67,7 @@ SkyEngine.Background = CLASS({
 				
 				if (pixiSprites.length === 0) {
 					
-					let pixiSprite = new PIXI.Sprite.from(img);
+					let pixiSprite = new PIXI.Sprite.fromImage(src);
 					
 					pixiSprite.anchor.x = 0.5;
 					pixiSprite.anchor.y = 0.5;
@@ -120,7 +120,7 @@ SkyEngine.Background = CLASS({
 					// 스프라이트 생성
 					if (existed !== true) {
 						
-						let pixiSprite = new PIXI.Sprite.from(img);
+						let pixiSprite = new PIXI.Sprite.fromImage(src);
 						
 						pixiSprite.anchor.x = 0.5;
 						pixiSprite.anchor.y = 0.5;
@@ -177,7 +177,7 @@ SkyEngine.Background = CLASS({
 					// 스프라이트 생성
 					if (existed !== true) {
 						
-						let pixiSprite = new PIXI.Sprite.from(img);
+						let pixiSprite = new PIXI.Sprite.fromImage(src);
 						
 						pixiSprite.anchor.x = 0.5;
 						pixiSprite.anchor.y = 0.5;
@@ -245,7 +245,7 @@ SkyEngine.Background = CLASS({
 						// 스프라이트 생성
 						if (existed !== true) {
 							
-							let pixiSprite = new PIXI.Sprite.from(img);
+							let pixiSprite = new PIXI.Sprite.fromImage(src);
 							
 							pixiSprite.anchor.x = 0.5;
 							pixiSprite.anchor.y = 0.5;
@@ -269,14 +269,49 @@ SkyEngine.Background = CLASS({
 			}
 		};
 		
-		img.onload = () => {
+		NEXT([
+		(next) => {
 			
-			img.onload = undefined;
+			let texture = PIXI.utils.TextureCache[src];
 			
-			if (self.checkIsRemoved() !== true) {
+			if (texture === undefined) {
 				
-				width = img.width;
-				height = img.height;
+				img = new Image();
+				
+				img.onload = () => {
+					
+					img.onload = undefined;
+					
+					if (self.checkIsRemoved() !== true) {
+						
+						if (PIXI.utils.TextureCache[src] !== undefined) {
+							texture = PIXI.utils.TextureCache[src];
+						}
+						
+						else {
+							
+							texture = new PIXI.Texture.from(img);
+							
+							PIXI.Texture.addToCache(texture, src);
+						}
+						
+						next(texture);
+					}
+				};
+				
+				img.src = src;
+			}
+			
+			else {
+				next(texture);
+			}
+		},
+		
+		() => {
+			return (texture) => {
+				
+				width = texture.width;
+				height = texture.height;
 				
 				if (isNotToRepeatX !== true && isNotToRepeatY !== true && leftMargin === 0 && rightMargin === 0 && topMargin === 0 && bottomMargin === 0) {
 					
@@ -286,7 +321,7 @@ SkyEngine.Background = CLASS({
 					let screenWidth = SkyEngine.Screen.getWidth() / realScaleX;
 					let screenHeight = SkyEngine.Screen.getHeight() / realScaleY;
 					
-					pixiTilingSprite = new PIXI.extras.TilingSprite.from(img, screenWidth, screenHeight);
+					pixiTilingSprite = new PIXI.extras.TilingSprite.from(texture, screenWidth, screenHeight);
 					
 					pixiTilingSprite.anchor.x = 0.5;
 					pixiTilingSprite.anchor.y = 0.5;
@@ -307,10 +342,8 @@ SkyEngine.Background = CLASS({
 				}
 				
 				self.fireEvent('load');
-			}
-		};
-		
-		img.src = src;
+			};
+		}]);
 		
 		let step;
 		OVERRIDE(self.step, (origin) => {
@@ -351,8 +384,10 @@ SkyEngine.Background = CLASS({
 			
 			remove = self.remove = () => {
 				
-				img.onload = undefined;
-				img = undefined;
+				if (img !== undefined) {
+					img.onload = undefined;
+					img = undefined;
+				}
 				
 				pixiTilingSprite = undefined;
 				pixiSprites = undefined;
@@ -360,10 +395,6 @@ SkyEngine.Background = CLASS({
 				origin();
 			};
 		});
-		
-		let getImg = inner.getImg = () => {
-			return img;
-		};
 		
 		let getWidth = self.getWidth = () => {
 			return width;

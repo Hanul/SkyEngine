@@ -6,12 +6,102 @@ SkyEngine('Util').ImageData = OBJECT({
 		
 		const OUTLINE_DX = [1, 0, 1, 1, -1, 0, -1, 1, 0, 0, 0, 0, -1, 0, -1];
 		const OUTLINE_DY = [0, -1, 0, 0, 0, -1, 0, 0, 1, -1, 1, 1, 0, -1, 0];
+		
+		let imageDataCache = {};
+		
+		let getCachedImageData = self.getCachedImageData = (src) => {
+			//REQUIRED: src
+			
+			return imageDataCache[src];
+		};
+		
+		let load = self.load = (src, callback) => {
+			//REQUIRED: src
+			//REQUIRED: callback
+			
+			NEXT([
+			(next) => {
+				
+				let texture = PIXI.utils.TextureCache[src];
+				
+				if (texture === undefined) {
+					
+					let img = new Image();
+					
+					img.onload = () => {
+						
+						img.onload = undefined;
+						
+						if (PIXI.utils.TextureCache[src] !== undefined) {
+							texture = PIXI.utils.TextureCache[src];
+						}
+						
+						else {
+							
+							texture = new PIXI.Texture.from(img);
+							
+							PIXI.Texture.addToCache(texture, src);
+						}
+						
+						img = undefined;
+						
+						next(texture);
+					};
+					
+					img.src = src;
+				}
+				
+				else {
+					next(texture);
+				}
+			},
+			
+			() => {
+				return (texture) => {
+					
+					let width = texture.width;
+					let height = texture.height;
+					
+					let imageCanvas = CANVAS({
+						style : {
+							display : 'none'
+						},
+						width : width,
+						height : height
+					}).appendTo(BODY);
+					
+					let imageContext = imageCanvas.getContext('2d');
+					imageContext.drawImage(texture.baseTexture.source, 0, 0, width, height);
+					
+					let imgData = imageContext.getImageData(0, 0, width, height);
+					
+					// clear.
+					imageContext = undefined;
+					imageCanvas.remove();
+					
+					callback(imgData.data, imgData, {
+						width : width,
+						height : height
+					});
+				};
+			}]);
+		};
+		
+		let loadAndCache = self.loadAndCache = (src) => {
+			//REQUIRED: src
+			
+			if (getCachedImageData(src) === undefined) {
+				load(src, (imageData) => {
+					imageDataCache[src] = imageData;
+				});
+			}
+		};
 
-		let checkImageDataPointIsTransparent = self.checkImageDataPointIsTransparent = (imageData, width, x, y) => {
+		let checkPointIsTransparent = self.checkPointIsTransparent = (imageData, width, x, y) => {
 			return imageData[(y * width + x) * 4 + 3] <= TRANSPARENT_ALPHA;
 		};
 
-		let convertImageDataToPolygonPoints = self.convertImageDataToPolygonPoints = (imageData, width) => {
+		let convertToPolygonPoints = self.convertToPolygonPoints = (imageData, width) => {
 			
 			let x = 0;
 			let y = 0;
@@ -26,7 +116,7 @@ SkyEngine('Util').ImageData = OBJECT({
 			
 			while (true) {
 				
-				if (checkImageDataPointIsTransparent(imageData, width, x, y) !== true) {
+				if (checkPointIsTransparent(imageData, width, x, y) !== true) {
 					startX = x;
 					startY = y;
 					break;
@@ -50,16 +140,16 @@ SkyEngine('Util').ImageData = OBJECT({
 			do {
 				let i = 0;
 				
-				if (checkImageDataPointIsTransparent(imageData, width, x - 1, y - 1) !== true) {
+				if (checkPointIsTransparent(imageData, width, x - 1, y - 1) !== true) {
 					i += 1;
 				}
-				if (checkImageDataPointIsTransparent(imageData, width, x, y - 1) !== true) {
+				if (checkPointIsTransparent(imageData, width, x, y - 1) !== true) {
 					i += 2;
 				}
-				if (checkImageDataPointIsTransparent(imageData, width, x - 1, y) !== true) {
+				if (checkPointIsTransparent(imageData, width, x - 1, y) !== true) {
 					i += 4;
 				}
-				if (checkImageDataPointIsTransparent(imageData, width, x, y) !== true) {
+				if (checkPointIsTransparent(imageData, width, x, y) !== true) {
 					i += 8;
 				}
 				

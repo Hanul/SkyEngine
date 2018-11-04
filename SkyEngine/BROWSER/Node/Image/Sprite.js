@@ -46,16 +46,50 @@ SkyEngine.Sprite = CLASS({
 		}
 		
 		if (src !== undefined) {
-			img = new Image();
 			
-			img.onload = () => {
+			NEXT([
+			(next) => {
 				
-				img.onload = undefined;
+				let texture = PIXI.utils.TextureCache[src];
 				
-				if (self.checkIsRemoved() !== true) {
+				if (texture === undefined) {
 					
-					width = img.width;
-					height = img.height;
+					img = new Image();
+					
+					img.onload = () => {
+						
+						img.onload = undefined;
+						
+						if (self.checkIsRemoved() !== true) {
+							
+							if (PIXI.utils.TextureCache[src] !== undefined) {
+								texture = PIXI.utils.TextureCache[src];
+							}
+							
+							else {
+								
+								texture = new PIXI.Texture.from(img);
+								
+								PIXI.Texture.addToCache(texture, src);
+							}
+							
+							next(texture);
+						}
+					};
+					
+					img.src = src;
+				}
+				
+				else {
+					next(texture);
+				}
+			},
+			
+			() => {
+				return (texture) => {
+					
+					width = texture.width;
+					height = texture.height;
 					
 					if (spriteWidth === undefined) {
 						if (frameCount !== undefined) {
@@ -73,7 +107,7 @@ SkyEngine.Sprite = CLASS({
 						frameCount = width / spriteWidth * height / spriteHeight;
 					}
 					
-					pixiTilingSprite = new PIXI.extras.TilingSprite.from(img, spriteWidth, spriteHeight);
+					pixiTilingSprite = new PIXI.extras.TilingSprite.from(texture, spriteWidth, spriteHeight);
 					
 					pixiTilingSprite.anchor.x = 0.5;
 					pixiTilingSprite.anchor.y = 0.5;
@@ -85,30 +119,62 @@ SkyEngine.Sprite = CLASS({
 					self.addToPixiContainer(pixiTilingSprite);
 					
 					self.fireEvent('load');
-				}
-			};
-			
-			img.src = src;
+				};
+			}]);
 		}
 		
 		if (srcs !== undefined) {
 			EACH(srcs, (src, i) => {
 				
-				let img = new Image();
-				
 				if (imgs === undefined) {
 					imgs = [];
 					pixiSprites = [];
 				}
+				
+				NEXT([
+				(next) => {
 					
-				img.onload = () => {
+					let texture = PIXI.utils.TextureCache[src];
 					
-					img.onload = undefined;
-					
-					if (self.checkIsRemoved() !== true) {
+					if (texture === undefined) {
 						
-						width = img.width;
-						height = img.height;
+						let img = new Image();
+						
+						img.onload = () => {
+							
+							img.onload = undefined;
+							
+							if (self.checkIsRemoved() !== true) {
+								
+								if (PIXI.utils.TextureCache[src] !== undefined) {
+									texture = PIXI.utils.TextureCache[src];
+								}
+								
+								else {
+									texture = new PIXI.Texture.from(img);
+									
+									PIXI.Texture.addToCache(texture, src);
+								}
+								
+								next(texture);
+							}
+						};
+						
+						img.src = src;
+						
+						imgs.push(img);
+					}
+					
+					else {
+						next(texture);
+					}
+				},
+				
+				() => {
+					return (texture) => {
+						
+						width = texture.width;
+						height = texture.height;
 						
 						if (spriteWidth === undefined) {
 							spriteWidth = width;
@@ -124,7 +190,7 @@ SkyEngine.Sprite = CLASS({
 							frameCount += 1;
 						}
 						
-						let pixiSprite = new PIXI.Sprite.from(img);
+						let pixiSprite = new PIXI.Sprite.from(texture);
 						
 						pixiSprite.anchor.x = 0.5;
 						pixiSprite.anchor.y = 0.5;
@@ -136,12 +202,8 @@ SkyEngine.Sprite = CLASS({
 						pixiSprites[i] = pixiSprite;
 						
 						self.fireEvent('load');
-					}
-				};
-				
-				img.src = src;
-				
-				imgs.push(img);
+					};
+				}]);
 			});
 		}
 		
@@ -335,14 +397,6 @@ SkyEngine.Sprite = CLASS({
 				origin();
 			};
 		});
-		
-		let getImg = inner.getImg = () => {
-			return img;
-		};
-		
-		let getImgs = inner.getImgs = () => {
-			return imgs;
-		};
 		
 		let getRealFrame = inner.getRealFrame = () => {
 			return realFrame;
