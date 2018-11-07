@@ -9362,15 +9362,19 @@ var Container = function (_DisplayObject) {
     Container.prototype.updateTransform = function updateTransform() {
         this._boundsID++;
 
-        this.transform.updateTransform(this.parent.transform);
+        //IMPORTANT: 수정됨
+        if (this.parent !== null) {
+            this.transform.updateTransform(this.parent.transform);
 
-        // TODO: check render flags, how to process stuff here
-        this.worldAlpha = this.alpha * this.parent.worldAlpha;
+            // TODO: check render flags, how to process stuff here
+            this.worldAlpha = this.alpha * this.parent.worldAlpha;
+        }
 
         for (var i = 0, j = this.children.length; i < j; ++i) {
             var child = this.children[i];
 
-            if (child.visible) {
+            //IMPORTANT: 수정됨
+            if (child !== undefined && child.visible) {
                 child.updateTransform();
             }
         }
@@ -17892,7 +17896,10 @@ var WebGLRenderer = function (_SystemRenderer) {
 
         this.bindRenderTexture(renderTexture, transform);
 
-        this.currentRenderer.start();
+        //IMPORTANT: 수정됨
+        if (this.currentRenderer !== null) {
+            this.currentRenderer.start();
+        }
 
         if (clear !== undefined ? clear : this.clearBeforeRender) {
             this._activeRenderTarget.clear();
@@ -17900,8 +17907,11 @@ var WebGLRenderer = function (_SystemRenderer) {
 
         displayObject.renderWebGL(this);
 
-        // apply transform..
-        this.currentRenderer.flush();
+        //IMPORTANT: 수정됨
+        if (this.currentRenderer !== null) {
+            // apply transform..
+            this.currentRenderer.flush();
+        }
 
         // this.setObjectRenderer(this.emptyRenderer);
 

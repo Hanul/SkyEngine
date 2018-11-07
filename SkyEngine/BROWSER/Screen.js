@@ -35,6 +35,7 @@ SkyEngine.Screen = OBJECT({
 		let ratio;
 		
 		let deltaTime;
+		let isStepping;
 		
 		let registeredNodeMap = {};
 		
@@ -169,6 +170,8 @@ SkyEngine.Screen = OBJECT({
 				deltaTime = 0.03;
 			}
 			
+			isStepping = true;
+			
 			if (self.checkIsPaused() !== true) {
 				
 				SkyEngine.Delay.step(deltaTime);
@@ -185,6 +188,8 @@ SkyEngine.Screen = OBJECT({
 			}
 			
 			nonePausableNode.step(deltaTime);
+			
+			isStepping = false;
 			
 			// 스테이지가 가운데 오도록
 			stage.x = width / 2 - getCameraFollowX();
@@ -283,7 +288,13 @@ SkyEngine.Screen = OBJECT({
 		
 		self.on('remove', () => {
 			loop.remove();
+			renderer.destroy(true);
+			wrapper.remove();
 		});
+		
+		let checkIsStepping = self.checkIsStepping = () => {
+			return isStepping;
+		};
 		
 		let cameraFollowX = self.cameraFollowX = (params) => {
 			//REQUIRED: params

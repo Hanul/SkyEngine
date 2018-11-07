@@ -173,6 +173,7 @@ SkyEngine.SubScreen = CLASS({
 		
 		self.on('remove', () => {
 			loop.remove();
+			renderer.destroy(true);
 			wrapper.remove();
 		});
 		

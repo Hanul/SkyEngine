@@ -104,8 +104,6 @@ SkyEngine.Node = CLASS({
 
 		let isHiding = false;
 		let isRemoved = false;
-		let isToRemove = false;
-		let setToRemoveCallback;
 
 		let eventMap = {};
 
@@ -1932,72 +1930,62 @@ SkyEngine.Node = CLASS({
 
 		let remove = self.remove = () => {
 			
-			// fire remove event.
-			fireEvent('remove');
-
-			empty();
-			
-			childNodes = undefined;
-
-			if (parentNode !== undefined) {
-				removeFromParent();
-				setParent(undefined);
+			if (isRemoved !== true) {
+				
+				// fire remove event.
+				fireEvent('remove');
+	
+				empty();
+				
+				childNodes = undefined;
+	
+				if (parentNode !== undefined) {
+					removeFromParent();
+					setParent(undefined);
+				}
+	
+				if (SkyEngine.Screen !== self) {
+					SkyEngine.Screen.unregisterNode(self);
+				}
+	
+				// 모든 이벤트 제거
+				eventMap = undefined;
+	
+				// 모든 터치 영역 제거
+				for (let i = 0; i < touchAreas.length; i += 1) {
+					touchAreas[i].remove();
+				}
+				touchAreas = undefined;
+	
+				// 모든 충돌 영역 제거
+				for (let i = 0; i < colliders.length; i += 1) {
+					colliders[i].remove();
+				}
+				colliders = undefined;
+	
+				collisionTargets = undefined
+				collidingNodeIds = undefined;
+				meetHandlerMap = undefined;
+				partHandlerMap = undefined;
+				
+				if (domWrapper !== undefined) {
+					domWrapper.remove();
+				}
+	
+				isRemoved = true;
+				
+				if (displayResizeEvent !== undefined) {
+					displayResizeEvent.remove();
+					displayResizeEvent = undefined;
+				}
+				
+				pixiContainer.destroy();
+				pixiContainer = undefined;
 			}
-
-			if (SkyEngine.Screen !== self) {
-				SkyEngine.Screen.unregisterNode(self);
-			}
-
-			// 모든 이벤트 제거
-			eventMap = undefined;
-
-			// 모든 터치 영역 제거
-			for (let i = 0; i < touchAreas.length; i += 1) {
-				touchAreas[i].remove();
-			}
-			touchAreas = undefined;
-
-			// 모든 충돌 영역 제거
-			for (let i = 0; i < colliders.length; i += 1) {
-				colliders[i].remove();
-			}
-			colliders = undefined;
-
-			collisionTargets = undefined
-			collidingNodeIds = undefined;
-			meetHandlerMap = undefined;
-			partHandlerMap = undefined;
-			
-			if (domWrapper !== undefined) {
-				domWrapper.remove();
-			}
-
-			isRemoved = true;
-			
-			if (displayResizeEvent !== undefined) {
-				displayResizeEvent.remove();
-				displayResizeEvent = undefined;
-			}
-			
-			pixiContainer.destroy({
-				children : true,
-				texture : true,
-				baseTexture : true
-			});
-			pixiContainer = undefined;
 		};
 
 		let checkIsRemoved = self.checkIsRemoved = () => {
 			return isRemoved;
-		};
-		
-		let setToRemove = self.setToRemove = (_setToRemoveCallback) => {
-			//OPTIONAL: setToRemoveCallback
-			
-			setToRemoveCallback = _setToRemoveCallback;
-			
-			pixiContainer.visible = false;
-			isToRemove = true;
 		};
 		
 		let addDom = self.addDom = (dom) => {
@@ -2019,9 +2007,11 @@ SkyEngine.Node = CLASS({
 				}).appendTo(BODY);
 				
 				DELAY(() => {
-					domWrapper.addStyle({
-						opacity : pixiContainer.worldAlpha
-					});
+					if (isRemoved !== true) {
+						domWrapper.addStyle({
+							opacity : pixiContainer.worldAlpha
+						});
+					}
 				});
 			}
 			
@@ -2050,9 +2040,11 @@ SkyEngine.Node = CLASS({
 				}).appendTo(BODY);
 				
 				DELAY(() => {
-					domWrapper.addStyle({
-						opacity : pixiContainer.worldAlpha
-					});
+					if (isRemoved !== true) {
+						domWrapper.addStyle({
+							opacity : pixiContainer.worldAlpha
+						});
+					}
 				});
 			}
 			
@@ -2144,7 +2136,7 @@ SkyEngine.Node = CLASS({
 			}
 			
 			let eventHandlers = eventMap[eventName];
-
+			
 			if (eventHandlers !== undefined) {
 				
 				for (let i = 0; i < eventHandlers.length; i += 1) {
@@ -2508,16 +2500,7 @@ SkyEngine.Node = CLASS({
 
 		let step = self.step = (deltaTime) => {
 			
-			if (isToRemove === true) {
-				
-				if (setToRemoveCallback !== undefined) {
-					setToRemoveCallback();
-				}
-				
-				remove();
-			}
-			
-			else if (pauseCount === 0) {
+			if (pauseCount === 0) {
 				
 				beforeX = x;
 				beforeY = y;
