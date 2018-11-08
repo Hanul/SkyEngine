@@ -65,12 +65,16 @@ SkyEngine.SubScreen = CLASS({
 				}
 			}).appendTo(wrapper);
 			
-			INTERVAL(0.1, () => {
+			let interval = INTERVAL(0.1, () => {
 				
 				if (deltaTime !== undefined) {
 					fpsDom.empty();
 					fpsDom.append('FPS: ' + parseInt(1 / deltaTime));
 				}
+			});
+			
+			fpsDom.on('remove', () => {
+				interval.remove();
 			});
 		}
 		
