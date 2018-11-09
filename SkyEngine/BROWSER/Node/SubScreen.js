@@ -176,9 +176,12 @@ SkyEngine.SubScreen = CLASS({
 		});
 		
 		self.on('remove', () => {
+			
 			loop.remove();
 			renderer.destroy(true);
 			wrapper.remove();
+			
+			nonePausableNode.remove();
 		});
 		
 		let cameraFollowX = self.cameraFollowX = (params) => {
