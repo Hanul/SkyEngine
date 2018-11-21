@@ -139,6 +139,8 @@ SkyEngine.Node = CLASS({
 		
 		// PixiJS 컨테이너
 		let pixiContainer = new PIXI.Container();
+		pixiContainer.alpha = 0;
+		
 		let areaGraphics;
 		
 		let getPixiContainer = inner.getPixiContainer = () => {
