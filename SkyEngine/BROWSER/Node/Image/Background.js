@@ -278,6 +278,8 @@ SkyEngine.Background = CLASS({
 				
 				img = new Image();
 				
+				img.crossOrigin = 'anonymous';
+				
 				img.onload = () => {
 					
 					img.onload = undefined;

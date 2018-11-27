@@ -56,6 +56,8 @@ SkyEngine.Sprite = CLASS({
 					
 					img = new Image();
 					
+					img.crossOrigin = 'anonymous';
+					
 					img.onload = () => {
 						
 						img.onload = undefined;
@@ -139,6 +141,8 @@ SkyEngine.Sprite = CLASS({
 					if (texture === undefined) {
 						
 						let img = new Image();
+						
+						img.crossOrigin = 'anonymous';
 						
 						img.onload = () => {
 							

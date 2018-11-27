@@ -40,6 +40,8 @@ SkyEngine.Image = CLASS({
 						img = tempImg;
 					}
 					
+					tempImg.crossOrigin = 'anonymous';
+					
 					tempImg.onload = () => {
 						
 						tempImg.onload = undefined;

@@ -28,6 +28,8 @@ SkyEngine('Util').ImageData = OBJECT({
 					
 					let img = new Image();
 					
+					img.crossOrigin = 'anonymous';
+					
 					img.onload = () => {
 						
 						img.onload = undefined;
