@@ -343,7 +343,9 @@ SkyEngine.Background = CLASS({
 					draw();
 				}
 				
-				self.fireEvent('load');
+				DELAY(() => {
+					self.fireEvent('load');
+				});
 			};
 		}]);
 		

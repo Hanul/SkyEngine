@@ -400,7 +400,7 @@ SkyEngine.Node = CLASS({
 
 		let setScaleX = self.setScaleX = (_scaleX) => {
 			//REQUIRED: scaleX
-
+			
 			scaleX = _scaleX;
 
 			if (targetNode === undefined) {
@@ -433,7 +433,7 @@ SkyEngine.Node = CLASS({
 		// x 스케일과 y 스케일을 동시에 설정합니다.
 		let setScale = self.setScale = (scale) => {
 			//REQUIRED: scale
-
+			
 			setScaleX(scale);
 			setScaleY(scale);
 		};

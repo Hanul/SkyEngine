@@ -114,7 +114,9 @@ SkyEngine.Silhouette = CLASS({
 				
 				self.addToPixiContainer(pixiSprite);
 				
-				self.fireEvent('load');
+				DELAY(() => {
+					self.fireEvent('load');
+				});
 			});
 		};
 		

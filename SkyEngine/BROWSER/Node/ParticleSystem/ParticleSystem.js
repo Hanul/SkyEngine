@@ -398,13 +398,18 @@ SkyEngine.ParticleSystem = CLASS(() => {
 							particleHeight = height;
 						}
 						
-						self.fireEvent('load');
+						DELAY(() => {
+							self.fireEvent('load');
+						});
 					};
 				}]);
 			}
 			
 			else {
-				self.fireEvent('load');
+				
+				DELAY(() => {
+					self.fireEvent('load');
+				});
 			}
 			
 			let particles = [];
