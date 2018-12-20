@@ -344,7 +344,9 @@ SkyEngine.Background = CLASS({
 				}
 				
 				DELAY(() => {
-					self.fireEvent('load');
+					if (self.checkIsRemoved() !== true) {
+						self.fireEvent('load');
+					}
 				});
 			};
 		}]);

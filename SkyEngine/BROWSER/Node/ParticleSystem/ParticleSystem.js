@@ -399,7 +399,9 @@ SkyEngine.ParticleSystem = CLASS(() => {
 						}
 						
 						DELAY(() => {
-							self.fireEvent('load');
+							if (self.checkIsRemoved() !== true) {
+								self.fireEvent('load');
+							}
 						});
 					};
 				}]);
@@ -408,7 +410,9 @@ SkyEngine.ParticleSystem = CLASS(() => {
 			else {
 				
 				DELAY(() => {
-					self.fireEvent('load');
+					if (self.checkIsRemoved() !== true) {
+						self.fireEvent('load');
+					}
 				});
 			}
 			

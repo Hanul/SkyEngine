@@ -121,7 +121,9 @@ SkyEngine.Sprite = CLASS({
 					self.addToPixiContainer(pixiTilingSprite);
 					
 					DELAY(() => {
-						self.fireEvent('load');
+						if (self.checkIsRemoved() !== true) {
+							self.fireEvent('load');
+						}
 					});
 				};
 			}]);
@@ -208,7 +210,9 @@ SkyEngine.Sprite = CLASS({
 						pixiSprites[i] = pixiSprite;
 						
 						DELAY(() => {
-							self.fireEvent('load');
+							if (self.checkIsRemoved() !== true) {
+								self.fireEvent('load');
+							}
 						});
 					};
 				}]);
