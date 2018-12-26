@@ -1756,15 +1756,39 @@ SkyEngine.Node = CLASS({
 			
 			fadeEndHandler = _fadeEndHandler;
 		};
+		
+		let domWrapperHide = self.domWrapperHide = () => {
+			
+			if (domWrapper !== undefined) {
+				domWrapper.hide();
+			}
+			
+			let children = self.getChildren();
+			
+			for (let i = 0; i < children.length; i += 1) {
+				children[i].domWrapperHide();
+			}
+		};
+		
+		let domWrapperShow = self.domWrapperShow = () => {
+			
+			if (domWrapper !== undefined) {
+				domWrapper.show();
+			}
+			
+			let children = self.getChildren();
+			
+			for (let i = 0; i < children.length; i += 1) {
+				children[i].domWrapperShow();
+			}
+		};
 
 		let hide = self.hide = () => {
 			isHiding = true;
 			
 			pixiContainer.visible = false;
 			
-			if (domWrapper !== undefined) {
-				domWrapper.hide();
-			}
+			domWrapperHide();
 		};
 
 		let show = self.show = () => {
@@ -1772,9 +1796,7 @@ SkyEngine.Node = CLASS({
 			
 			pixiContainer.visible = true;
 			
-			if (domWrapper !== undefined) {
-				domWrapper.show();
-			}
+			domWrapperShow();
 		};
 
 		let checkIsHiding = self.checkIsHiding = () => {
