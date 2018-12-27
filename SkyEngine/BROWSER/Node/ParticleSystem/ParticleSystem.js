@@ -17,14 +17,14 @@ SkyEngine.ParticleSystem = CLASS(() => {
 			//REQUIRED: params
 			//OPTIONAL: params.particleSrc					파티클이 이미지인 경우, 파티클 이미지의 경로
 			
-			//OPTIONAL: params.particleFigure				파티클이 이미지가 아닌 경우, 파티클의 형태	(line, rect, circle, polygon 중 하나)
+			//OPTIONAL: params.particleFigure				파티클이 이미지가 아닌 경우, 파티클의 형태	('line', 'rect', 'circle', 'polygon' 중 하나)
 			//OPTIONAL: params.particleStartX				파티클의 형태가 line인 경우, 시작점의 x 좌표
 			//OPTIONAL: params.particleStartY				파티클의 형태가 line인 경우, 시작점의 y 좌표
 			//OPTIONAL: params.particleEndX					파티클의 형태가 line인 경우, 끝점의 x 좌표
 			//OPTIONAL: params.particleEndY					파티클의 형태가 line인 경우, 끝점의 y 좌표
 			//OPTIONAL: params.particleWidth				파티클의 형태가 rect나 circle인 경우, 가로 길이
 			//OPTIONAL: params.particleHeight				파티클의 형태가 rect나 circle인 경우, 세로 길이
-			//OPTIONAL: params.particlePoints				파티클의 형태가 polygon인 경우, 폴리곤을 이루는 {x, y}로 이루어진 점들의 좌표 목록
+			//OPTIONAL: params.particlePoints				파티클의 형태가 polygon인 경우, 폴리곤을 이루는 {x:, y:}로 이루어진 점들의 좌표 목록
 			//OPTIONAL: params.particleColor				파티클의 색상
 			//OPTIONAL: params.particleBorder				파티클의 테두리 설정
 			//OPTIONAL: params.particleColorR				파티클 색상의 RGB 값 중, R 값
@@ -485,7 +485,7 @@ SkyEngine.ParticleSystem = CLASS(() => {
 						}
 						
 						else if (particleFigure === 'polygon') {
-							pixiGraphics = SkyEngine.Circle.generateGraphics({
+							pixiGraphics = SkyEngine.Polygon.generateGraphics({
 								points : particlePoints,
 								color : color,
 								border : particleBorder,

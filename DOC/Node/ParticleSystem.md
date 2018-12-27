@@ -60,14 +60,14 @@ SkyEngine.Interval(0.1, () => {
 
 사용 가능한 파라미터는 다음과 같습니다.
 - `particleSrc` 파티클이 이미지인 경우, 파티클 이미지의 경로
-- `particleFigure` 파티클이 이미지가 아닌 경우, 파티클의 형태 (`line`, `rect`, `circle`, `polygon` 중 하나)
+- `particleFigure` 파티클이 이미지가 아닌 경우, 파티클의 형태 (`'line'`, `'rect'`, `'circle'`, `'polygon'` 중 하나)
 - `particleStartX` 파티클의 형태가 line인 경우, 시작점의 x 좌표
 - `particleStartY` 파티클의 형태가 line인 경우, 시작점의 y 좌표
 - `particleEndX` 파티클의 형태가 line인 경우, 끝점의 x 좌표
 - `particleEndY` 파티클의 형태가 line인 경우, 끝점의 y 좌표
 - `particleWidth` 파티클의 형태가 rect나 circle인 경우, 가로 길이
 - `particleHeight` 파티클의 형태가 rect나 circle인 경우, 세로 길이
-- `particlePoints` 파티클의 형태가 polygon인 경우, 폴리곤을 이루는 {x, y}로 이루어진 점들의 좌표 목록
+- `particlePoints` 파티클의 형태가 polygon인 경우, 폴리곤을 이루는 `{x:, y:}`로 이루어진 점들의 좌표 목록
 - `particleColor` 파티클의 색상
 - `particleBorder` 파티클의 테두리 설정
 - `particleColorR` 파티클 색상의 RGB 값 중, R 값
