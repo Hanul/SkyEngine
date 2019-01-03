@@ -25,9 +25,6 @@ SkyEngine.Sprite = CLASS({
 		
 		let checkRectRect = SkyEngine.Util.Collision.checkRectRect;
 		
-		let img;
-		let imgs;
-		
 		let pixiTilingSprite;
 		let pixiSprites;
 		let nowPixiSprite;
@@ -47,48 +44,9 @@ SkyEngine.Sprite = CLASS({
 		
 		if (src !== undefined) {
 			
-			NEXT([
-			(next) => {
-				
-				let texture = PIXI.utils.TextureCache[src];
-				
-				if (texture === undefined) {
-					
-					img = new Image();
-					
-					img.crossOrigin = 'anonymous';
-					
-					img.onload = () => {
-						
-						img.onload = undefined;
-						
-						if (self.checkIsRemoved() !== true) {
-							
-							if (PIXI.utils.TextureCache[src] !== undefined) {
-								texture = PIXI.utils.TextureCache[src];
-							}
-							
-							else {
-								
-								texture = new PIXI.Texture.from(img);
-								
-								PIXI.Texture.addToCache(texture, src);
-							}
-							
-							next(texture);
-						}
-					};
-					
-					img.src = src;
-				}
-				
-				else {
-					next(texture);
-				}
-			},
+			SkyEngine.LoadTexture(src, (texture) => {
 			
-			() => {
-				return (texture) => {
+				if (self.checkIsRemoved() !== true) {
 					
 					width = texture.width;
 					height = texture.height;
@@ -125,61 +83,19 @@ SkyEngine.Sprite = CLASS({
 							self.fireEvent('load');
 						}
 					});
-				};
-			}]);
+				}
+			});
 		}
 		
 		if (srcs !== undefined) {
+			
+			pixiSprites = [];
+			
 			EACH(srcs, (src, i) => {
 				
-				if (imgs === undefined) {
-					imgs = [];
-					pixiSprites = [];
-				}
+				SkyEngine.LoadTexture(src, (texture) => {
 				
-				NEXT([
-				(next) => {
-					
-					let texture = PIXI.utils.TextureCache[src];
-					
-					if (texture === undefined) {
-						
-						let img = new Image();
-						
-						img.crossOrigin = 'anonymous';
-						
-						img.onload = () => {
-							
-							img.onload = undefined;
-							
-							if (self.checkIsRemoved() !== true) {
-								
-								if (PIXI.utils.TextureCache[src] !== undefined) {
-									texture = PIXI.utils.TextureCache[src];
-								}
-								
-								else {
-									texture = new PIXI.Texture.from(img);
-									
-									PIXI.Texture.addToCache(texture, src);
-								}
-								
-								next(texture);
-							}
-						};
-						
-						img.src = src;
-						
-						imgs.push(img);
-					}
-					
-					else {
-						next(texture);
-					}
-				},
-				
-				() => {
-					return (texture) => {
+					if (self.checkIsRemoved() !== true) {
 						
 						width = texture.width;
 						height = texture.height;
@@ -214,8 +130,8 @@ SkyEngine.Sprite = CLASS({
 								self.fireEvent('load');
 							}
 						});
-					};
-				}]);
+					}
+				});
 			});
 		}
 		
@@ -391,16 +307,6 @@ SkyEngine.Sprite = CLASS({
 			remove = self.remove = () => {
 				
 				srcs = undefined;
-				
-				if (img !== undefined) {
-					img.onload = undefined;
-					img = undefined;
-				}
-				
-				EACH(imgs, (img) => {
-					img.onload = undefined;
-				});
-				imgs = undefined;
 				
 				pixiTilingSprite = undefined;
 				pixiSprites = undefined;

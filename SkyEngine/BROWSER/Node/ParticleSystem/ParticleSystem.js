@@ -341,52 +341,11 @@ SkyEngine.ParticleSystem = CLASS(() => {
 			let width;
 			let height;
 			
-			let img;
-			
 			if (particleSrc !== undefined) {
 				
-				NEXT([
-				(next) => {
-					
-					let texture = PIXI.utils.TextureCache[particleSrc];
-					
-					if (texture === undefined) {
-						
-						img = new Image();
-						
-						img.crossOrigin = 'anonymous';
-						
-						img.onload = () => {
-							
-							img.onload = undefined;
-							
-							if (self.checkIsRemoved() !== true) {
-								
-								if (PIXI.utils.TextureCache[particleSrc] !== undefined) {
-									texture = PIXI.utils.TextureCache[particleSrc];
-								}
-								
-								else {
-									
-									texture = new PIXI.Texture.from(img);
-									
-									PIXI.Texture.addToCache(texture, particleSrc);
-								}
-								
-								next(texture);
-							}
-						};
-						
-						img.src = particleSrc;
-					}
-					
-					else {
-						next(texture);
-					}
-				},
+				SkyEngine.LoadTexture(particleSrc, (texture) => {
 				
-				() => {
-					return (texture) => {
+					if (self.checkIsRemoved() !== true) {
 						
 						width = texture.width;
 						height = texture.height;
@@ -403,8 +362,8 @@ SkyEngine.ParticleSystem = CLASS(() => {
 								self.fireEvent('load');
 							}
 						});
-					};
-				}]);
+					}
+				});
 			}
 			
 			else {
@@ -609,11 +568,6 @@ SkyEngine.ParticleSystem = CLASS(() => {
 			OVERRIDE(self.remove, (origin) => {
 				
 				remove = self.remove = () => {
-					
-					if (img !== undefined) {
-						img.onload = undefined;
-						img = undefined;
-					}
 					
 					particles = undefined;
 					

@@ -126,6 +126,9 @@ SkyEngine의 모든 구성요소는 노드를 확장합니다.
 ### [`SkyEngine.BGM`](DOC/BGM.md)
 [UPPERCASE의 SOUND 기능](https://github.com/Hanul/UPPERCASE/blob/master/DOC/GUIDE/UPPERCASE-CORE-BROWSER.md#sound)을 게임의 배경음악 재생에 어울리도록 확장한 클래스
 
+### [`SkyEngine.LoadTexture`](DOC/LoadTexture.md)
+텍스쳐를 불러오는 메소드
+
 ## UPPERCASE의 기능 중 게임에서 사용할 만한 것들
 * [사운드 재생](https://github.com/Hanul/UPPERCASE/blob/master/DOC/GUIDE/UPPERCASE-CORE-BROWSER.md#sound)
 * [HTTP 요청 기능](https://github.com/Hanul/UPPERCASE/blob/master/DOC/GUIDE/UPPERCASE-CORE-BROWSER.md#http-%EC%9A%94%EC%B2%AD-%EA%B8%B0%EB%8A%A5)

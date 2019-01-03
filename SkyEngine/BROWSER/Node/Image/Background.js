@@ -41,8 +41,6 @@ SkyEngine.Background = CLASS({
 		let width;
 		let height;
 		
-		let img;
-		
 		let pixiTilingSprite;
 		let pixiSprites;
 		
@@ -269,48 +267,9 @@ SkyEngine.Background = CLASS({
 			}
 		};
 		
-		NEXT([
-		(next) => {
+		SkyEngine.LoadTexture(src, (texture) => {
 			
-			let texture = PIXI.utils.TextureCache[src];
-			
-			if (texture === undefined) {
-				
-				img = new Image();
-				
-				img.crossOrigin = 'anonymous';
-				
-				img.onload = () => {
-					
-					img.onload = undefined;
-					
-					if (self.checkIsRemoved() !== true) {
-						
-						if (PIXI.utils.TextureCache[src] !== undefined) {
-							texture = PIXI.utils.TextureCache[src];
-						}
-						
-						else {
-							
-							texture = new PIXI.Texture.from(img);
-							
-							PIXI.Texture.addToCache(texture, src);
-						}
-						
-						next(texture);
-					}
-				};
-				
-				img.src = src;
-			}
-			
-			else {
-				next(texture);
-			}
-		},
-		
-		() => {
-			return (texture) => {
+			if (self.checkIsRemoved() !== true) {
 				
 				width = texture.width;
 				height = texture.height;
@@ -348,8 +307,8 @@ SkyEngine.Background = CLASS({
 						self.fireEvent('load');
 					}
 				});
-			};
-		}]);
+			}
+		});
 		
 		let step;
 		OVERRIDE(self.step, (origin) => {
@@ -389,11 +348,6 @@ SkyEngine.Background = CLASS({
 		OVERRIDE(self.remove, (origin) => {
 			
 			remove = self.remove = () => {
-				
-				if (img !== undefined) {
-					img.onload = undefined;
-					img = undefined;
-				}
 				
 				pixiTilingSprite = undefined;
 				pixiSprites = undefined;

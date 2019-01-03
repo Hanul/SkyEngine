@@ -19,74 +19,33 @@ SkyEngine('Util').ImageData = OBJECT({
 			//REQUIRED: src
 			//REQUIRED: callback
 			
-			NEXT([
-			(next) => {
+			SkyEngine.LoadTexture(src, (texture) => {
 				
-				let texture = PIXI.utils.TextureCache[src];
+				let width = texture.width;
+				let height = texture.height;
 				
-				if (texture === undefined) {
-					
-					let img = new Image();
-					
-					img.crossOrigin = 'anonymous';
-					
-					img.onload = () => {
-						
-						img.onload = undefined;
-						
-						if (PIXI.utils.TextureCache[src] !== undefined) {
-							texture = PIXI.utils.TextureCache[src];
-						}
-						
-						else {
-							
-							texture = new PIXI.Texture.from(img);
-							
-							PIXI.Texture.addToCache(texture, src);
-						}
-						
-						img = undefined;
-						
-						next(texture);
-					};
-					
-					img.src = src;
-				}
+				let imageCanvas = CANVAS({
+					style : {
+						display : 'none'
+					},
+					width : width,
+					height : height
+				}).appendTo(BODY);
 				
-				else {
-					next(texture);
-				}
-			},
-			
-			() => {
-				return (texture) => {
-					
-					let width = texture.width;
-					let height = texture.height;
-					
-					let imageCanvas = CANVAS({
-						style : {
-							display : 'none'
-						},
-						width : width,
-						height : height
-					}).appendTo(BODY);
-					
-					let imageContext = imageCanvas.getContext('2d');
-					imageContext.drawImage(texture.baseTexture.source, 0, 0, width, height);
-					
-					let imgData = imageContext.getImageData(0, 0, width, height);
-					
-					// clear.
-					imageContext = undefined;
-					imageCanvas.remove();
-					
-					callback(imgData.data, imgData, {
-						width : width,
-						height : height
-					});
-				};
-			}]);
+				let imageContext = imageCanvas.getContext('2d');
+				imageContext.drawImage(texture.baseTexture.source, 0, 0, width, height);
+				
+				let imgData = imageContext.getImageData(0, 0, width, height);
+				
+				// clear.
+				imageContext = undefined;
+				imageCanvas.remove();
+				
+				callback(imgData.data, imgData, {
+					width : width,
+					height : height
+				});
+			});
 		};
 		
 		let loadAndCache = self.loadAndCache = (src) => {

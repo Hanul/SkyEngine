@@ -103,6 +103,10 @@ SkyEngine.Silhouette = CLASS({
 					polygonPoints = undefined;
 				}
 				
+				if (pixiSprite !== undefined) {
+					self.removeFromPixiContainer(pixiSprite);
+				}
+				
 				pixiSprite = PIXI.Sprite.from(imageCanvas.getEl());
 				
 				pixiSprite.anchor.x = 0.5;
