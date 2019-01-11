@@ -477,7 +477,12 @@ SkyEngine.ParticleSystem = CLASS(() => {
 						pixiGraphics.rotation = random(minParticleAngle, maxParticleAngle) * Math.PI / 180;
 					}
 					
-					pixiGraphics.alpha = random(minParticleAlpha, maxParticleAlpha);
+					let alpha = random(minParticleAlpha, maxParticleAlpha);
+					if (alpha > 1) {
+						pixiGraphics.alpha = 1;
+					} else {
+						pixiGraphics.alpha = alpha;
+					}
 					
 					self.addToPixiContainer(pixiGraphics);
 					
@@ -491,6 +496,7 @@ SkyEngine.ParticleSystem = CLASS(() => {
 						accelX : accel * cos,
 						accelY : accel * sin,
 						rotationSpeedRadian : random(minParticleRotationSpeedRadian, maxParticleRotationSpeedRadian),
+						alpha : alpha,
 						fadingSpeed : random(minParticleFadingSpeed, maxParticleFadingSpeed),
 						pixiGraphics : pixiGraphics
 					});
@@ -544,10 +550,12 @@ SkyEngine.ParticleSystem = CLASS(() => {
 								pixiGraphics.rotation += particle.rotationSpeedRadian * deltaTime;
 							}
 							
-							pixiGraphics.alpha += particle.fadingSpeed * deltaTime;
+							particle.alpha += particle.fadingSpeed * deltaTime;
 							
-							if (pixiGraphics.alpha < 0) {
-								pixiGraphics.alpha = 0;
+							if (particle.alpha > 1) {
+								pixiGraphics.alpha = 1;
+							} else {
+								pixiGraphics.alpha = particle.alpha;
 							}
 							
 							if (particleFadingAccel !== undefined) {

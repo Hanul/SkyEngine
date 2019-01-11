@@ -2917,7 +2917,11 @@ SkyEngine.Node = CLASS({
 						pixiContainer.pivot.set(centerX, centerY);
 						pixiContainer.scale.set(scaleX, scaleY);
 						pixiContainer.rotation = angle * Math.PI / 180;
-						pixiContainer.alpha = alpha;
+						if (alpha > 1) {
+							pixiContainer.alpha = 1;
+						} else {
+							pixiContainer.alpha = alpha;
+						}
 					}
 					
 					if (areaGraphics !== undefined) {
