@@ -61,7 +61,7 @@ SkyEngine.SubScreen = CLASS({
 					left : 5,
 					top : 5,
 					fontSize : 12,
-					zIndex : 999999
+					zIndex : 9999999
 				}
 			}).appendTo(wrapper);
 			

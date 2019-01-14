@@ -331,6 +331,9 @@ SkyEngine.Background = CLASS({
 					let realX = self.getX() / realScaleX;
 					let realY = self.getY() / realScaleY;
 					
+					pixiTilingSprite.width = screenWidth;
+					pixiTilingSprite.height = screenHeight;
+					
 					pixiTilingSprite.x = -realX + screenX;
 					pixiTilingSprite.y = -realY + screenY;
 					

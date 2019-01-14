@@ -9,16 +9,59 @@ SkyEngine.Screen = OBJECT({
 	
 	init : (inner, self) => {
 		
-		let wrapper = DIV({
+		let wrapper = DIV().appendTo(BODY);
+		
+		let canvas = CANVAS({
+			style : {
+				position : 'fixed',
+				zIndex : -1
+			}
+		}).appendTo(wrapper);
+		
+		let leftLetterbox = DIV({
 			style : {
 				position : 'fixed',
 				left : 0,
 				top : 0,
-				zIndex : -1
+				height : '100%',
+				zIndex : 9999998,
+				backgroundColor : '#000'
 			}
-		}).appendTo(BODY);
+		}).appendTo(wrapper);
 		
-		let canvas = CANVAS().appendTo(wrapper);
+		let topLetterbox = DIV({
+			style : {
+				position : 'fixed',
+				left : 0,
+				top : 0,
+				width : '100%',
+				zIndex : 9999998,
+				backgroundColor : '#000'
+			}
+		}).appendTo(wrapper);
+		
+		let rightLetterbox = DIV({
+			style : {
+				position : 'fixed',
+				right : 0,
+				top : 0,
+				height : '100%',
+				zIndex : 9999998,
+				backgroundColor : '#000'
+			}
+		}).appendTo(wrapper);
+		
+		let bottomLetterbox = DIV({
+			style : {
+				position : 'fixed',
+				left : 0,
+				bottom : 0,
+				width : '100%',
+				zIndex : 9999998,
+				backgroundColor : '#000'
+			}
+		}).appendTo(wrapper);
+		
 		let renderer = new PIXI.WebGLRenderer({
 			view : canvas.getEl(),
 			transparent : true
@@ -110,7 +153,7 @@ SkyEngine.Screen = OBJECT({
 					left : 5,
 					top : 5,
 					fontSize : 12,
-					zIndex : 999999
+					zIndex : 9999999
 				}
 			}).appendTo(BODY);
 			
@@ -265,22 +308,32 @@ SkyEngine.Screen = OBJECT({
 				height = BROWSER_CONFIG.SkyEngine.maxHeight;
 			}
 			
-			canvas.addStyle({
-				width : width * ratio,
-				height : height * ratio
-			});
-			
 			left = (winWidth - width * ratio) / 2;
 			top = (winHeight - height * ratio) / 2;
 			
-			wrapper.addStyle({
+			canvas.addStyle({
 				left : left,
-				top : top
+				top : top,
+				width : width * ratio,
+				height : height * ratio
 			});
 			
 			canvas.setSize({
 				width : width * devicePixelRatio,
 				height : height * devicePixelRatio
+			});
+			
+			leftLetterbox.addStyle({
+				width : left
+			});
+			topLetterbox.addStyle({
+				height : top
+			});
+			rightLetterbox.addStyle({
+				width : left
+			});
+			bottomLetterbox.addStyle({
+				height : top
 			});
 			
 			renderer.resize(width, height);
