@@ -26,7 +26,7 @@ SkyEngine.SubScreen = CLASS({
 		});
 		
 		let canvas = CANVAS().appendTo(wrapper);
-		let renderer = new PIXI.autoDetectRenderer({
+		let renderer = new PIXI.WebGLRenderer({
 			view : canvas.getEl(),
 			transparent : true
 		});
