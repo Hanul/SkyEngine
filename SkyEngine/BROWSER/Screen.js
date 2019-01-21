@@ -205,81 +205,51 @@ SkyEngine.Screen = OBJECT({
 			});
 		});
 		
-		let loop;
+		let fps = BROWSER_CONFIG.SkyEngine.fps;
 		
-		if (BROWSER_CONFIG.SkyEngine.fps === undefined) {
+		let loop = LOOP(fps, (_deltaTime) => {
 			
-			loop = LOOP((_deltaTime) => {
+			deltaTime = _deltaTime;
+			
+			isStepping = true;
+			
+			if (self.checkIsPaused() !== true) {
 				
-				deltaTime = _deltaTime;
+				SkyEngine.Delay.step(deltaTime);
+				SkyEngine.Interval.step(deltaTime);
 				
-				if (deltaTime > 0.03) {
-					deltaTime = 0.03;
+				// 모든 노드의 step을 실행합니다.
+				self.step(deltaTime);
+				
+				let fixedNodes = findNodesByClass(SkyEngine.FixedNode);
+				
+				for (let i = 0; i < fixedNodes.length; i += 1) {
+					fixedNodes[i].step(0);
 				}
-				
-				isStepping = true;
-				
-				if (self.checkIsPaused() !== true) {
-					
-					SkyEngine.Delay.step(deltaTime);
-					SkyEngine.Interval.step(deltaTime);
-					
-					// 모든 노드의 step을 실행합니다.
-					self.step(deltaTime);
-					
-					let fixedNodes = findNodesByClass(SkyEngine.FixedNode);
-					
-					for (let i = 0; i < fixedNodes.length; i += 1) {
-						fixedNodes[i].step(0);
-					}
-				}
-				
-				nonePausableNode.step(deltaTime);
-				
-				isStepping = false;
-				
-				// 스테이지가 가운데 오도록
-				stage.x = width / 2 - getCameraFollowX();
-				stage.y = height / 2 - getCameraFollowY();
-				
-				renderer.render(stage);
-			});
-		}
+			}
+			
+			nonePausableNode.step(deltaTime);
+			
+			isStepping = false;
+			
+			// 스테이지가 가운데 오도록
+			stage.x = width / 2 - getCameraFollowX();
+			stage.y = height / 2 - getCameraFollowY();
+			
+			renderer.render(stage);
+		});
 		
-		else {
+		let changeFPS = self.changeFPS = (_fps) => {
+			//REQUIRED: fps
 			
-			loop = LOOP(BROWSER_CONFIG.SkyEngine.fps, (fps) => {
-				
-				deltaTime = 1 / fps;
-				
-				isStepping = true;
-				
-				if (self.checkIsPaused() !== true) {
-					
-					SkyEngine.Delay.step(deltaTime);
-					SkyEngine.Interval.step(deltaTime);
-					
-					// 모든 노드의 step을 실행합니다.
-					self.step(deltaTime);
-					
-					let fixedNodes = findNodesByClass(SkyEngine.FixedNode);
-					
-					for (let i = 0; i < fixedNodes.length; i += 1) {
-						fixedNodes[i].step(0);
-					}
-				}
-				
-				nonePausableNode.step(deltaTime);
-				
-				isStepping = false;
-				
-				// 스테이지가 가운데 오도록
-				stage.x = width / 2 - getCameraFollowX();
-				stage.y = height / 2 - getCameraFollowY();
-				
-				renderer.render(stage);
-			});
-		}
+			fps = _fps;
+			
+			loop.changeFPS(fps);
+		};
+		
+		let getFPS = self.getFPS = () => {
+			return fps;
+		};
 		
 		// 화면 크기가 변경되는 경우, 캔버스의 크기 또한 변경되어야 합니다.
 		EVENT('resize', RAR(() => {
