@@ -205,41 +205,81 @@ SkyEngine.Screen = OBJECT({
 			});
 		});
 		
-		let loop = LOOP((_deltaTime) => {
+		let loop;
+		
+		if (BROWSER_CONFIG.SkyEngine.fps === undefined) {
 			
-			deltaTime = _deltaTime;
-			
-			if (deltaTime > 0.03) {
-				deltaTime = 0.03;
-			}
-			
-			isStepping = true;
-			
-			if (self.checkIsPaused() !== true) {
+			loop = LOOP((_deltaTime) => {
 				
-				SkyEngine.Delay.step(deltaTime);
-				SkyEngine.Interval.step(deltaTime);
+				deltaTime = _deltaTime;
 				
-				// 모든 노드의 step을 실행합니다.
-				self.step(deltaTime);
-				
-				let fixedNodes = findNodesByClass(SkyEngine.FixedNode);
-				
-				for (let i = 0; i < fixedNodes.length; i += 1) {
-					fixedNodes[i].step(0);
+				if (deltaTime > 0.03) {
+					deltaTime = 0.03;
 				}
-			}
+				
+				isStepping = true;
+				
+				if (self.checkIsPaused() !== true) {
+					
+					SkyEngine.Delay.step(deltaTime);
+					SkyEngine.Interval.step(deltaTime);
+					
+					// 모든 노드의 step을 실행합니다.
+					self.step(deltaTime);
+					
+					let fixedNodes = findNodesByClass(SkyEngine.FixedNode);
+					
+					for (let i = 0; i < fixedNodes.length; i += 1) {
+						fixedNodes[i].step(0);
+					}
+				}
+				
+				nonePausableNode.step(deltaTime);
+				
+				isStepping = false;
+				
+				// 스테이지가 가운데 오도록
+				stage.x = width / 2 - getCameraFollowX();
+				stage.y = height / 2 - getCameraFollowY();
+				
+				renderer.render(stage);
+			});
+		}
+		
+		else {
 			
-			nonePausableNode.step(deltaTime);
-			
-			isStepping = false;
-			
-			// 스테이지가 가운데 오도록
-			stage.x = width / 2 - getCameraFollowX();
-			stage.y = height / 2 - getCameraFollowY();
-			
-			renderer.render(stage);
-		});
+			loop = LOOP(BROWSER_CONFIG.SkyEngine.fps, (fps) => {
+				
+				deltaTime = 1 / fps;
+				
+				isStepping = true;
+				
+				if (self.checkIsPaused() !== true) {
+					
+					SkyEngine.Delay.step(deltaTime);
+					SkyEngine.Interval.step(deltaTime);
+					
+					// 모든 노드의 step을 실행합니다.
+					self.step(deltaTime);
+					
+					let fixedNodes = findNodesByClass(SkyEngine.FixedNode);
+					
+					for (let i = 0; i < fixedNodes.length; i += 1) {
+						fixedNodes[i].step(0);
+					}
+				}
+				
+				nonePausableNode.step(deltaTime);
+				
+				isStepping = false;
+				
+				// 스테이지가 가운데 오도록
+				stage.x = width / 2 - getCameraFollowX();
+				stage.y = height / 2 - getCameraFollowY();
+				
+				renderer.render(stage);
+			});
+		}
 		
 		// 화면 크기가 변경되는 경우, 캔버스의 크기 또한 변경되어야 합니다.
 		EVENT('resize', RAR(() => {

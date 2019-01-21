@@ -139,28 +139,55 @@ SkyEngine.SubScreen = CLASS((cls) => {
 				});
 			});
 			
-			let loop = LOOP((_deltaTime) => {
+			let loop;
+			
+			if (BROWSER_CONFIG.SkyEngine.fps === undefined) {
 				
-				deltaTime = _deltaTime;
-				
-				if (deltaTime > 0.03) {
-					deltaTime = 0.03;
-				}
-				
-				if (self.checkIsPaused() !== true) {
+				loop = LOOP((_deltaTime) => {
 					
-					// 모든 노드의 step을 실행합니다.
-					self.step(deltaTime);
-				}
+					deltaTime = _deltaTime;
+					
+					if (deltaTime > 0.03) {
+						deltaTime = 0.03;
+					}
+					
+					if (self.checkIsPaused() !== true) {
+						
+						// 모든 노드의 step을 실행합니다.
+						self.step(deltaTime);
+					}
+					
+					nonePausableNode.step(deltaTime);
+					
+					// 스테이지가 가운데 오도록
+					stage.x = width / 2 - getCameraFollowX();
+					stage.y = height / 2 - getCameraFollowY();
+					
+					renderer.render(stage);
+				});
+			}
+			
+			else {
 				
-				nonePausableNode.step(deltaTime);
-				
-				// 스테이지가 가운데 오도록
-				stage.x = width / 2 - getCameraFollowX();
-				stage.y = height / 2 - getCameraFollowY();
-				
-				renderer.render(stage);
-			});
+				loop = LOOP(BROWSER_CONFIG.SkyEngine.fps, (fps) => {
+					
+					deltaTime = 1 / fps;
+					
+					if (self.checkIsPaused() !== true) {
+						
+						// 모든 노드의 step을 실행합니다.
+						self.step(deltaTime);
+					}
+					
+					nonePausableNode.step(deltaTime);
+					
+					// 스테이지가 가운데 오도록
+					stage.x = width / 2 - getCameraFollowX();
+					stage.y = height / 2 - getCameraFollowY();
+					
+					renderer.render(stage);
+				});
+			}
 			
 			// 화면 크기가 변경되는 경우, 캔버스의 크기 또한 변경되어야 합니다.
 			let setSize = self.setSize = (params) => {

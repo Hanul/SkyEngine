@@ -14,7 +14,8 @@ BOOT({
 		isNotToConnectServer : true,
 		
 		SkyEngine : {
-			isDebugMode : true
+			isDebugMode : true,
+			fps : 24
 		}
 	},
 	
