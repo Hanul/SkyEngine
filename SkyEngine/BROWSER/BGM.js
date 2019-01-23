@@ -142,7 +142,7 @@ SkyEngine.BGM = CLASS({
 				if (INFO.getOSName() === 'iOS') {
 					if (volume === 0) {
 						audio.stop();
-					} else if (isPlaying !== true) {
+					} else if (isPlaying === true) {
 						audio.play();
 					}
 				}
