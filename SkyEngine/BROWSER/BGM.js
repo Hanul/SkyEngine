@@ -43,10 +43,15 @@ SkyEngine.BGM = CLASS({
 			
 			let stop = self.stop = () => {
 				
-				visibilitychangeEvent.remove();
+				if (visibilitychangeEvent !== undefined) {
+					visibilitychangeEvent.remove();
+					visibilitychangeEvent = undefined;
+				}
 				
-				sound.stop();
-				sound = undefined;
+				if (sound !== undefined) {
+					sound.stop();
+					sound = undefined;
+				}
 			};
 			
 			let setVolume = self.setVolume = (volume) => {
@@ -68,10 +73,15 @@ SkyEngine.BGM = CLASS({
 			let fadeOut = self.fadeOut = (seconds) => {
 				//REQUIRED: seconds
 				
-				visibilitychangeEvent.remove();
+				if (visibilitychangeEvent !== undefined) {
+					visibilitychangeEvent.remove();
+					visibilitychangeEvent = undefined;
+				}
 				
-				sound.fadeOut(seconds);
-				sound = undefined;
+				if (sound !== undefined) {
+					sound.fadeOut(seconds);
+					sound = undefined;
+				}
 			};
 		}
 		
@@ -125,10 +135,15 @@ SkyEngine.BGM = CLASS({
 			
 			let stop = self.stop = () => {
 				
-				visibilitychangeEvent.remove();
+				if (visibilitychangeEvent !== undefined) {
+					visibilitychangeEvent.remove();
+					visibilitychangeEvent = undefined;
+				}
 				
-				audio.stop();
-				audio = undefined;
+				if (audio !== undefined) {
+					audio.stop();
+					audio = undefined;
+				}
 				
 				isPlaying = false;
 			};
