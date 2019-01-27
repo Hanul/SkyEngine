@@ -20,3 +20,5 @@ SkyEngine에 대해 자주 묻는 질문에 대해 정리한 문서입니다. �
 HTML5 기반 게임을 만드려는 게임 개발자나, 게임 개발을 시작하려는 웹 개발자에게 특히 좋습니다.
 
 ## 본 엔진을 사용한, 상용화된 게임이 있습니까?
+- 발키리 메이커 ([Android](https://play.google.com/store/apps/details?id=com.btncafe.ValkyrieMaker) / [iOS](https://itunes.apple.com/us/app/valkyrie-maker/id1311252728))
+- 소행성 소녀 ([Android](https://play.google.com/store/apps/details?id=com.btncafe.AsteroidGirl) / [iOS](https://itunes.apple.com/us/app/asteroid-girl/id1278123826) / [Steam](https://store.steampowered.com/app/747280/Asteroid_Girl/))
