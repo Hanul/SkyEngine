@@ -45,6 +45,10 @@ SkyEngine.Figure = CLASS((cls) => {
 			graphics.lineStyle(borderSize, colorStrToColor(borderColor), 1);
 		}
 		
+		if (blendMode !== undefined) {
+			graphics.blendMode = SkyEngine.Util.BlendMode.getPixiBlendMode(blendMode);
+		}
+		
 		graphics.zIndex = -9999999;
 		
 		return graphics;

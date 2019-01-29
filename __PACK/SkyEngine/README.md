@@ -139,6 +139,7 @@ SkyEngine의 모든 구성요소는 노드를 확장합니다.
 * [샘플 프로젝트](DOC/Samples.md)
 * [UI 개발](DOC/UI.md)
 * [API 문서](API/README.md)
+* [최적화를 위한 안내 사항](DOC/Optimization.md)
 
 ## 포럼
 [SkyEngine 포럼](https://forum.inos.io/skyengine)

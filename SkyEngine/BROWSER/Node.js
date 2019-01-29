@@ -1042,13 +1042,6 @@ SkyEngine.Node = CLASS({
 					color : color
 				});
 				
-				console.log({
-					rotation : Math.atan2(offsetY, offsetX) * 180 / Math.PI,
-					distance : Math.sqrt(offsetX * offsetX + offsetY * offsetY),
-					blur : blurRadius,
-					color : color
-				});
-				
 				pixiContainer.filters = [pixiFilter];
 			}
 			
