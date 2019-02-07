@@ -205,9 +205,7 @@ SkyEngine.Screen = OBJECT({
 			});
 		});
 		
-		let fps = BROWSER_CONFIG.SkyEngine.fps;
-		
-		let loop = LOOP(fps, (_deltaTime) => {
+		let loop = LOOP(BROWSER_CONFIG.SkyEngine.fps, (_deltaTime) => {
 			
 			deltaTime = _deltaTime;
 			
@@ -239,16 +237,18 @@ SkyEngine.Screen = OBJECT({
 			renderer.render(stage);
 		});
 		
-		let changeFPS = self.changeFPS = (_fps) => {
+		let changeFPS = self.changeFPS = (fps) => {
 			//REQUIRED: fps
-			
-			fps = _fps;
 			
 			loop.changeFPS(fps);
 		};
 		
+		let clearFPS = self.clearFPS = () => {
+			loop.clearFPS();
+		};
+		
 		let getFPS = self.getFPS = () => {
-			return fps;
+			return loop.getFPS();
 		};
 		
 		// 화면 크기가 변경되는 경우, 캔버스의 크기 또한 변경되어야 합니다.
