@@ -282,7 +282,7 @@ SkyEngine.Background = CLASS({
 					let screenWidth = SkyEngine.Screen.getWidth() / realScaleX;
 					let screenHeight = SkyEngine.Screen.getHeight() / realScaleY;
 					
-					pixiTilingSprite = new PIXI.extras.TilingSprite.from(texture, screenWidth, screenHeight);
+					pixiTilingSprite = new PIXI.TilingSprite(texture, screenWidth, screenHeight);
 					
 					pixiTilingSprite.anchor.x = 0.5;
 					pixiTilingSprite.anchor.y = 0.5;
