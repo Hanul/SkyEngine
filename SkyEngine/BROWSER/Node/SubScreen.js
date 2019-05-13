@@ -45,7 +45,7 @@ SkyEngine.SubScreen = CLASS((cls) => {
 			
 			else {
 				canvas = CANVAS();
-				renderer = new PIXI.WebGLRenderer({
+				renderer = new PIXI.Renderer({
 					view : canvas.getEl(),
 					transparent : true
 				});

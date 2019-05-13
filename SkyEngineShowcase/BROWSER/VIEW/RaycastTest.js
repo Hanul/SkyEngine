@@ -20,8 +20,6 @@ SkyEngineShowcase.RaycastTest = CLASS({
 			    point.angleSquare = Math.PI + Math.PI - point.angleSquare;
 			}
 		};
-			
-			let lines = [];
 		
 		// 빛을 생성합니다.
 		let genLight = () => {
@@ -251,7 +249,7 @@ SkyEngineShowcase.RaycastTest = CLASS({
 			fps : 10,
 			on : {
 				move : () => {
-					genLight();
+					DELAY(genLight);
 				}
 			}
 		}).appendTo(SkyEngine.Screen);

@@ -62,7 +62,7 @@ SkyEngine.Screen = OBJECT({
 			}
 		}).appendTo(wrapper);
 		
-		let renderer = new PIXI.WebGLRenderer({
+		let renderer = new PIXI.Renderer({
 			view : canvas.getEl(),
 			transparent : true
 		});

@@ -67,7 +67,7 @@ SkyEngine.Sprite = CLASS({
 						frameCount = width / spriteWidth * height / spriteHeight;
 					}
 					
-					pixiTilingSprite = new PIXI.extras.TilingSprite.from(texture, spriteWidth, spriteHeight);
+					pixiTilingSprite = new PIXI.TilingSprite(texture, spriteWidth, spriteHeight);
 					
 					pixiTilingSprite.anchor.x = 0.5;
 					pixiTilingSprite.anchor.y = 0.5;

@@ -65,7 +65,7 @@ SkyEngine.Background = CLASS({
 				
 				if (pixiSprites.length === 0) {
 					
-					let pixiSprite = new PIXI.Sprite.fromImage(src);
+					let pixiSprite = new PIXI.Sprite.from(src);
 					
 					pixiSprite.anchor.x = 0.5;
 					pixiSprite.anchor.y = 0.5;
@@ -118,7 +118,7 @@ SkyEngine.Background = CLASS({
 					// 스프라이트 생성
 					if (existed !== true) {
 						
-						let pixiSprite = new PIXI.Sprite.fromImage(src);
+						let pixiSprite = new PIXI.Sprite.from(src);
 						
 						pixiSprite.anchor.x = 0.5;
 						pixiSprite.anchor.y = 0.5;
@@ -175,7 +175,7 @@ SkyEngine.Background = CLASS({
 					// 스프라이트 생성
 					if (existed !== true) {
 						
-						let pixiSprite = new PIXI.Sprite.fromImage(src);
+						let pixiSprite = new PIXI.Sprite.from(src);
 						
 						pixiSprite.anchor.x = 0.5;
 						pixiSprite.anchor.y = 0.5;
@@ -243,7 +243,7 @@ SkyEngine.Background = CLASS({
 						// 스프라이트 생성
 						if (existed !== true) {
 							
-							let pixiSprite = new PIXI.Sprite.fromImage(src);
+							let pixiSprite = new PIXI.Sprite.from(src);
 							
 							pixiSprite.anchor.x = 0.5;
 							pixiSprite.anchor.y = 0.5;
