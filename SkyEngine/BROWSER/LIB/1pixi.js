@@ -4,6 +4,8 @@
  *
  * pixi.js is licensed under the MIT License.
  * http://www.opensource.org/licenses/mit-license
+ *
+ * //IMPORTANT: 수정됨 부분 살펴보기
  */
 var PIXI = (function (exports) {
   'use strict';
@@ -8016,16 +8018,20 @@ var PIXI = (function (exports) {
 
           this._boundsID++;
 
-          this.transform.updateTransform(this.parent.transform);
+          //IMPORTANT: 수정됨
+          if (this.parent !== null) {
+            this.transform.updateTransform(this.parent.transform);
 
-          // TODO: check render flags, how to process stuff here
-          this.worldAlpha = this.alpha * this.parent.worldAlpha;
+            // TODO: check render flags, how to process stuff here
+            this.worldAlpha = this.alpha * this.parent.worldAlpha;
+          }
 
           for (var i = 0, j = this.children.length; i < j; ++i)
           {
               var child = this.children[i];
 
-              if (child.visible)
+              //IMPORTANT: 수정됨
+              if (child !== undefined && child.visible)
               {
                   child.updateTransform();
               }
@@ -20798,7 +20804,11 @@ var PIXI = (function (exports) {
           }
 
           this.renderTexture.bind(renderTexture);
-          this.batch.currentRenderer.start();
+
+          //IMPORTANT: 수정됨
+          if (this.batch.currentRenderer !== null) {
+            this.batch.currentRenderer.start();
+          }
 
           if (clear !== undefined ? clear : this.clearBeforeRender)
           {
@@ -20807,8 +20817,11 @@ var PIXI = (function (exports) {
 
           displayObject.render(this);
 
-          // apply transform..
-          this.batch.currentRenderer.flush();
+          //IMPORTANT: 수정됨
+          if (this.batch.currentRenderer !== null) {
+            // apply transform..
+            this.batch.currentRenderer.flush();
+          }
 
           if (renderTexture)
           {
