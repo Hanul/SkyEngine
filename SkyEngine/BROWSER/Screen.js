@@ -68,6 +68,9 @@ SkyEngine.Screen = OBJECT({
 		});
 		renderer.plugins.interaction.autoPreventDefault = false;
 		
+		let stageX = 0;
+		let stageY = 0;
+		
 		let stage = new PIXI.Container();
 		stage.addChild(inner.getPixiContainer());
 		
@@ -231,8 +234,8 @@ SkyEngine.Screen = OBJECT({
 			isStepping = false;
 			
 			// 스테이지가 가운데 오도록
-			stage.x = width / 2 - getCameraFollowX();
-			stage.y = height / 2 - getCameraFollowY();
+			stage.x = width / 2 - getCameraFollowX() + stageX;
+			stage.y = height / 2 - getCameraFollowY() + stageY;
 			
 			renderer.render(stage);
 		});
@@ -502,31 +505,50 @@ SkyEngine.Screen = OBJECT({
 			return canvas;
 		};
 		
+		let getLeftLetterbox = self.getLeftLetterbox = () => {
+			return leftLetterbox;
+		};
+		
+		let getRightLetterbox = self.getRightLetterbox = () => {
+			return rightLetterbox;
+		};
+		
+		let getTopLetterbox = self.getTopLetterbox = () => {
+			return topLetterbox;
+		};
+		
+		let getBottomLetterbox = self.getBottomLetterbox = () => {
+			return bottomLetterbox;
+		};
+		
 		let getPixiRenderer = self.getPixiRenderer = () => {
 			return renderer;
+		};
+		
+		let setStageX = self.setStageX = (_stageX) => {
+			//REQUIRED: stageX
+			
+			stageX = _stageX;
+		};
+		
+		let getStageX = self.getStageX = () => {
+			return stageX;
+		};
+		
+		let setStageY = self.setStageY = (_stageY) => {
+			//REQUIRED: stageY
+			
+			stageY = _stageY;
+		};
+		
+		let getStageY = self.getStageY = () => {
+			return stageY;
 		};
 		
 		let nonePausableNode = SkyEngine.Node();
 		
 		let getNonePausableNode = self.getNonePausableNode = () => {
 			return nonePausableNode;
-		};
-		
-		let setLetterboxImageSrc = self.setLetterboxImageSrc = (letterboxImageSrc) => {
-			//REQUIRED: letterboxImageSrc
-			
-			leftLetterbox.addStyle({
-				backgroundImage : letterboxImageSrc
-			});
-			topLetterbox.addStyle({
-				backgroundImage : letterboxImageSrc
-			});
-			rightLetterbox.addStyle({
-				backgroundImage : letterboxImageSrc
-			});
-			bottomLetterbox.addStyle({
-				backgroundImage : letterboxImageSrc
-			});
 		};
 	}
 });

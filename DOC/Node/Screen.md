@@ -41,4 +41,7 @@ SkyEngine.Screen.cameraFollowY({
 ## 기타 함수
 - `findNodesByClass(cls)` 특정 클래스의 노드들을 가져옵니다.
 - `getNonePausableNode()` 스크린 노드가 일시정지 되어도, 덩달아 일시정지 되지 않고 움직이는 노드를 가져옵니다.
-- `setLetterboxImageSrc(letterboxImageSrc)` 레더박스에 이미지를 지정하고자 하는 경우, 이미지의 경로를 지정합니다.
+- `getLeftLetterbox()` 왼쪽 레터박스 DOM을 가져옵니다.
+- `getRightLetterbox()` 오른쪽 레터박스 DOM을 가져옵니다.
+- `getTopLetterbox()` 위쪽 레터박스 DOM을 가져옵니다.
+- `getBottomLetterbox()` 아래쪽 레터박스 DOM을 가져옵니다.
