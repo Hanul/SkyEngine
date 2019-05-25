@@ -511,5 +511,22 @@ SkyEngine.Screen = OBJECT({
 		let getNonePausableNode = self.getNonePausableNode = () => {
 			return nonePausableNode;
 		};
+		
+		let setLetterboxImageSrc = self.setLetterboxImageSrc = (letterboxImageSrc) => {
+			//REQUIRED: letterboxImageSrc
+			
+			leftLetterbox.addStyle({
+				backgroundImage : letterboxImageSrc
+			});
+			topLetterbox.addStyle({
+				backgroundImage : letterboxImageSrc
+			});
+			rightLetterbox.addStyle({
+				backgroundImage : letterboxImageSrc
+			});
+			bottomLetterbox.addStyle({
+				backgroundImage : letterboxImageSrc
+			});
+		};
 	}
 });
