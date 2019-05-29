@@ -11,31 +11,39 @@ SkyEngine.LoadTexture = METHOD({
 		
 		if (texture === undefined) {
 			
-			let img = new Image();
-			
-			img.crossOrigin = 'anonymous';
-			
-			img.onload = () => {
+			let retry = RAR(() => {
 				
-				img.onload = undefined;
+				let img = new Image();
 				
-				if (PIXI.utils.TextureCache[src] !== undefined) {
-					texture = PIXI.utils.TextureCache[src];
-				}
+				img.crossOrigin = 'anonymous';
 				
-				else {
+				img.onload = () => {
 					
-					texture = new PIXI.Texture.from(img);
+					img.onload = undefined;
 					
-					PIXI.Texture.addToCache(texture, src);
-				}
+					if (PIXI.utils.TextureCache[src] !== undefined) {
+						texture = PIXI.utils.TextureCache[src];
+					}
+					
+					else {
+						
+						texture = new PIXI.Texture.from(img);
+						
+						PIXI.Texture.addToCache(texture, src);
+					}
+					
+					if (callback !== undefined) {
+						callback(texture);
+					}
+				};
 				
-				if (callback !== undefined) {
-					callback(texture);
-				}
-			};
-			
-			img.src = src;
+				// 로드 오류 시 재시도
+				img.onerror = () => {
+					retry();
+				};
+				
+				img.src = src;
+			});
 		}
 		
 		else if (callback !== undefined) {
