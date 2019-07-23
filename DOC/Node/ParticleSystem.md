@@ -110,6 +110,18 @@ SkyEngine.Interval(0.1, () => {
 - `particleScalingSpeed` 파티클이 커지는 속도
 - `minParticleScalingSpeed` 파티클이 커지는 최소 속도
 - `maxParticleScalingSpeed` 파티클이 커지는 최대 속도
+- `particleScaleX` 파티클의 x 스케일
+- `minParticleScaleX` 파티클의 최소 x 스케일
+- `maxParticleScaleX` 파티클의 최대 x 스케일
+- `particleScalingSpeedX` 파티클이 커지는 x 속도
+- `minParticleScalingSpeedX` 파티클이 커지는 최소 x 속도
+- `maxParticleScalingSpeedX` 파티클이 커지는 최대 x 속도
+- `particleScaleY` 파티클의 y 스케일
+- `minParticleScaleY` 파티클의 최소 y 스케일
+- `maxParticleScaleY` 파티클의 최대 y 스케일
+- `particleScalingSpeedY` 파티클이 커지는 y 속도
+- `minParticleScalingSpeedY` 파티클이 커지는 최소 y 속도
+- `maxParticleScalingSpeedY` 파티클이 커지는 최대 y 속도
 - `isParticleAngleToDirection` 파티클의 각도가 방향의 각도를 따르는지 여부
 - `particleAngle` 파티클의 각도
 - `minParticleAngle` 파티클의 최소 각도
