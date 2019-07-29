@@ -25,6 +25,7 @@ SkyEngine.Sprite = CLASS({
 		
 		let checkRectRect = SkyEngine.Util.Collision.checkRectRect;
 		
+		let pixiSprite;
 		let pixiTilingSprite;
 		let pixiSprites;
 		let nowPixiSprite;
@@ -67,16 +68,33 @@ SkyEngine.Sprite = CLASS({
 						frameCount = width / spriteWidth * height / spriteHeight;
 					}
 					
-					pixiTilingSprite = new PIXI.TilingSprite(texture, spriteWidth, spriteHeight);
+					if (frameCount <= 1) {
+						
+						pixiSprite = new PIXI.Sprite.from(texture);
+						
+						pixiSprite.anchor.x = 0.5;
+						pixiSprite.anchor.y = 0.5;
+						
+						pixiSprite.zIndex = -9999999;
+						
+						pixiSprite.blendMode = SkyEngine.Util.BlendMode.getPixiBlendMode(self.getBlendMode());
+						
+						self.addToPixiContainer(pixiSprite);
+					}
 					
-					pixiTilingSprite.anchor.x = 0.5;
-					pixiTilingSprite.anchor.y = 0.5;
-					
-					pixiTilingSprite.zIndex = -9999999;
-					
-					pixiTilingSprite.blendMode = SkyEngine.Util.BlendMode.getPixiBlendMode(self.getBlendMode());
-					
-					self.addToPixiContainer(pixiTilingSprite);
+					else {
+						
+						pixiTilingSprite = new PIXI.TilingSprite(texture, spriteWidth, spriteHeight);
+						
+						pixiTilingSprite.anchor.x = 0.5;
+						pixiTilingSprite.anchor.y = 0.5;
+						
+						pixiTilingSprite.zIndex = -9999999;
+						
+						pixiTilingSprite.blendMode = SkyEngine.Util.BlendMode.getPixiBlendMode(self.getBlendMode());
+						
+						self.addToPixiContainer(pixiTilingSprite);
+					}
 					
 					DELAY(() => {
 						if (self.checkIsRemoved() !== true) {
