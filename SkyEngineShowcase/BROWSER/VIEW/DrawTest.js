@@ -42,11 +42,20 @@ SkyEngineShowcase.DrawTest = CLASS({
 			scale : 0.2
 		}).appendTo(SkyEngine.Screen);
 		
+		let sprite = SkyEngine.Sprite({
+			src : SkyEngineShowcase.R('sprite.png'),
+			frameCount : 16,
+			spriteWidth : 128,
+			spriteHeight : 128,
+			fps : 10
+		}).appendTo(SkyEngine.Screen);
+		
 		inner.on('close', () => {
 			line.remove();
 			rect.remove();
 			circle.remove();
 			character.remove();
+			sprite.remove();
 		});
 	}
 });

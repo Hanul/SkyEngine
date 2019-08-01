@@ -26,7 +26,6 @@ SkyEngine.Sprite = CLASS({
 		let checkRectRect = SkyEngine.Util.Collision.checkRectRect;
 		
 		let pixiSprite;
-		let pixiTilingSprite;
 		let pixiSprites;
 		let nowPixiSprite;
 		
@@ -68,6 +67,7 @@ SkyEngine.Sprite = CLASS({
 						frameCount = width / spriteWidth * height / spriteHeight;
 					}
 					
+					// 단일 스프라이트
 					if (frameCount <= 1) {
 						
 						pixiSprite = new PIXI.Sprite.from(texture);
@@ -82,18 +82,45 @@ SkyEngine.Sprite = CLASS({
 						self.addToPixiContainer(pixiSprite);
 					}
 					
+					// 텍스쳐를 쪼개서 여러 스프라이트 생성
 					else {
 						
-						pixiTilingSprite = new PIXI.TilingSprite(texture, spriteWidth, spriteHeight);
+						pixiSprites = [];
 						
-						pixiTilingSprite.anchor.x = 0.5;
-						pixiTilingSprite.anchor.y = 0.5;
+						let baseTexture = texture.baseTexture;
 						
-						pixiTilingSprite.zIndex = -9999999;
+						let rowFrameCount = width / spriteWidth;
 						
-						pixiTilingSprite.blendMode = SkyEngine.Util.BlendMode.getPixiBlendMode(self.getBlendMode());
-						
-						self.addToPixiContainer(pixiTilingSprite);
+						REPEAT(frameCount, (i) => {
+							
+							let left = (i % rowFrameCount) * spriteWidth;
+							let top = Math.floor(i / rowFrameCount) * spriteHeight;
+							
+							let frameSrc = src + ':' + left + ',' + top;
+							let frameTexture;
+							
+							if (PIXI.utils.TextureCache[frameSrc] !== undefined) {
+								frameTexture = PIXI.utils.TextureCache[frameSrc];
+							}
+							
+							else {
+								
+								frameTexture = new PIXI.Texture(baseTexture, new PIXI.Rectangle(left, top, spriteWidth, spriteHeight));
+								
+								PIXI.Texture.addToCache(frameTexture, frameSrc);
+							}
+							
+							let pixiSprite = new PIXI.Sprite.from(frameTexture);
+							
+							pixiSprite.anchor.x = 0.5;
+							pixiSprite.anchor.y = 0.5;
+							
+							pixiSprite.zIndex = -9999999;
+							
+							pixiSprite.blendMode = SkyEngine.Util.BlendMode.getPixiBlendMode(self.getBlendMode());
+							
+							pixiSprites[i] = pixiSprite;
+						});
 					}
 					
 					DELAY(() => {
@@ -207,8 +234,8 @@ SkyEngine.Sprite = CLASS({
 				
 				origin(blendMode);
 				
-				if (pixiTilingSprite !== undefined) {
-					pixiTilingSprite.blendMode = SkyEngine.Util.BlendMode.getPixiBlendMode(self.getBlendMode());
+				if (pixiSprite !== undefined) {
+					pixiSprite.blendMode = SkyEngine.Util.BlendMode.getPixiBlendMode(self.getBlendMode());
 				}
 				
 				if (pixiSprites !== undefined) {
@@ -226,8 +253,8 @@ SkyEngine.Sprite = CLASS({
 				
 				origin();
 				
-				if (pixiTilingSprite !== undefined) {
-					pixiTilingSprite.blendMode = SkyEngine.Util.BlendMode.getPixiBlendMode(self.getBlendMode());
+				if (pixiSprite !== undefined) {
+					pixiSprite.blendMode = SkyEngine.Util.BlendMode.getPixiBlendMode(self.getBlendMode());
 				}
 				
 				if (pixiSprites !== undefined) {
@@ -306,11 +333,6 @@ SkyEngine.Sprite = CLASS({
 							}
 						}
 						
-						else if (pixiTilingSprite !== undefined) {
-							pixiTilingSprite.tilePosition.x = -spriteWidth * Math.floor(realFrame % (width / spriteWidth));
-							pixiTilingSprite.tilePosition.y = -spriteHeight * Math.floor(realFrame / (width / spriteWidth));
-						}
-						
 						self.fireEvent('framechange');
 					}
 				}
@@ -326,7 +348,7 @@ SkyEngine.Sprite = CLASS({
 				
 				srcs = undefined;
 				
-				pixiTilingSprite = undefined;
+				pixiSprite = undefined;
 				pixiSprites = undefined;
 				nowPixiSprite = undefined;
 				
