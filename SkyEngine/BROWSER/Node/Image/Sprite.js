@@ -310,7 +310,7 @@ SkyEngine.Sprite = CLASS({
 					
 					if (frameCount !== undefined) {
 						if (realFrame >= frameCount) {
-							realFrame -= frameCount;
+							realFrame %= frameCount;
 							self.fireEvent('animationend');
 						}
 					}
