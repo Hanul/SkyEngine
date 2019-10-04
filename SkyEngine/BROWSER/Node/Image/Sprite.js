@@ -190,6 +190,8 @@ SkyEngine.Sprite = CLASS({
 		
 		let stop = self.stop = () => {
 			isStopped = true;
+			
+			realFrame = frame;
 		};
 		
 		let resume = self.resume = () => {

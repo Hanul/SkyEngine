@@ -299,9 +299,48 @@ SkyEngine.Line = CLASS((cls) => {
 		let border = params.border;
 		
 		let graphics = SkyEngine.Figure.generateGraphics(params);
+			
+		let borderStyle = 'solid';
+		if (border !== undefined) {
+			borderStyle = border.split(' ')[1];
+		}
 		
-		graphics.moveTo(startX, startY);
-		graphics.lineTo(endX, endY);
+		if (borderStyle === 'dashed') {
+			
+			let dash = 16;
+			let gap = 8;
+			
+			let radian = Math.atan2(endX - startX, endY - startY);
+			
+			let lastX = startX;
+			let lastY = startY;
+			
+			while(true) {
+				
+				let toX = lastX + dash * Math.cos(radian);
+				let toY = lastY + dash * Math.sin(radian);
+				
+				if ((startX < endX ? toX > endX : toX < endX) || (startY < endY ? toY > endY : toY < endY)) {
+					toX = endX;
+					toY = endY;
+				}
+				
+				graphics.moveTo(lastX, lastY);
+				graphics.lineTo(toX, toY);
+				
+				if (toX === endX && toY === endY) {
+					break;
+				}
+				
+				lastX = toX + gap * Math.cos(radian);
+				lastY = toY + gap * Math.sin(radian);
+			}
+		}
+		
+		else {
+			graphics.moveTo(startX, startY);
+			graphics.lineTo(endX, endY);
+		}
 		
 		return graphics;
 	};
