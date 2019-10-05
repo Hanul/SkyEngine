@@ -310,7 +310,7 @@ SkyEngine.Line = CLASS((cls) => {
 			let dash = 16;
 			let gap = 8;
 			
-			let radian = Math.atan2(endX - startX, endY - startY);
+			let radian = Math.atan2(endY - startY, endX - startX);
 			
 			let lastX = startX;
 			let lastY = startY;
