@@ -49,6 +49,8 @@ SkyEngine.SubScreen = CLASS((cls) => {
 					view : canvas.getEl(),
 					transparent : true
 				});
+				renderer.view.style.touchAction = 'auto';
+				renderer.plugins.interaction.autoPreventDefault = false;
 			}
 			
 			canvas.appendTo(wrapper);

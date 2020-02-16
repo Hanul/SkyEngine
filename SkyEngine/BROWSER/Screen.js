@@ -240,6 +240,10 @@ SkyEngine.Screen = OBJECT({
 			renderer.render(stage);
 		});
 		
+		if (BROWSER_CONFIG.SkyEngine.isNotUsingScreen === true) {
+			loop.remove();
+		}
+		
 		let changeFPS = self.changeFPS = (fps) => {
 			//REQUIRED: fps
 			
