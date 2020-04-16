@@ -1779,7 +1779,9 @@ SkyEngine.Node = CLASS({
 		let hide = self.hide = () => {
 			isHiding = true;
 			
-			pixiContainer.visible = false;
+			if (pixiContainer !== undefined) {
+				pixiContainer.visible = false;
+			}
 			
 			domWrapperHide();
 		};
@@ -1787,7 +1789,9 @@ SkyEngine.Node = CLASS({
 		let show = self.show = () => {
 			isHiding = false;
 			
-			pixiContainer.visible = true;
+			if (pixiContainer !== undefined) {
+				pixiContainer.visible = true;
+			}
 			
 			domWrapperShow();
 		};
