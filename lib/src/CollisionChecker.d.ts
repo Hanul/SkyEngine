@@ -1,0 +1,1 @@
+//# sourceMappingURL=CollisionChecker.d.ts.map

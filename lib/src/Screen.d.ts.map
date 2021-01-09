@@ -1,0 +1,1 @@
+{"version":3,"file":"Screen.d.ts","sourceRoot":"","sources":["../../src/Screen.ts"],"names":[],"mappings":"AAEA,OAAO,UAAU,MAAM,cAAc,CAAC;AAEtC,cAAM,MAAO,SAAQ,UAAU;IAE3B,OAAO,CAAC,MAAM,CAAoB;IAClC,OAAO,CAAC,aAAa,CAAc;IACnC,OAAO,CAAC,YAAY,CAAc;IAClC,OAAO,CAAC,cAAc,CAAc;IACpC,OAAO,CAAC,eAAe,CAAc;IAErC,OAAO,CAAC,QAAQ,CAAgB;IAChC,OAAO,CAAC,KAAK,CAAiB;;CAuCjC;;AAED,wBAA4B"}
