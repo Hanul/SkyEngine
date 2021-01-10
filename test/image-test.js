@@ -8,9 +8,9 @@
  */
 /******/ (() => { // webpackBootstrap
 /******/ 	"use strict";
-/*!****************************!*\
-  !*** ./test/image-test.ts ***!
-  \****************************/
-eval("\r\n\n\n//# sourceURL=webpack://@hanul/skyengine/./test/image-test.ts?");
+/*!********************************!*\
+  !*** ./test-src/image-test.ts ***!
+  \********************************/
+eval("\r\n\n\n//# sourceURL=webpack://@hanul/skyengine/./test-src/image-test.ts?");
 /******/ })()
 ;

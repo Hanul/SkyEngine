@@ -19,6 +19,7 @@ export default class Sound {
                         resolve(buffer);
                     });
                 };
+                request.onerror = (error) => reject(error);
                 request.send();
             });
         }

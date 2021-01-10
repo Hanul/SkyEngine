@@ -65,6 +65,7 @@
   },
   "exclude": [
     "lib",
+    "test-src",
     "node_modules",
     ".vscode"
   ]
