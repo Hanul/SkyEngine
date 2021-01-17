@@ -1,6 +1,4 @@
 
-		let stageX = 0;
-		let stageY = 0;
 		
 		let left;
 		let top;
@@ -123,104 +121,6 @@
 		let getFPS = self.getFPS = () => {
 			return loop.getFPS();
 		};
-		
-		// 화면 크기가 변경되는 경우, 캔버스의 크기 또한 변경되어야 합니다.
-		EVENT('resize', RAR(() => {
-			
-			let winWidth = WIN_WIDTH();
-			let winHeight = WIN_HEIGHT();
-			
-			let isToFixWidth = false;
-			let isToFixHeight = false;
-			
-			if (BROWSER_CONFIG.SkyEngine.width !== undefined) {
-				width = BROWSER_CONFIG.SkyEngine.width;
-			} else {
-				width = winWidth;
-				isToFixWidth = true;
-			}
-			
-			if (BROWSER_CONFIG.SkyEngine.height !== undefined) {
-				height = BROWSER_CONFIG.SkyEngine.height;
-			} else {
-				height = winHeight;
-				isToFixHeight = true;
-			}
-			
-			let widthRatio = winWidth / width;
-			let heightRatio = winHeight / height;
-			
-			if (widthRatio < heightRatio) {
-				ratio = widthRatio;
-			} else {
-				ratio = heightRatio;
-			}
-			
-			if (BROWSER_CONFIG.SkyEngine.minWidth !== undefined && width / ratio < BROWSER_CONFIG.SkyEngine.minWidth) {
-				width = BROWSER_CONFIG.SkyEngine.minWidth;
-				isToFixWidth = false;
-			}
-			
-			if (BROWSER_CONFIG.SkyEngine.minHeight !== undefined && height / ratio < BROWSER_CONFIG.SkyEngine.minHeight) {
-				height = BROWSER_CONFIG.SkyEngine.minHeight;
-				isToFixHeight = false;
-			}
-			
-			widthRatio = winWidth / width;
-			heightRatio = winHeight / height;
-			
-			if (widthRatio < heightRatio) {
-				ratio = widthRatio;
-			} else {
-				ratio = heightRatio;
-			}
-			
-			if (isToFixWidth === true) {
-				width /= ratio;
-			}
-			
-			if (isToFixHeight === true) {
-				height /= ratio;
-			}
-			
-			if (BROWSER_CONFIG.SkyEngine.maxWidth !== undefined && width > BROWSER_CONFIG.SkyEngine.maxWidth) {
-				width = BROWSER_CONFIG.SkyEngine.maxWidth;
-			}
-			
-			if (BROWSER_CONFIG.SkyEngine.maxHeight !== undefined && height > BROWSER_CONFIG.SkyEngine.maxHeight) {
-				height = BROWSER_CONFIG.SkyEngine.maxHeight;
-			}
-			
-			left = (winWidth - width * ratio) / 2;
-			top = (winHeight - height * ratio) / 2;
-			
-			canvas.addStyle({
-				left : left,
-				top : top,
-				width : width * ratio,
-				height : height * ratio
-			});
-			
-			canvas.setSize({
-				width : width * devicePixelRatio,
-				height : height * devicePixelRatio
-			});
-			
-			leftLetterbox.addStyle({
-				width : left
-			});
-			topLetterbox.addStyle({
-				height : top
-			});
-			rightLetterbox.addStyle({
-				width : left
-			});
-			bottomLetterbox.addStyle({
-				height : top
-			});
-			
-			renderer.resize(width, height);
-		}));
 		
 		self.on('remove', () => {
 			loop.remove();

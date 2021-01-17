@@ -7,8 +7,10 @@ declare class Screen {
     private bottomLetterbox;
     private renderer;
     private stage;
-    root: GameObject | undefined;
+    private _root;
     private loop;
+    private stageX;
+    private stageY;
     left: number;
     top: number;
     width: number;
@@ -24,7 +26,11 @@ declare class Screen {
     cameraMinFollowY: number | undefined;
     cameraMaxFollowX: number | undefined;
     cameraMaxFollowY: number | undefined;
-    constructor(fps?: number);
+    constructor();
+    private windowResizeHandler;
+    start(fps?: number): void;
+    set root(root: GameObject | undefined);
+    get root(): GameObject | undefined;
     get cameraFollowX(): number;
     get cameraFollowY(): number;
 }

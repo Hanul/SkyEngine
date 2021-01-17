@@ -1,5 +1,6 @@
 import el from "@hanul/el.js";
 import * as PIXI from "pixi.js";
+import Config from "./Config";
 import GameObject from "./GameObject";
 import Loop from "./Loop";
 
@@ -14,9 +15,12 @@ class Screen {
 
     private renderer: PIXI.Renderer;
     private stage: PIXI.Container;
-    public root: GameObject | undefined;
+    private _root: GameObject | undefined;
 
-    private loop: Loop;
+    private loop: Loop | undefined;
+
+    private stageX = 0;
+    private stageY = 0;
 
     public left = 0;
     public top = 0;
@@ -37,7 +41,7 @@ class Screen {
     public cameraMaxFollowX: number | undefined;
     public cameraMaxFollowY: number | undefined;
 
-    constructor(fps?: number) {
+    constructor() {
 
         document.body.append(
             this.canvas = el("canvas"),
@@ -70,10 +74,121 @@ class Screen {
 
         this.stage = new PIXI.Container();
 
-        this.loop = new Loop(fps, () => {
-            //TODO:
+        window.addEventListener("resize", this.windowResizeHandler);
+        this.windowResizeHandler();
+    }
+
+    private windowResizeHandler = () => {
+
+        const winWidth = document.documentElement.clientWidth;
+        const winHeight = window.innerHeight;
+
+        let isToFixWidth = false;
+        let isToFixHeight = false;
+
+        if (Config.width !== undefined) {
+            this.width = Config.width;
+        } else {
+            this.width = winWidth;
+            isToFixWidth = true;
+        }
+
+        if (Config.height !== undefined) {
+            this.height = Config.height;
+        } else {
+            this.height = winHeight;
+            isToFixHeight = true;
+        }
+
+        let widthRatio = winWidth / this.width;
+        let heightRatio = winHeight / this.height;
+
+        if (widthRatio < heightRatio) {
+            this.ratio = widthRatio;
+        } else {
+            this.ratio = heightRatio;
+        }
+
+        if (Config.minWidth !== undefined && this.width / this.ratio < Config.minWidth) {
+            this.width = Config.minWidth;
+            isToFixWidth = false;
+        }
+
+        if (Config.minHeight !== undefined && this.height / this.ratio < Config.minHeight) {
+            this.height = Config.minHeight;
+            isToFixHeight = false;
+        }
+
+        widthRatio = winWidth / this.width;
+        heightRatio = winHeight / this.height;
+
+        if (widthRatio < heightRatio) {
+            this.ratio = widthRatio;
+        } else {
+            this.ratio = heightRatio;
+        }
+
+        if (isToFixWidth === true) {
+            this.width /= this.ratio;
+        }
+
+        if (isToFixHeight === true) {
+            this.height /= this.ratio;
+        }
+
+        if (Config.maxWidth !== undefined && this.width > Config.maxWidth) {
+            this.width = Config.maxWidth;
+        }
+
+        if (Config.maxHeight !== undefined && this.height > Config.maxHeight) {
+            this.height = Config.maxHeight;
+        }
+
+        this.left = (winWidth - this.width * this.ratio) / 2;
+        this.top = (winHeight - this.height * this.ratio) / 2;
+
+        el.style(this.canvas, {
+            left: this.left,
+            top: this.top,
+            width: this.width * this.ratio,
+            height: this.height * this.ratio
+        });
+
+        this.canvas.width = this.width * devicePixelRatio;
+        this.canvas.height = this.height * devicePixelRatio;
+
+        el.style(this.leftLetterbox, { width: this.left });
+        el.style(this.topLetterbox, { height: this.top });
+        el.style(this.rightLetterbox, { width: this.left });
+        el.style(this.bottomLetterbox, { height: this.top });
+
+        this.renderer.resize(this.width, this.height);
+    };
+
+    public start(fps?: number) {
+        this.loop = new Loop(fps, (deltaTime) => {
+            this.root?.step(deltaTime);
+
+            // 스테이지가 가운데 오도록
+            this.stage.x = this.width / 2 - this.cameraFollowX + this.stageX;
+            this.stage.y = this.height / 2 - this.cameraFollowY + this.stageY;
+
+            this.renderer.render(this.stage);
         });
     }
+
+    public set root(root: GameObject | undefined) {
+        if (this._root !== undefined) {
+            this.stage.removeChild(this._root.pixiContainer);
+            this._root.destroy();
+        }
+        this._root = root;
+        if (root !== undefined) {
+            this.stage.addChild(root.pixiContainer);
+        }
+    }
+
+    public get root(): GameObject | undefined { return this._root; }
 
     public get cameraFollowX(): number {
         if (this.cameraFollowXTarget === undefined) {

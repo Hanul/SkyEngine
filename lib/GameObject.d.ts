@@ -135,5 +135,6 @@ export default class GameObject extends EventContainer {
     checkOneSideCollision(target: GameObject): boolean;
     checkCollision(target: GameObject): boolean;
     checkOffScreen(): boolean;
+    step(deltaTime: number): void;
 }
 //# sourceMappingURL=GameObject.d.ts.map

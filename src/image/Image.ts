@@ -36,7 +36,6 @@ export default class Image extends GameObject {
         }
 
         this.addToPixiContainer(this.pixiSprite);
-
         this.fireEvent("load");
     }
 
