@@ -4,7 +4,7 @@ import * as PIXI from "pixi.js";
 import Screen from "./Screen";
 import Util from "./Util";
 
-export default abstract class GameObject extends EventContainer {
+export default class GameObject extends EventContainer {
 
     private _parent: GameObject | undefined;
     private _target: GameObject | undefined;

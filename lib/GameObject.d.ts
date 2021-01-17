@@ -1,6 +1,6 @@
 import EventContainer from "eventcontainer";
 import * as PIXI from "pixi.js";
-export default abstract class GameObject extends EventContainer {
+export default class GameObject extends EventContainer {
     private _parent;
     private _target;
     colliders: GameObject[];

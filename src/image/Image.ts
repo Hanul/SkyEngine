@@ -1,3 +1,4 @@
+import * as PIXI from "pixi.js";
 import CollisionChecker from "../CollisionChecker";
 import GameObject from "../GameObject";
 import ImageDataManager from "../ImageDataManager";

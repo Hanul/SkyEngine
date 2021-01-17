@@ -3,9 +3,10 @@ import * as PIXI from "pixi.js";
 import GameObject from "./GameObject";
 import Loop from "./Loop";
 
-class Screen extends GameObject {
+class Screen {
 
     private canvas: HTMLCanvasElement;
+
     private leftLetterbox: HTMLElement;
     private topLetterbox: HTMLElement;
     private rightLetterbox: HTMLElement;
@@ -13,6 +14,7 @@ class Screen extends GameObject {
 
     private renderer: PIXI.Renderer;
     private stage: PIXI.Container;
+    public root: GameObject | undefined;
 
     private loop: Loop;
 
@@ -36,7 +38,6 @@ class Screen extends GameObject {
     public cameraMaxFollowY: number | undefined;
 
     constructor(fps?: number) {
-        super(0, 0);
 
         document.body.append(
             this.canvas = el("canvas"),
@@ -47,28 +48,27 @@ class Screen extends GameObject {
         );
 
         el.style(this.canvas, {
-            position: 'fixed',
+            position: "fixed",
             zIndex: -1,
         });
 
         for (const letterbox of [this.leftLetterbox, this.topLetterbox, this.rightLetterbox, this.bottomLetterbox]) {
             el.style(letterbox, {
-                position: 'fixed',
+                position: "fixed",
                 zIndex: 9999998,
-                backgroundColor: '#000',
+                backgroundColor: "#000",
             });
         }
 
-        el.style(this.leftLetterbox, { left: 0, top: 0, height: '100%' });
-        el.style(this.topLetterbox, { left: 0, top: 0, width: '100%' });
-        el.style(this.rightLetterbox, { right: 0, top: 0, height: '100%' });
-        el.style(this.bottomLetterbox, { left: 0, bottom: 0, width: '100%' });
+        el.style(this.leftLetterbox, { left: 0, top: 0, height: "100%" });
+        el.style(this.topLetterbox, { left: 0, top: 0, width: "100%" });
+        el.style(this.rightLetterbox, { right: 0, top: 0, height: "100%" });
+        el.style(this.bottomLetterbox, { left: 0, bottom: 0, width: "100%" });
 
         this.renderer = new PIXI.Renderer({ view: this.canvas, transparent: true });
         this.renderer.plugins.interaction.autoPreventDefault = false;
 
         this.stage = new PIXI.Container();
-        this.stage.addChild(this.pixiContainer);
 
         this.loop = new Loop(fps, () => {
             //TODO:

@@ -1,5 +1,5 @@
 import GameObject from "./GameObject";
-declare class Screen extends GameObject {
+declare class Screen {
     private canvas;
     private leftLetterbox;
     private topLetterbox;
@@ -7,6 +7,7 @@ declare class Screen extends GameObject {
     private bottomLetterbox;
     private renderer;
     private stage;
+    root: GameObject | undefined;
     private loop;
     left: number;
     top: number;

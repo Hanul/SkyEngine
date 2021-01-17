@@ -1,3 +1,5 @@
+import * as PIXI from "pixi.js";
+
 const loadTexture = async (src: string): Promise<PIXI.Texture> => {
 
     let texture: PIXI.Texture = PIXI.utils.TextureCache[src];
