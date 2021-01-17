@@ -10,7 +10,7 @@
         "webpack-prod": "webpack --mode production --config webpack.config.prod.js"
     },
     "dependencies": {
-        "@hanul/el.js": "^0.0.1",
+        "@hanul/el.js": "^0.0.7",
         "eventcontainer": "^0.0.1",
         "pixi.js": "^5.3.7",
         "ts-loader": "^8.0.13",

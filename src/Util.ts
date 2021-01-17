@@ -9,7 +9,7 @@ _.times
 _.union
 */
 export default class Util {
-    public static pull(array: any[], ...removeList: any[]) {
+    public static pull(array: any[], ...removeList: any[]): void {
         for (const el of removeList) {
             const index = array.indexOf(el);
             if (index !== -1) {

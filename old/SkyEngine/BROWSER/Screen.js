@@ -1,78 +1,6 @@
-/*
- * 게임 화면 전체를 다루는 오브젝트
- */
-SkyEngine.Screen = OBJECT({
-	
-	preset : () => {
-		return SkyEngine.Node;
-	},
-	
-	init : (inner, self) => {
-		
-		let wrapper = DIV().appendTo(BODY);
-		
-		let canvas = CANVAS({
-			style : {
-				position : 'fixed',
-				zIndex : -1
-			}
-		}).appendTo(wrapper);
-		
-		let leftLetterbox = DIV({
-			style : {
-				position : 'fixed',
-				left : 0,
-				top : 0,
-				height : '100%',
-				zIndex : 9999998,
-				backgroundColor : '#000'
-			}
-		}).appendTo(wrapper);
-		
-		let topLetterbox = DIV({
-			style : {
-				position : 'fixed',
-				left : 0,
-				top : 0,
-				width : '100%',
-				zIndex : 9999998,
-				backgroundColor : '#000'
-			}
-		}).appendTo(wrapper);
-		
-		let rightLetterbox = DIV({
-			style : {
-				position : 'fixed',
-				right : 0,
-				top : 0,
-				height : '100%',
-				zIndex : 9999998,
-				backgroundColor : '#000'
-			}
-		}).appendTo(wrapper);
-		
-		let bottomLetterbox = DIV({
-			style : {
-				position : 'fixed',
-				left : 0,
-				bottom : 0,
-				width : '100%',
-				zIndex : 9999998,
-				backgroundColor : '#000'
-			}
-		}).appendTo(wrapper);
-		
-		let renderer = new PIXI.Renderer({
-			view : canvas.getEl(),
-			transparent : true
-		});
-		renderer.plugins.interaction.autoPreventDefault = false;
-		
+
 		let stageX = 0;
 		let stageY = 0;
-		
-		let stage = new PIXI.Container();
-		stage.addChild(inner.getPixiContainer());
 		
 		let left;
 		let top;
@@ -84,68 +12,6 @@ SkyEngine.Screen = OBJECT({
 		let isStepping;
 		
 		let registeredNodeMap = {};
-		
-		let followX = 0;
-		let followY = 0;
-		
-		let cameraFollowCenterX;
-		let cameraFollowCenterY;
-		let cameraFollowXTarget;
-		let cameraFollowYTarget;
-		
-		let cameraMinFollowX;
-		let cameraMinFollowY;
-		let cameraMaxFollowX;
-		let cameraMaxFollowY;
-		
-		// 노드 등록
-		let registerNode = self.registerNode = (node) => {
-			
-			let cls = node.type;
-			
-			while (cls !== undefined && cls !== CLASS) {
-				
-				if (registeredNodeMap[cls.id] === undefined) {
-					registeredNodeMap[cls.id] = [];
-				}
-				
-				registeredNodeMap[cls.id].push(node);
-				
-				cls = cls.mom;
-			}
-		};
-		
-		// 노드 해제
-		let unregisterNode = self.unregisterNode = (node) => {
-			
-			let cls = node.type;
-			
-			while (cls !== undefined && cls !== CLASS) {
-				
-				if (registeredNodeMap[cls.id] !== undefined) {
-					
-					let nodes = registeredNodeMap[cls.id];
-					
-					for (let i = 0; i < nodes.length; i += 1) {
-						if (nodes[i] === node) {
-							nodes.splice(i, 1);
-							break;
-						}
-					}
-					
-					if (registeredNodeMap[cls.id].length === 0) {
-						delete registeredNodeMap[cls.id];
-					}
-				}
-				
-				cls = cls.mom;
-			}
-		};
-		
-		// 노드 검색
-		let findNodesByClass = self.findNodesByClass = (cls) => {
-			return registeredNodeMap[cls.id] === undefined ? [] : registeredNodeMap[cls.id];
-		};
 		
 		// 디버그 모드에서는 FPS 수치 표시
 		if (BROWSER_CONFIG.SkyEngine.isDebugMode === true) {
@@ -437,53 +303,7 @@ SkyEngine.Screen = OBJECT({
 			cameraUnfollowY();
 		};
 		
-		let getCameraFollowX = self.getCameraFollowX = () => {
-			
-			if (cameraFollowXTarget === undefined) {
-				return followX;
-			}
-			
-			if (cameraFollowXTarget.checkIsRemoved() === true) {
-				cameraFollowXTarget = undefined;
-				return followX;
-			}
-			
-			followX = cameraFollowXTarget.getRealX() - cameraFollowCenterX;
-			
-			if (cameraMinFollowX !== undefined && followX < cameraMinFollowX) {
-				return cameraMinFollowX;
-			}
-			
-			if (cameraMaxFollowX !== undefined && followX > cameraMaxFollowX) {
-				return cameraMaxFollowX;
-			}
-			
-			return followX;
-		};
 		
-		let getCameraFollowY = self.getCameraFollowY = () => {
-			
-			if (cameraFollowYTarget === undefined) {
-				return followY;
-			}
-			
-			if (cameraFollowYTarget.checkIsRemoved() === true) {
-				cameraFollowYTarget = undefined;
-				return followY;
-			}
-			
-			followY = cameraFollowYTarget.getRealY() - cameraFollowCenterY;
-			
-			if (cameraMinFollowY !== undefined && followY < cameraMinFollowY) {
-				return cameraMinFollowY;
-			}
-			
-			if (cameraMaxFollowY !== undefined && followY > cameraMaxFollowY) {
-				return cameraMaxFollowY;
-			}
-			
-			return followY;
-		};
 		
 		let getLeft = self.getLeft = () => {
 			return left;

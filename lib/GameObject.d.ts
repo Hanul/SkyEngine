@@ -1,8 +1,10 @@
 import EventContainer from "eventcontainer";
 import * as PIXI from "pixi.js";
 export default abstract class GameObject extends EventContainer {
-    parent: GameObject | undefined;
-    target: GameObject | undefined;
+    private _parent;
+    private _target;
+    colliders: GameObject[];
+    touchAreas: GameObject[];
     children: GameObject[];
     pixiContainer: PIXI.Container;
     private _x;
@@ -55,19 +57,22 @@ export default abstract class GameObject extends EventContainer {
     minFadingSpeed: number | undefined;
     maxFadingSpeed: number | undefined;
     toAlpha: number;
-    blendMode?: PIXI.BLEND_MODES;
-    collider?: GameObject;
-    touchArea?: GameObject;
-    dom?: HTMLElement;
+    private _blendMode?;
+    private _dom?;
     domStyle?: {
         [key: string]: string | number;
     };
     forceCollisionCheck?: boolean;
     private _yToZIndex;
+    private collisionTargets;
+    private collidingNodeIds;
+    private meetHandlerMap;
+    private partHandlerMap;
+    private windowResizeEvent;
     constructor(x: number, y: number);
     addToPixiContainer(pixiChild: PIXI.Container): void;
-    removeFromPixiContainer(pixiChild: PIXI.Container): void;
-    private removeFromParent;
+    deleteFromPixiContainer(pixiChild: PIXI.Container): void;
+    private deleteFromParent;
     private appendToParent;
     private genRealPosition;
     set x(x: number);
@@ -104,5 +109,31 @@ export default abstract class GameObject extends EventContainer {
     get yToZIndex(): boolean;
     addFilter(filter: PIXI.Filter): void;
     deleteFilter(filter: PIXI.Filter): void;
+    set blendMode(blendMode: PIXI.BLEND_MODES | undefined);
+    get blendMode(): PIXI.BLEND_MODES | undefined;
+    flipX(): void;
+    flipY(): void;
+    hideDom(): void;
+    showDom(): void;
+    hide(): void;
+    show(): void;
+    get hiding(): boolean;
+    private genRealProperties;
+    set target(target: GameObject | undefined);
+    get target(): GameObject | undefined;
+    set parent(parent: GameObject | undefined);
+    get parent(): GameObject | undefined;
+    appendTo(object: GameObject): GameObject;
+    append(object: GameObject): void;
+    empty(): void;
+    destroy(): void;
+    set dom(dom: HTMLElement | undefined);
+    get dom(): HTMLElement | undefined;
+    checkPoint(pointX: number, pointY: number): boolean;
+    checkArea(area: GameObject): boolean;
+    checkTouch(touchX: number, touchY: number): boolean;
+    checkOneSideCollision(target: GameObject): boolean;
+    checkCollision(target: GameObject): boolean;
+    checkOffScreen(): boolean;
 }
 //# sourceMappingURL=GameObject.d.ts.map

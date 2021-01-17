@@ -1,34 +1,38 @@
+import el from "@hanul/el.js";
 import EventContainer from "eventcontainer";
 import * as PIXI from "pixi.js";
+import Screen from "./Screen";
 import Util from "./Util";
 
 export default abstract class GameObject extends EventContainer {
 
-    public parent: GameObject | undefined;
-    public target: GameObject | undefined;
+    private _parent: GameObject | undefined;
+    private _target: GameObject | undefined;
 
+    public colliders: GameObject[] = [];
+    public touchAreas: GameObject[] = [];
     public children: GameObject[] = [];
 
     public pixiContainer: PIXI.Container;
 
-    private _x: number = 0;
-    private _y: number = 0;
-    private _zIndex: number = 0;
+    private _x = 0;
+    private _y = 0;
+    private _zIndex = 0;
 
-    public centerX: number = 0;
-    public centerY: number = 0;
+    public centerX = 0;
+    public centerY = 0;
 
-    public realX: number = 0;
-    public realY: number = 0;
+    public realX = 0;
+    public realY = 0;
 
-    public drawingX: number = 0;
-    public drawingY: number = 0;
+    public drawingX = 0;
+    public drawingY = 0;
 
-    private _speedX: number = 0;
-    private _speedY: number = 0;
+    private _speedX = 0;
+    private _speedY = 0;
 
-    public accelX: number = 0;
-    public accelY: number = 0;
+    public accelX = 0;
+    public accelY = 0;
 
     public minSpeedX: number | undefined;
     public minSpeedY: number | undefined;
@@ -36,61 +40,65 @@ export default abstract class GameObject extends EventContainer {
     public maxSpeedX: number | undefined;
     public maxSpeedY: number | undefined;
 
-    public toX: number = 0;
-    public toY: number = 0;
+    public toX = 0;
+    public toY = 0;
 
-    private _scaleX: number = 0;
-    private _scaleY: number = 0;
+    private _scaleX = 0;
+    private _scaleY = 0;
 
-    public realScaleX: number = 0;
-    public realScaleY: number = 0;
+    public realScaleX = 0;
+    public realScaleY = 0;
 
-    private _scalingSpeedX: number = 0;
-    private _scalingSpeedY: number = 0;
+    private _scalingSpeedX = 0;
+    private _scalingSpeedY = 0;
 
-    public realScalingSpeedX: number = 0;
-    public realScalingSpeedY: number = 0;
+    public realScalingSpeedX = 0;
+    public realScalingSpeedY = 0;
 
-    public scalingAccelX: number = 0;
-    public scalingAccelY: number = 0;
+    public scalingAccelX = 0;
+    public scalingAccelY = 0;
 
-    public minScalingSpeedX: number = 0;
-    public minScalingSpeedY: number = 0;
+    public minScalingSpeedX = 0;
+    public minScalingSpeedY = 0;
 
-    public maxScalingSpeedX: number = 0;
-    public maxScalingSpeedY: number = 0;
+    public maxScalingSpeedX = 0;
+    public maxScalingSpeedY = 0;
 
-    public toScaleX: number = 0;
-    public toScaleY: number = 0;
+    public toScaleX = 0;
+    public toScaleY = 0;
 
-    private _angle: number = 0;
-    public realRadian: number = 0;
-    public realSin: number = 0;
-    public realCos: number = 0;
+    private _angle = 0;
+    public realRadian = 0;
+    public realSin = 0;
+    public realCos = 0;
 
-    private _rotationSpeed: number = 0;
-    public rotationAccel: number = 0;
+    private _rotationSpeed = 0;
+    public rotationAccel = 0;
     public minRotationSpeed: number | undefined;
     public maxRotationSpeed: number | undefined;
-    public toAngle: number = 0;
+    public toAngle = 0;
 
-    public alpha: number = 0;
-    private _fadingSpeed: number = 0;
-    public fadingAccel: number = 0;
+    public alpha = 0;
+    private _fadingSpeed = 0;
+    public fadingAccel = 0;
     public minFadingSpeed: number | undefined;
     public maxFadingSpeed: number | undefined;
-    public toAlpha: number = 0;
+    public toAlpha = 0;
 
-    public blendMode?: PIXI.BLEND_MODES;
+    private _blendMode?: PIXI.BLEND_MODES;
 
-    public collider?: GameObject;
-    public touchArea?: GameObject;
-
-    public dom?: HTMLElement;
+    private _dom?: HTMLElement;
     public domStyle?: { [key: string]: string | number };
 
     public forceCollisionCheck?: boolean;
-    private _yToZIndex: boolean = false;
+    private _yToZIndex = false;
+
+    private collisionTargets = [];
+    private collidingNodeIds = {};
+    private meetHandlerMap = {};
+    private partHandlerMap = {};
+
+    private windowResizeEvent: (() => void) | undefined;
 
     constructor(x: number, y: number) {
         super();
@@ -99,11 +107,11 @@ export default abstract class GameObject extends EventContainer {
         this._y = y;
 
         this.pixiContainer = new PIXI.Container();
-        this.pixiContainer.zIndex = 0
+        this.pixiContainer.zIndex = 0;
         this.pixiContainer.alpha = 0;
     }
 
-    public addToPixiContainer(pixiChild: PIXI.Container) {
+    public addToPixiContainer(pixiChild: PIXI.Container): void {
 
         const pixiChildren = this.pixiContainer.children;
 
@@ -126,11 +134,11 @@ export default abstract class GameObject extends EventContainer {
         this.pixiContainer.addChildAt(pixiChild, low);
     }
 
-    public removeFromPixiContainer(pixiChild: PIXI.Container) {
+    public deleteFromPixiContainer(pixiChild: PIXI.Container): void {
         this.pixiContainer.removeChild(pixiChild);
     }
 
-    private removeFromParent() {
+    private deleteFromParent() {
         if (this.parent !== undefined) {
 
             let minIndex = 0;
@@ -149,6 +157,7 @@ export default abstract class GameObject extends EventContainer {
                     maxIndex = index - 1;
                 } else {
 
+                    // eslint-disable-next-line no-constant-condition
                     while (true) {
 
                         if (this.parent.children[index - level] === this) {
@@ -173,7 +182,7 @@ export default abstract class GameObject extends EventContainer {
                 }
             }
 
-            this.parent.removeFromPixiContainer(this.pixiContainer);
+            this.parent.deleteFromPixiContainer(this.pixiContainer);
         }
     }
 
@@ -229,7 +238,7 @@ export default abstract class GameObject extends EventContainer {
         this.genRealPosition();
     }
 
-    public get x() { return this._x; }
+    public get x(): number { return this._x; }
 
     public set y(y: number) {
         this._y = y;
@@ -239,19 +248,19 @@ export default abstract class GameObject extends EventContainer {
         }
     }
 
-    public get y() { return this._y; }
+    public get y(): number { return this._y; }
 
     public set zIndex(zIndex: number) {
         if (this.parent === undefined) {
             this.pixiContainer.zIndex = this._zIndex = zIndex;
         } else {
-            this.removeFromParent();
+            this.deleteFromParent();
             this.pixiContainer.zIndex = this._zIndex = zIndex;
             this.appendToParent();
         }
     }
 
-    public get zIndex() { return this._zIndex; }
+    public get zIndex(): number { return this._zIndex; }
 
     public set speedX(speedX: number) {
         this._speedX = speedX;
@@ -263,7 +272,7 @@ export default abstract class GameObject extends EventContainer {
         }
     }
 
-    public get speedX() { return this._speedX; }
+    public get speedX(): number { return this._speedX; }
 
     public set speedY(speedY: number) {
         this._speedY = speedY;
@@ -275,7 +284,7 @@ export default abstract class GameObject extends EventContainer {
         }
     }
 
-    public get speedY() { return this._speedY; }
+    public get speedY(): number { return this._speedY; }
 
     public set scaleX(scaleX: number) {
         this._scaleX = scaleX;
@@ -286,7 +295,7 @@ export default abstract class GameObject extends EventContainer {
         }
     }
 
-    public get scaleX() { return this._scaleX; }
+    public get scaleX(): number { return this._scaleX; }
 
     public set scaleY(scaleY: number) {
         this._scaleY = scaleY;
@@ -297,7 +306,7 @@ export default abstract class GameObject extends EventContainer {
         }
     }
 
-    public get scaleY() { return this._scaleY; }
+    public get scaleY(): number { return this._scaleY; }
 
     public set scale(scale: number) {
         this.scaleX = scale;
@@ -313,7 +322,7 @@ export default abstract class GameObject extends EventContainer {
         }
     }
 
-    public get scalingSpeedX() { return this._scalingSpeedX; }
+    public get scalingSpeedX(): number { return this._scalingSpeedX; }
 
     public set scalingSpeedY(scalingSpeedY: number) {
         this._scalingSpeedY = scalingSpeedY;
@@ -324,7 +333,7 @@ export default abstract class GameObject extends EventContainer {
         }
     }
 
-    public get scalingSpeedY() { return this._scalingSpeedY; }
+    public get scalingSpeedY(): number { return this._scalingSpeedY; }
 
     public set scalingSpeed(scalingSpeed: number) {
         this.scalingSpeedX = scalingSpeed;
@@ -364,7 +373,7 @@ export default abstract class GameObject extends EventContainer {
         this.realCos = Math.cos(this.realRadian);
     }
 
-    public get angle() { return this._angle; }
+    public get angle(): number { return this._angle; }
 
     public set rotationSpeed(rotationSpeed: number) {
         this._rotationSpeed = rotationSpeed;
@@ -376,7 +385,7 @@ export default abstract class GameObject extends EventContainer {
         }
     }
 
-    public get rotationSpeed() { return this._rotationSpeed; }
+    public get rotationSpeed(): number { return this._rotationSpeed; }
 
     public set fadingSpeed(fadingSpeed: number) {
         this._fadingSpeed = fadingSpeed;
@@ -388,20 +397,239 @@ export default abstract class GameObject extends EventContainer {
         }
     }
 
-    public get fadingSpeed() { return this._fadingSpeed; }
+    public get fadingSpeed(): number { return this._fadingSpeed; }
 
     public set yToZIndex(yToZIndex: boolean) {
         this._yToZIndex = yToZIndex;
         this.zIndex = this.y;
     }
 
-    public get yToZIndex() { return this._yToZIndex; }
+    public get yToZIndex(): boolean { return this._yToZIndex; }
 
-    public addFilter(filter: PIXI.Filter) {
+    public addFilter(filter: PIXI.Filter): void {
         this.pixiContainer.filters.push(filter);
     }
 
-    public deleteFilter(filter: PIXI.Filter) {
+    public deleteFilter(filter: PIXI.Filter): void {
         Util.pull(this.pixiContainer.filters, filter);
+    }
+
+    public set blendMode(blendMode: PIXI.BLEND_MODES | undefined) {
+        this._blendMode = blendMode;
+    }
+
+    public get blendMode(): PIXI.BLEND_MODES | undefined { return this._blendMode; }
+
+    public flipX(): void { this.scaleX = -this.scaleX; }
+    public flipY(): void { this.scaleY = -this.scaleY; }
+
+    public hideDom(): void {
+        if (this._dom !== undefined) {
+            this._dom.dataset.originDisplay = this._dom.style.display;
+            this._dom.style.display = "none";
+        }
+        for (const child of this.children) {
+            child.hideDom();
+        }
+    }
+
+    public showDom(): void {
+        if (this._dom?.dataset.originDisplay !== undefined) {
+            this._dom.style.display = this._dom.dataset.originDisplay;
+        }
+        for (const child of this.children) {
+            child.showDom();
+        }
+    }
+
+    public hide(): void {
+        this.pixiContainer.visible = false;
+        this.hideDom();
+    }
+
+    public show(): void {
+        this.pixiContainer.visible = true;
+        this.showDom();
+    }
+
+    public get hiding(): boolean {
+        return this.pixiContainer.visible;
+    }
+
+    private genRealProperties() {
+        this.angle = this._angle;
+        this.scaleX = this._scaleX;
+        this.scaleY = this._scaleY;
+        this.genRealPosition();
+    }
+
+    public set target(target: GameObject | undefined) {
+        this._target = target;
+        if (target !== undefined) {
+
+            this.genRealProperties();
+
+            for (const touchArea of this.touchAreas) {
+                touchArea.target = this;
+            }
+            for (const collider of this.colliders) {
+                collider.target = this;
+            }
+            for (const child of this.children) {
+                child.target = this;
+            }
+        }
+    }
+
+    public get target(): GameObject | undefined { return this._target; }
+
+    public set parent(parent: GameObject | undefined) {
+        this._parent = parent;
+        this.target = parent;
+    }
+
+    public get parent(): GameObject | undefined { return this._parent; }
+
+    public appendTo(object: GameObject): GameObject {
+        if (this.parent !== undefined) {
+            this.deleteFromParent();
+        }
+        this.parent = object;
+        this.appendToParent();
+        return this;
+    }
+
+    public append(object: GameObject): void {
+        object.appendTo(object);
+    }
+
+    public empty(): void {
+        for (const child of this.children) {
+            child.parent = undefined;
+            child.destroy();
+        }
+        this.children = [];
+        this.pixiContainer.removeChildren();
+    }
+
+    public destroy(): void {
+
+        this.empty();
+        (this.children as unknown) = undefined;
+
+        if (this.parent !== undefined) {
+            this.deleteFromParent();
+            this.parent = undefined;
+        }
+
+        for (const touchArea of this.touchAreas) {
+            touchArea.destroy();
+        }
+        (this.touchAreas as unknown) = undefined;
+
+        for (const collider of this.colliders) {
+            collider.destroy();
+        }
+        (this.colliders as unknown) = undefined;
+
+        (this.collisionTargets as unknown) = undefined;
+        (this.collidingNodeIds as unknown) = undefined;
+        (this.meetHandlerMap as unknown) = undefined;
+        (this.partHandlerMap as unknown) = undefined;
+
+        this._dom?.remove();
+
+        if (this.windowResizeEvent !== undefined) {
+            window.removeEventListener("resize", this.windowResizeEvent);
+            this.windowResizeEvent = undefined;
+        }
+
+        this.pixiContainer.destroy();
+        (this.pixiContainer as unknown) = undefined;
+
+        super.destroy();
+    }
+
+    public set dom(dom: HTMLElement | undefined) {
+        this._dom?.remove();
+        this._dom = dom;
+        if (dom !== undefined) {
+            el.style(dom, {
+                position: 'fixed',
+                left: Screen.left + Screen.width / 2 + this.drawingX - Screen.cameraFollowX * Screen.ratio,
+                top: Screen.top + Screen.height / 2 + this.drawingY - Screen.cameraFollowY * Screen.ratio,
+                transform: `rotate(${this.realRadian}rad) scale(${Screen.ratio * this.realScaleX}, ${Screen.ratio * this.realScaleY})`,
+                opacity: this.pixiContainer.worldAlpha,
+            });
+        }
+    }
+
+    public get dom(): HTMLElement | undefined { return this._dom; }
+
+    public checkPoint(pointX: number, pointY: number): boolean {
+        for (const child of this.children) {
+            if (child.checkPoint(pointX, pointY) === true) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public checkArea(area: GameObject): boolean {
+        for (const child of this.children) {
+            if (child.checkArea(area) === true || area.checkArea(child) === true) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public checkTouch(touchX: number, touchY: number): boolean {
+        if (this.hiding === true) {
+            return false;
+        }
+        for (const touchArea of this.touchAreas) {
+            if (touchArea.checkPoint(touchX, touchY) === true) {
+                return true;
+            }
+        }
+        for (const child of this.children) {
+            if (child.checkTouch(touchX, touchY) === true) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public checkOneSideCollision(target: GameObject): boolean {
+        if (this.hiding === true || target.hiding === true) {
+            return false;
+        }
+        for (const collider of this.colliders) {
+            for (const targetCollider of target.colliders) {
+                if (collider.checkArea(targetCollider) === true || targetCollider.checkArea(collider) === true) {
+                    return true;
+                }
+            }
+        }
+        for (const child of this.children) {
+            if (child.checkOneSideCollision(target) === true) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public checkCollision(target: GameObject): boolean {
+        return (this.checkOneSideCollision(target) === true || target.checkOneSideCollision(this) === true);
+    }
+
+    public checkOffScreen(): boolean {
+        for (const child of this.children) {
+            if (child.checkOffScreen() !== true) {
+                return false;
+            }
+        }
+        return true;
     }
 }

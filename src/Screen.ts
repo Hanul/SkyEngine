@@ -1,6 +1,7 @@
 import el from "@hanul/el.js";
 import * as PIXI from "pixi.js";
 import GameObject from "./GameObject";
+import Loop from "./Loop";
 
 class Screen extends GameObject {
 
@@ -13,7 +14,28 @@ class Screen extends GameObject {
     private renderer: PIXI.Renderer;
     private stage: PIXI.Container;
 
-    constructor() {
+    private loop: Loop;
+
+    public left = 0;
+    public top = 0;
+    public width = 0;
+    public height = 0;
+    public ratio = 0;
+
+    public followX = 0;
+    public followY = 0;
+
+    public cameraFollowCenterX = 0;
+    public cameraFollowCenterY = 0;
+    public cameraFollowXTarget: GameObject | undefined;
+    public cameraFollowYTarget: GameObject | undefined;
+
+    public cameraMinFollowX: number | undefined;
+    public cameraMinFollowY: number | undefined;
+    public cameraMaxFollowX: number | undefined;
+    public cameraMaxFollowY: number | undefined;
+
+    constructor(fps?: number) {
         super(0, 0);
 
         document.body.append(
@@ -48,7 +70,37 @@ class Screen extends GameObject {
         this.stage = new PIXI.Container();
         this.stage.addChild(this.pixiContainer);
 
-        console.log("TEST");
+        this.loop = new Loop(fps, () => {
+            //TODO:
+        });
+    }
+
+    public get cameraFollowX(): number {
+        if (this.cameraFollowXTarget === undefined) {
+            return this.followX;
+        }
+        this.followX = this.cameraFollowXTarget.realX - this.cameraFollowCenterX;
+        if (this.cameraMinFollowX !== undefined && this.followX < this.cameraMinFollowX) {
+            return this.cameraMinFollowX;
+        }
+        if (this.cameraMaxFollowX !== undefined && this.followX > this.cameraMaxFollowX) {
+            return this.cameraMaxFollowX;
+        }
+        return this.followX;
+    }
+
+    public get cameraFollowY(): number {
+        if (this.cameraFollowYTarget === undefined) {
+            return this.followY;
+        }
+        this.followY = this.cameraFollowYTarget.realY - this.cameraFollowCenterY;
+        if (this.cameraMinFollowY !== undefined && this.followY < this.cameraMinFollowY) {
+            return this.cameraMinFollowY;
+        }
+        if (this.cameraMaxFollowY !== undefined && this.followY > this.cameraMaxFollowY) {
+            return this.cameraMaxFollowY;
+        }
+        return this.followY;
     }
 }
 
