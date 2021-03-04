@@ -11,7 +11,9 @@
     },
     "dependencies": {
         "@hanul/el.js": "^0.0.7",
-        "eventcontainer": "^0.0.1",
+        "eventcontainer": "^0.0.2",
+        "@hanul/skynode": "^0.0.1",
+        "skyutil": "^0.0.1",
         "pixi.js": "^5.3.7",
         "ts-loader": "^8.0.13",
         "typescript": "^4.1.3",

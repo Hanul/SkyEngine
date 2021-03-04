@@ -1,5 +1,5 @@
 import el from "@hanul/el.js";
-import loadTexture from "./loadTexture";
+import loadTexture from "../../src/loadTexture";
 
 class ImageDataManager {
 

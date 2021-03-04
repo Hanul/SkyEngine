@@ -49,6 +49,15 @@
   resolved "https://registry.yarnpkg.com/@hanul/el.js/-/el.js-0.0.7.tgz#748ee8d24fac34e4a58522822d1df93cbbce6bee"
   integrity sha512-Vc9f4P+sytFf7MntfqrkyxikUZHwfK4lBDXMsoYp9pKbzw7sQ3pI4ppL+xoUwjJLOBiJpNIv+MkfPc+7HZrn6A==
 
+"@hanul/skynode@^0.0.1":
+  version "0.0.1"
+  resolved "https://registry.yarnpkg.com/@hanul/skynode/-/skynode-0.0.1.tgz#19f0ec239ee30c4fdb8f203f71bd4a3323bc4dd8"
+  integrity sha512-VUnxkriwIcQVNqenRPnKwXWUAnovv299BEDTrO5D20Dhxy1rVee5Y4DjrZRZTBDQNAC/+ZmRENSMyGLNU8QzYA==
+  dependencies:
+    "@hanul/el.js" "^0.0.7"
+    eventcontainer "^0.0.2"
+    skyutil "^0.0.1"
+
 "@nodelib/fs.scandir@2.1.4":
   version "2.1.4"
   resolved "https://registry.yarnpkg.com/@nodelib/fs.scandir/-/fs.scandir-2.1.4.tgz#d4b3549a5db5de2683e0c1071ab4f140904bbf69"
@@ -1077,10 +1086,10 @@ esutils@^2.0.2:
   resolved "https://registry.yarnpkg.com/esutils/-/esutils-2.0.3.tgz#74d2eb4de0b8da1293711910d50775b9b710ef64"
   integrity sha512-kVscqXk4OCp68SZ0dkgEKVi6/8ij300KBWTJq32P/dYeWTSwK41WyTxalN1eRmA5Z9UU/LX9D7FWSmV9SAYx6g==
 
-eventcontainer@^0.0.1:
-  version "0.0.1"
-  resolved "https://registry.yarnpkg.com/eventcontainer/-/eventcontainer-0.0.1.tgz#e7fb3563577424bffcceb504a9c06dc2e531a0bc"
-  integrity sha512-e+or2KRHRzWJhjCl9fIw7xIRLTR4y2UP57w/TLPrisG1oeahsMBAnDmlEVd86XwWh8colim+xMGSOoM1FxekUA==
+eventcontainer@^0.0.2:
+  version "0.0.2"
+  resolved "https://registry.yarnpkg.com/eventcontainer/-/eventcontainer-0.0.2.tgz#603bcc333ba9be0e8477ffa18a1c17b273e00c4c"
+  integrity sha512-0BY6T0iIVvoSE/9kVTIp0T8EKCa0+hJ+VS0AvtQU1OCkxS5H8m3jV2UI1cf/az3m9+ny+DipiDKIkAe4l19D9Q==
 
 eventemitter3@^3.1.0:
   version "3.1.2"
@@ -1904,6 +1913,11 @@ signal-exit@^3.0.3:
   version "3.0.3"
   resolved "https://registry.yarnpkg.com/signal-exit/-/signal-exit-3.0.3.tgz#a1410c2edd8f077b08b4e253c8eacfcaf057461c"
   integrity sha512-VUJ49FC8U1OxwZLxIbTTrDvLnf/6TDgxZcK8wxR8zs13xpx7xbG60ndBlhNrFi2EMuFRoeDoJO7wthSLq42EjA==
+
+skyutil@^0.0.1:
+  version "0.0.1"
+  resolved "https://registry.yarnpkg.com/skyutil/-/skyutil-0.0.1.tgz#fdd8255b2eeac3ee06e3643427e34db0ee42ab8b"
+  integrity sha512-rcbUtbwiuOJs9rvZHzVUgV1UBhOa7KxnPEmQapfhzSwUAFM2THLNZuoF/8XMFEuznRqPMeYeABo8TFiFrgBL+w==
 
 slash@^3.0.0:
   version "3.0.0"
