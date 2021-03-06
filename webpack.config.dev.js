@@ -2,7 +2,7 @@ const path = require('path');
 
 module.exports = {
     entry: {
-        'gameobject-test': './test-src/gameobject-test.ts',
+        'node-test': './test-src/node-test.ts',
         'draw-test': './test-src/draw-test.ts',
         'image-test': './test-src/image-test.ts',
         'dom-test': './test-src/dom-test.ts',

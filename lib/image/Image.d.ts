@@ -1,8 +1,8 @@
-import GameObject, { GameObjectOptions } from "../GameObject";
-export interface ImageOptions extends GameObjectOptions {
+import GameNode, { GameNodeOptions } from "../GameNode";
+export interface ImageOptions extends GameNodeOptions {
     src: string;
 }
-export default class Image extends GameObject {
+export default class Image extends GameNode {
     private pixiSprite;
     width: number;
     height: number;

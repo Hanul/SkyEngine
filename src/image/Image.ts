@@ -1,11 +1,12 @@
-import GameObject, { GameObjectOptions } from "../GameObject";
+import * as PIXI from "pixi.js";
+import GameNode, { GameNodeOptions } from "../GameNode";
 import loadTexture from "../loadTexture";
 
-export interface ImageOptions extends GameObjectOptions {
+export interface ImageOptions extends GameNodeOptions {
     src: string;
 }
 
-export default class Image extends GameObject {
+export default class Image extends GameNode {
 
     private pixiSprite: PIXI.Sprite | undefined;
 

@@ -7,7 +7,7 @@ const loadTexture = async (src: string): Promise<PIXI.Texture> => {
         return new Promise((resolve) => {
             const retry = () => {
                 const img = new Image();
-                img.crossOrigin = 'anonymous';
+                img.crossOrigin = "anonymous";
                 img.onload = () => {
                     img.onload = null;
                     if (PIXI.utils.TextureCache[src] !== undefined) {
