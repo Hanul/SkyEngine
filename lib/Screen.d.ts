@@ -1,15 +1,23 @@
 import { DomNode } from "@hanul/skynode";
+import * as PIXI from "pixi.js";
 import GameNode from "./GameNode";
-export default class Screen extends DomNode<HTMLCanvasElement> {
-    private fps?;
+export interface ScreenOptions {
+    fps?: number;
+    width?: number;
+    height?: number;
+}
+export default class Screen extends DomNode<HTMLDivElement> {
     private static readonly WINDOW_BLUR_FPS;
     private animationInterval;
     private beforeTime;
     private timeSigma;
+    private fps;
     private originFPS;
-    private renderer;
+    protected canvas: DomNode<HTMLCanvasElement>;
+    protected renderer: PIXI.Renderer;
     root: GameNode;
-    constructor(fps?: number | undefined);
+    constructor(options: ScreenOptions);
+    resize(width: number, height: number, ratio?: number): void;
     private step;
     private windowBlurHandler;
     private windowFocusHandler;

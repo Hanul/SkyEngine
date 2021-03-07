@@ -1,29 +1,51 @@
-import { DomNode } from "@hanul/skynode";
+import { DomNode, el } from "@hanul/skynode";
 import * as PIXI from "pixi.js";
 import GameNode from "./GameNode";
 
-export default class Screen extends DomNode<HTMLCanvasElement> {
+export interface ScreenOptions {
+    fps?: number;
+    width?: number;
+    height?: number;
+}
+
+export default class Screen extends DomNode<HTMLDivElement> {
 
     private static readonly WINDOW_BLUR_FPS = 1;
 
     private animationInterval: number | undefined;
     private beforeTime = 0;
     private timeSigma = 0;
+    private fps: number | undefined;
     private originFPS: number | undefined;
 
-    private renderer: PIXI.Renderer;
+    protected canvas: DomNode<HTMLCanvasElement>;
+    protected renderer: PIXI.Renderer;
     public root = new GameNode({ x: 0, y: 0 });
 
-    constructor(private fps?: number) {
-        super(document.createElement("canvas"));
+    constructor(options: ScreenOptions) {
+        super(document.createElement("div"));
 
-        this.renderer = new PIXI.Renderer({ view: this.domElement, transparent: true });
+        this.fps = options.fps;
+
+        this.append(this.canvas = el("canvas"));
+
+        this.renderer = new PIXI.Renderer({ view: this.canvas.domElement, transparent: true });
         this.renderer.plugins.interaction.autoPreventDefault = false;
+
+        if (options.width !== undefined && options.height !== undefined) {
+            this.resize(options.width, options.height);
+        }
+        this.resume();
 
         window.addEventListener("blur", this.windowBlurHandler);
         window.addEventListener("focus", this.windowFocusHandler);
+    }
 
-        this.resume();
+    public resize(width: number, height: number, ratio = 1): void {
+        this.canvas.style({ width: width * ratio, height: height * ratio });
+        this.canvas.domElement.width = width * devicePixelRatio;
+        this.canvas.domElement.height = height * devicePixelRatio;
+        this.renderer.resize(width, height);
     }
 
     private step(deltaTime: number) {
