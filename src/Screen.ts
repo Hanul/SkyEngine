@@ -1,11 +1,12 @@
 import { DomNode, el } from "@hanul/skynode";
 import * as PIXI from "pixi.js";
+import Camera from "./Camera";
 import GameNode from "./GameNode";
 
 export interface ScreenOptions {
     fps?: number;
-    width?: number;
-    height?: number;
+    width: number;
+    height: number;
 }
 
 export default class Screen extends DomNode<HTMLDivElement> {
@@ -21,6 +22,10 @@ export default class Screen extends DomNode<HTMLDivElement> {
     protected canvas: DomNode<HTMLCanvasElement>;
     protected renderer: PIXI.Renderer;
     public root = new GameNode({ x: 0, y: 0 });
+    private camera = new Camera();
+
+    public width = 0;
+    public height = 0;
 
     constructor(options: ScreenOptions) {
         super(document.createElement("div"));
@@ -46,14 +51,15 @@ export default class Screen extends DomNode<HTMLDivElement> {
         this.canvas.domElement.width = width * devicePixelRatio;
         this.canvas.domElement.height = height * devicePixelRatio;
         this.renderer.resize(width, height);
+        this.width = width; this.height = height;
     }
 
     private step(deltaTime: number) {
         this.root.step(deltaTime);
 
         // root to center of screen
-        //this.root.x = this.width / 2 - this.cameraFollowX + this.stageX;
-        //this.root.y = this.height / 2 - this.cameraFollowY + this.stageY;
+        this.root.x = this.width / 2 - this.camera.x;
+        this.root.y = this.height / 2 - this.camera.y;
 
         this.renderer.render(this.root.pixiContainer);
     }

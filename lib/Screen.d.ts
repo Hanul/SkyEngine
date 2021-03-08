@@ -3,8 +3,8 @@ import * as PIXI from "pixi.js";
 import GameNode from "./GameNode";
 export interface ScreenOptions {
     fps?: number;
-    width?: number;
-    height?: number;
+    width: number;
+    height: number;
 }
 export default class Screen extends DomNode<HTMLDivElement> {
     private static readonly WINDOW_BLUR_FPS;
@@ -16,6 +16,9 @@ export default class Screen extends DomNode<HTMLDivElement> {
     protected canvas: DomNode<HTMLCanvasElement>;
     protected renderer: PIXI.Renderer;
     root: GameNode;
+    private camera;
+    width: number;
+    height: number;
     constructor(options: ScreenOptions);
     resize(width: number, height: number, ratio?: number): void;
     private step;

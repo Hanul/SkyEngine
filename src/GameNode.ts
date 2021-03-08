@@ -15,6 +15,14 @@ export default class GameNode extends SkyNode {
         super();
     }
 
+    public set x(x: number) {
+        this.pixiContainer.x = x;
+    }
+
+    public set y(y: number) {
+        this.pixiContainer.y = y;
+    }
+
     public step(deltaTime: number) {
     }
 
