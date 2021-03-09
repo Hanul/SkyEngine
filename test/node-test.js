@@ -9,6 +9,17 @@
 /******/ (() => { // webpackBootstrap
 /******/ 	var __webpack_modules__ = ({
 
+/***/ "../eventcontainer/EventContainer.js":
+/*!*******************************************!*\
+  !*** ../eventcontainer/EventContainer.js ***!
+  \*******************************************/
+/***/ ((__unused_webpack_module, exports) => {
+
+"use strict";
+eval("\r\nObject.defineProperty(exports, \"__esModule\", ({ value: true }));\r\nclass EventContainer {\r\n    constructor() {\r\n        this.eventMap = {};\r\n    }\r\n    on(eventName, eventHandler) {\r\n        if (this.eventMap[eventName] === undefined) {\r\n            this.eventMap[eventName] = [];\r\n        }\r\n        this.eventMap[eventName].push(eventHandler);\r\n    }\r\n    pass(target, eventName) {\r\n        target.on(eventName, (...params) => this.fireEvent(eventName, ...params));\r\n    }\r\n    off(eventName, eventHandler) {\r\n        if (eventHandler === undefined) {\r\n            delete this.eventMap[eventName];\r\n        }\r\n        else if (this.eventMap[eventName] !== undefined) {\r\n            const index = this.eventMap[eventName].indexOf(eventHandler);\r\n            if (index !== -1) {\r\n                this.eventMap[eventName].splice(index, 1);\r\n            }\r\n            if (this.eventMap[eventName].length === 0) {\r\n                delete this.eventMap[eventName];\r\n            }\r\n        }\r\n    }\r\n    async fireEvent(eventName, ...params) {\r\n        if (this.eventMap[eventName] !== undefined) {\r\n            for (const eventHandler of this.eventMap[eventName]) {\r\n                await eventHandler(...params);\r\n            }\r\n        }\r\n    }\r\n    delete() {\r\n        this.fireEvent(\"delete\");\r\n        this.eventMap = undefined;\r\n    }\r\n}\r\nexports.default = EventContainer;\r\n\n\n//# sourceURL=webpack://@hanul/skyengine/../eventcontainer/EventContainer.js?");
+
+/***/ }),
+
 /***/ "./node_modules/@pixi/accessibility/lib/accessibility.es.js":
 /*!******************************************************************!*\
   !*** ./node_modules/@pixi/accessibility/lib/accessibility.es.js ***!
@@ -557,17 +568,6 @@ eval("\n\nmodule.exports = {\n  isString: function(arg) {\n    return typeof(arg
 
 /***/ }),
 
-/***/ "../eventcontainer/EventContainer.js":
-/*!*******************************************!*\
-  !*** ../eventcontainer/EventContainer.js ***!
-  \*******************************************/
-/***/ ((__unused_webpack_module, exports) => {
-
-"use strict";
-eval("\r\nObject.defineProperty(exports, \"__esModule\", ({ value: true }));\r\nclass EventContainer {\r\n    constructor() {\r\n        this.eventMap = {};\r\n    }\r\n    on(eventName, eventHandler) {\r\n        if (this.eventMap[eventName] === undefined) {\r\n            this.eventMap[eventName] = [];\r\n        }\r\n        this.eventMap[eventName].push(eventHandler);\r\n    }\r\n    pass(target, eventName) {\r\n        target.on(eventName, (...params) => this.fireEvent(eventName, ...params));\r\n    }\r\n    off(eventName, eventHandler) {\r\n        if (eventHandler === undefined) {\r\n            delete this.eventMap[eventName];\r\n        }\r\n        else if (this.eventMap[eventName] !== undefined) {\r\n            const index = this.eventMap[eventName].indexOf(eventHandler);\r\n            if (index !== -1) {\r\n                this.eventMap[eventName].splice(index, 1);\r\n            }\r\n            if (this.eventMap[eventName].length === 0) {\r\n                delete this.eventMap[eventName];\r\n            }\r\n        }\r\n    }\r\n    async fireEvent(eventName, ...params) {\r\n        if (this.eventMap[eventName] !== undefined) {\r\n            for (const eventHandler of this.eventMap[eventName]) {\r\n                await eventHandler(...params);\r\n            }\r\n        }\r\n    }\r\n    delete() {\r\n        this.fireEvent(\"delete\");\r\n        this.eventMap = undefined;\r\n    }\r\n}\r\nexports.default = EventContainer;\r\n\n\n//# sourceURL=webpack://@hanul/skyengine/../eventcontainer/EventContainer.js?");
-
-/***/ }),
-
 /***/ "../skynode/lib/BodyNode.js":
 /*!**********************************!*\
   !*** ../skynode/lib/BodyNode.js ***!
@@ -656,6 +656,28 @@ eval("\r\nvar __createBinding = (this && this.__createBinding) || (Object.create
 
 /***/ }),
 
+/***/ "./src/Letterbox.ts":
+/*!**************************!*\
+  !*** ./src/Letterbox.ts ***!
+  \**************************/
+/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+
+"use strict";
+eval("\r\nObject.defineProperty(exports, \"__esModule\", ({ value: true }));\r\nconst skynode_1 = __webpack_require__(/*! @hanul/skynode */ \"../skynode/lib/index.js\");\r\nclass Letterbox extends skynode_1.DomNode {\r\n    constructor() {\r\n        super(document.createElement(\"div\"));\r\n        this.style({\r\n            position: \"absolute\",\r\n            zIndex: 9999998,\r\n            backgroundColor: \"#000\",\r\n        });\r\n    }\r\n}\r\nexports.default = Letterbox;\r\n\n\n//# sourceURL=webpack://@hanul/skyengine/./src/Letterbox.ts?");
+
+/***/ }),
+
+/***/ "./src/MainScreen.ts":
+/*!***************************!*\
+  !*** ./src/MainScreen.ts ***!
+  \***************************/
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+"use strict";
+eval("\r\nvar __importDefault = (this && this.__importDefault) || function (mod) {\r\n    return (mod && mod.__esModule) ? mod : { \"default\": mod };\r\n};\r\nObject.defineProperty(exports, \"__esModule\", ({ value: true }));\r\nconst Letterbox_1 = __importDefault(__webpack_require__(/*! ./Letterbox */ \"./src/Letterbox.ts\"));\r\nconst Screen_1 = __importDefault(__webpack_require__(/*! ./Screen */ \"./src/Screen.ts\"));\r\nclass MainScreen extends Screen_1.default {\r\n    constructor(options = {}) {\r\n        super({\r\n            fps: options.fps,\r\n            width: options.width === undefined ? 0 : options.width,\r\n            height: options.height === undefined ? 0 : options.height,\r\n        });\r\n        this.options = options;\r\n        this.ratio = 1;\r\n        this.left = 0;\r\n        this.top = 0;\r\n        this.topLetterbox = new Letterbox_1.default();\r\n        this.bottomLetterbox = new Letterbox_1.default();\r\n        this.leftLetterbox = new Letterbox_1.default();\r\n        this.rightLetterbox = new Letterbox_1.default();\r\n        this.windowResizeHandler = () => {\r\n            const winWidth = document.documentElement.clientWidth;\r\n            const winHeight = window.innerHeight;\r\n            let isToFixWidth = false;\r\n            let isToFixHeight = false;\r\n            if (this.options.width === undefined) {\r\n                this.width = winWidth;\r\n                isToFixWidth = true;\r\n            }\r\n            if (this.options.height === undefined) {\r\n                this.height = winHeight;\r\n                isToFixHeight = true;\r\n            }\r\n            let widthRatio = winWidth / this.width;\r\n            let heightRatio = winHeight / this.height;\r\n            if (widthRatio < heightRatio) {\r\n                this.ratio = widthRatio;\r\n            }\r\n            else {\r\n                this.ratio = heightRatio;\r\n            }\r\n            if (this.options.minWidth !== undefined && this.width / this.ratio < this.options.minWidth) {\r\n                this.width = this.options.minWidth;\r\n                isToFixWidth = false;\r\n            }\r\n            if (this.options.minHeight !== undefined && this.height / this.ratio < this.options.minHeight) {\r\n                this.height = this.options.minHeight;\r\n                isToFixHeight = false;\r\n            }\r\n            widthRatio = winWidth / this.width;\r\n            heightRatio = winHeight / this.height;\r\n            if (widthRatio < heightRatio) {\r\n                this.ratio = widthRatio;\r\n            }\r\n            else {\r\n                this.ratio = heightRatio;\r\n            }\r\n            if (isToFixWidth === true) {\r\n                this.width /= this.ratio;\r\n            }\r\n            if (isToFixHeight === true) {\r\n                this.height /= this.ratio;\r\n            }\r\n            if (this.options.maxWidth !== undefined && this.width > this.options.maxWidth) {\r\n                this.width = this.options.maxWidth;\r\n            }\r\n            if (this.options.maxHeight !== undefined && this.height > this.options.maxHeight) {\r\n                this.height = this.options.maxHeight;\r\n            }\r\n            this.left = (winWidth - this.width * this.ratio) / 2;\r\n            this.top = (winHeight - this.height * this.ratio) / 2;\r\n            this.canvas.style({ left: this.left, top: this.top });\r\n            this.resize(this.width, this.height, this.ratio);\r\n            this.leftLetterbox.style({ width: this.left });\r\n            this.topLetterbox.style({ height: this.top });\r\n            this.rightLetterbox.style({ width: this.left });\r\n            this.bottomLetterbox.style({ height: this.top });\r\n        };\r\n        this.style({\r\n            position: \"fixed\",\r\n            left: 0,\r\n            top: 0,\r\n            width: \"100%\",\r\n            height: \"100%\",\r\n        });\r\n        this.canvas.style({\r\n            position: \"fixed\",\r\n            zIndex: -1,\r\n        });\r\n        this.append(this.topLetterbox, this.bottomLetterbox, this.leftLetterbox, this.rightLetterbox);\r\n        this.topLetterbox.style({ left: 0, top: 0, width: \"100%\" });\r\n        this.bottomLetterbox.style({ left: 0, bottom: 0, width: \"100%\" });\r\n        this.leftLetterbox.style({ left: 0, top: 0, height: \"100%\" });\r\n        this.rightLetterbox.style({ right: 0, top: 0, height: \"100%\" });\r\n        window.addEventListener(\"resize\", this.windowResizeHandler);\r\n        this.windowResizeHandler();\r\n    }\r\n    delete() {\r\n        window.removeEventListener(\"resize\", this.windowResizeHandler);\r\n        super.delete();\r\n    }\r\n}\r\nexports.default = MainScreen;\r\n\n\n//# sourceURL=webpack://@hanul/skyengine/./src/MainScreen.ts?");
+
+/***/ }),
+
 /***/ "./src/Screen.ts":
 /*!***********************!*\
   !*** ./src/Screen.ts ***!
@@ -667,6 +689,28 @@ eval("\r\nvar __createBinding = (this && this.__createBinding) || (Object.create
 
 /***/ }),
 
+/***/ "./src/image/Image.ts":
+/*!****************************!*\
+  !*** ./src/image/Image.ts ***!
+  \****************************/
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+"use strict";
+eval("\r\nvar __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {\r\n    if (k2 === undefined) k2 = k;\r\n    Object.defineProperty(o, k2, { enumerable: true, get: function() { return m[k]; } });\r\n}) : (function(o, m, k, k2) {\r\n    if (k2 === undefined) k2 = k;\r\n    o[k2] = m[k];\r\n}));\r\nvar __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {\r\n    Object.defineProperty(o, \"default\", { enumerable: true, value: v });\r\n}) : function(o, v) {\r\n    o[\"default\"] = v;\r\n});\r\nvar __importStar = (this && this.__importStar) || function (mod) {\r\n    if (mod && mod.__esModule) return mod;\r\n    var result = {};\r\n    if (mod != null) for (var k in mod) if (k !== \"default\" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);\r\n    __setModuleDefault(result, mod);\r\n    return result;\r\n};\r\nvar __importDefault = (this && this.__importDefault) || function (mod) {\r\n    return (mod && mod.__esModule) ? mod : { \"default\": mod };\r\n};\r\nObject.defineProperty(exports, \"__esModule\", ({ value: true }));\r\nconst PIXI = __importStar(__webpack_require__(/*! pixi.js */ \"./node_modules/pixi.js/lib/pixi.es.js\"));\r\nconst GameNode_1 = __importDefault(__webpack_require__(/*! ../GameNode */ \"./src/GameNode.ts\"));\r\nconst loadTexture_1 = __importDefault(__webpack_require__(/*! ../loadTexture */ \"./src/loadTexture.ts\"));\r\nclass Image extends GameNode_1.default {\r\n    constructor(options) {\r\n        super(options);\r\n        this.width = 0;\r\n        this.height = 0;\r\n        this.src = options.src;\r\n    }\r\n    async changeImage(src) {\r\n        const texture = await loadTexture_1.default(src);\r\n        this.width = texture.width;\r\n        this.height = texture.height;\r\n        this.pixiSprite = PIXI.Sprite.from(texture);\r\n        this.pixiSprite.anchor.x = 0.5;\r\n        this.pixiSprite.anchor.y = 0.5;\r\n        this.pixiContainer.addChild(this.pixiSprite);\r\n    }\r\n    set src(src) {\r\n        this.changeImage(src);\r\n    }\r\n    delete() {\r\n        var _a;\r\n        (_a = this.pixiSprite) === null || _a === void 0 ? void 0 : _a.destroy();\r\n        super.delete();\r\n    }\r\n}\r\nexports.default = Image;\r\n\n\n//# sourceURL=webpack://@hanul/skyengine/./src/image/Image.ts?");
+
+/***/ }),
+
+/***/ "./src/loadTexture.ts":
+/*!****************************!*\
+  !*** ./src/loadTexture.ts ***!
+  \****************************/
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+"use strict";
+eval("\r\nvar __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {\r\n    if (k2 === undefined) k2 = k;\r\n    Object.defineProperty(o, k2, { enumerable: true, get: function() { return m[k]; } });\r\n}) : (function(o, m, k, k2) {\r\n    if (k2 === undefined) k2 = k;\r\n    o[k2] = m[k];\r\n}));\r\nvar __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {\r\n    Object.defineProperty(o, \"default\", { enumerable: true, value: v });\r\n}) : function(o, v) {\r\n    o[\"default\"] = v;\r\n});\r\nvar __importStar = (this && this.__importStar) || function (mod) {\r\n    if (mod && mod.__esModule) return mod;\r\n    var result = {};\r\n    if (mod != null) for (var k in mod) if (k !== \"default\" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);\r\n    __setModuleDefault(result, mod);\r\n    return result;\r\n};\r\nObject.defineProperty(exports, \"__esModule\", ({ value: true }));\r\nconst PIXI = __importStar(__webpack_require__(/*! pixi.js */ \"./node_modules/pixi.js/lib/pixi.es.js\"));\r\nconst loadTexture = async (src) => {\r\n    let texture = PIXI.utils.TextureCache[src];\r\n    if (texture === undefined) {\r\n        return new Promise((resolve) => {\r\n            const retry = () => {\r\n                const img = new Image();\r\n                img.crossOrigin = \"anonymous\";\r\n                img.onload = () => {\r\n                    img.onload = null;\r\n                    if (PIXI.utils.TextureCache[src] !== undefined) {\r\n                        texture = PIXI.utils.TextureCache[src];\r\n                    }\r\n                    else {\r\n                        texture = PIXI.Texture.from(img);\r\n                        PIXI.Texture.addToCache(texture, src);\r\n                    }\r\n                    resolve(texture);\r\n                };\r\n                img.onerror = () => retry();\r\n                img.src = src;\r\n            };\r\n            retry();\r\n        });\r\n    }\r\n    else {\r\n        return texture;\r\n    }\r\n};\r\nexports.default = loadTexture;\r\n\n\n//# sourceURL=webpack://@hanul/skyengine/./src/loadTexture.ts?");
+
+/***/ }),
+
 /***/ "./test-src/node-test.ts":
 /*!*******************************!*\
   !*** ./test-src/node-test.ts ***!
@@ -674,7 +718,7 @@ eval("\r\nvar __createBinding = (this && this.__createBinding) || (Object.create
 /***/ (function(__unused_webpack_module, exports, __webpack_require__) {
 
 "use strict";
-eval("\r\nvar __importDefault = (this && this.__importDefault) || function (mod) {\r\n    return (mod && mod.__esModule) ? mod : { \"default\": mod };\r\n};\r\nObject.defineProperty(exports, \"__esModule\", ({ value: true }));\r\nconst skynode_1 = __webpack_require__(/*! @hanul/skynode */ \"../skynode/lib/index.js\");\r\nconst Screen_1 = __importDefault(__webpack_require__(/*! ../src/Screen */ \"./src/Screen.ts\"));\r\nconst screen = new Screen_1.default();\r\nskynode_1.BodyNode.append(screen);\r\n\n\n//# sourceURL=webpack://@hanul/skyengine/./test-src/node-test.ts?");
+eval("\r\nvar __importDefault = (this && this.__importDefault) || function (mod) {\r\n    return (mod && mod.__esModule) ? mod : { \"default\": mod };\r\n};\r\nObject.defineProperty(exports, \"__esModule\", ({ value: true }));\r\nconst skynode_1 = __webpack_require__(/*! @hanul/skynode */ \"../skynode/lib/index.js\");\r\nconst Image_1 = __importDefault(__webpack_require__(/*! ../src/image/Image */ \"./src/image/Image.ts\"));\r\nconst MainScreen_1 = __importDefault(__webpack_require__(/*! ../src/MainScreen */ \"./src/MainScreen.ts\"));\r\nconst screen = new MainScreen_1.default();\r\nscreen.root.append(new Image_1.default({ x: 0, y: 0, src: \"hello.png\" }));\r\nskynode_1.BodyNode.append(screen);\r\n\n\n//# sourceURL=webpack://@hanul/skyengine/./test-src/node-test.ts?");
 
 /***/ })
 
