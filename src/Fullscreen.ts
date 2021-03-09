@@ -1,14 +1,14 @@
 import Letterbox from "./Letterbox";
 import Screen from "./Screen";
 
-export interface MainScreenOptions {
+export interface FullscreenOptions {
     fps?: number;
     width?: number; height?: number;
     minWidth?: number; minHeight?: number;
     maxWidth?: number; maxHeight?: number;
 }
 
-export default class MainScreen extends Screen {
+export default class Fullscreen extends Screen {
 
     public ratio = 1;
     public left = 0; public top = 0;
@@ -18,7 +18,7 @@ export default class MainScreen extends Screen {
     private leftLetterbox: Letterbox = new Letterbox();
     private rightLetterbox: Letterbox = new Letterbox();
 
-    constructor(private options: MainScreenOptions = {}) {
+    constructor(private options: FullscreenOptions = {}) {
 
         super({
             fps: options.fps,

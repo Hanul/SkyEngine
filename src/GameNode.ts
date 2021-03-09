@@ -2,8 +2,8 @@ import { SkyNode } from "@hanul/skynode";
 import * as PIXI from "pixi.js";
 
 export interface GameNodeOptions {
-    x: number;
-    y: number;
+    x?: number;
+    y?: number;
 }
 
 export default class GameNode extends SkyNode {
@@ -13,6 +13,8 @@ export default class GameNode extends SkyNode {
 
     constructor(options: GameNodeOptions) {
         super();
+        if (options.x !== undefined) { this.x = options.x; }
+        if (options.y !== undefined) { this.y = options.y; }
     }
 
     public set x(x: number) {

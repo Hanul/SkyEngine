@@ -1,8 +1,8 @@
 import { SkyNode } from "@hanul/skynode";
 import * as PIXI from "pixi.js";
 export interface GameNodeOptions {
-    x: number;
-    y: number;
+    x?: number;
+    y?: number;
 }
 export default class GameNode extends SkyNode {
     protected children: GameNode[];
