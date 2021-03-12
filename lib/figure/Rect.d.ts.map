@@ -1,1 +1,1 @@
-{"version":3,"file":"Rect.d.ts","sourceRoot":"","sources":["../../src/figure/Rect.ts"],"names":[],"mappings":"AAAA,OAAO,MAAM,MAAM,UAAU,CAAC;AAE9B,MAAM,CAAC,OAAO,OAAO,IAAK,SAAQ,MAAM;CACvC"}
+{"version":3,"file":"Rect.d.ts","sourceRoot":"","sources":["../../src/figure/Rect.ts"],"names":[],"mappings":"AAAA,OAAO,EAAE,eAAe,EAAE,MAAM,aAAa,CAAC;AAC9C,OAAO,MAAM,MAAM,UAAU,CAAC;AAE9B,MAAM,WAAW,WAAY,SAAQ,eAAe;IAChD,KAAK,EAAE,MAAM,CAAC;IACd,MAAM,EAAE,MAAM,CAAC;CAClB;AAED,MAAM,CAAC,OAAO,OAAO,IAAK,SAAQ,MAAM;gBAExB,OAAO,EAAE,WAAW;CAGnC"}

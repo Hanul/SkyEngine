@@ -238,45 +238,6 @@
 			}
 		};
 
-		let moveDown = self.moveDown = (speedOrParams, _moveEndHandler) => {
-			//REQUIRED: speedOrParams
-			//OPTIONAL: speedOrParams.speed
-			//OPTIONAL: speedOrParams.accel
-			//OPTIONAL: speedOrParams.maxSpeed
-			//OPTIONAL: speedOrParams.toY
-			//OPTIONAL: moveEndHandler
-
-			if (CHECK_IS_DATA(speedOrParams) === true) {
-
-				if (speedOrParams.speed !== undefined) {
-					speedY = speedOrParams.speed;
-				}
-
-				if (speedOrParams.accel === undefined) {
-					accelY = 0;
-				} else {
-					accelY = speedOrParams.accel;
-				}
-				
-				minSpeedY = 0;
-
-				if (speedOrParams.maxSpeed !== undefined) {
-					maxSpeedY = speedOrParams.maxSpeed;
-				} else {
-					maxSpeedY = undefined;
-				}
-				
-				if (speedOrParams.toY !== undefined) {
-					toY = speedOrParams.toY;
-					moveYEndHandler = _moveEndHandler;
-				}
-				
-			} else {
-				accelY = 0;
-				speedY = maxSpeedY = speedOrParams;
-			}
-		};
-
 		let stopDown = self.stopDown = (accel) => {
 			//OPTIONAL: accel
 
