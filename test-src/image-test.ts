@@ -1,7 +1,7 @@
 import { BodyNode } from "@hanul/skynode";
 import Image from "../src/image/Image";
-import MainScreen from "../src/MainScreen";
+import Fullscreen from "../src/Fullscreen";
 
-const screen = new MainScreen();
+const screen = new Fullscreen();
 screen.root.append(new Image({ x: 0, y: 0, src: "hello.png" }));
 BodyNode.append(screen);

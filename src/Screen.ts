@@ -27,6 +27,17 @@ export default class Screen extends DomNode<HTMLDivElement> {
     public width = 0;
     public height = 0;
 
+    private static delays: (typeof Screen.Delay.prototype)[] = [];
+    private static intervals: (typeof Screen.Interval.prototype)[] = [];
+
+    public static Delay = class {
+        constructor() { Screen.delays.push(this); }
+    }
+
+    public static Interval = class {
+        constructor() { Screen.intervals.push(this); }
+    }
+
     constructor(options: ScreenOptions) {
         super(document.createElement("div"));
 

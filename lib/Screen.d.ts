@@ -19,6 +19,14 @@ export default class Screen extends DomNode<HTMLDivElement> {
     private camera;
     width: number;
     height: number;
+    private static delays;
+    private static intervals;
+    static Delay: {
+        new (): {};
+    };
+    static Interval: {
+        new (): {};
+    };
     constructor(options: ScreenOptions);
     resize(width: number, height: number, ratio?: number): void;
     private step;

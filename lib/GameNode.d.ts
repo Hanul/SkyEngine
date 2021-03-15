@@ -7,6 +7,7 @@ export interface GameNodeOptions {
     colliders?: Figure[];
 }
 export default class GameNode extends SkyNode {
+    parent: GameNode | undefined;
     protected children: GameNode[];
     pixiContainer: PIXI.Container;
     private speedX;
@@ -30,8 +31,8 @@ export default class GameNode extends SkyNode {
         toY?: number;
     }, moveEndHandler?: () => void): void;
     step(deltaTime: number): void;
-    append(...nodes: GameNode[]): void;
-    appendTo(node: GameNode, index: number): void;
+    appendTo(node: GameNode, index?: number): this;
+    exceptFromParent(): void;
     delete(): void;
 }
 //# sourceMappingURL=GameNode.d.ts.map
