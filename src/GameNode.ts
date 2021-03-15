@@ -10,6 +10,7 @@ export interface GameNodeOptions {
 
 export default class GameNode extends SkyNode {
 
+    public parent: GameNode | undefined;
     protected children: GameNode[] = [];
     public pixiContainer: PIXI.Container = new PIXI.Container();
 
@@ -54,13 +55,20 @@ export default class GameNode extends SkyNode {
     public step(deltaTime: number) {
     }
 
-    public appendTo(node: GameNode, index?: number): void {
-        super.appendTo(node, index);
-        if (index !== undefined && index < this.children.length) {
-            this.pixiContainer.addChildAt(node.pixiContainer, index);
+    public appendTo(node: GameNode, index?: number): this {
+        if (index !== undefined && index < node.children.length) {
+            node.pixiContainer.addChildAt(this.pixiContainer, index);
         } else {
-            this.pixiContainer.addChild(node.pixiContainer);
+            node.pixiContainer.addChild(this.pixiContainer);
         }
+        return super.appendTo(node, index);
+    }
+
+    public exceptFromParent(): void {
+        if (this.parent !== undefined) {
+            this.parent.pixiContainer.removeChild(this.pixiContainer);
+        }
+        super.exceptFromParent();
     }
 
     public delete(): void {
